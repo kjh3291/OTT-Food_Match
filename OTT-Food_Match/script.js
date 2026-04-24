@@ -99,6 +99,7 @@ const resultSection = document.getElementById("resultSection");
 const contentResult = document.getElementById("contentResult");
 const foodResult = document.getElementById("foodResult");
 const bestMatchText = document.getElementById("bestMatchText");
+const shareBtn = document.getElementById("shareBtn"); // 공유하기 버튼 추가
 
 optionButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -180,3 +181,19 @@ function renderResult(data) {
 
   resultSection.classList.remove("hidden");
 }
+
+// 💡 공유하기 기능 추가
+shareBtn.addEventListener("click", () => {
+  const { ott, mood, meal } = selections;
+  
+  // 클립보드에 복사될 텍스트 포맷 생성
+  const shareText = `🍿 뭐 볼까, 뭐 먹을까 🍕\n\n[나의 선택]\n📺 OTT: ${ott}\n✨ 분위기: ${mood}\n🍽️ 상황: ${meal}\n\n[추천 결과]\n🎬 콘텐츠: ${bestMatchText.textContent.split("의")[0]}의 추천작\n🍕 음식: ${document.querySelector('#foodResult strong').innerText}\n\n우리 이거 같이 볼래? 👀`;
+
+  // 클립보드 API를 사용해 텍스트 복사
+  navigator.clipboard.writeText(shareText).then(() => {
+    alert("추천 결과가 클립보드에 복사되었습니다!\n친구에게 붙여넣기(Ctrl+V)로 공유해보세요.");
+  }).catch((err) => {
+    alert("복사에 실패했습니다.");
+    console.error('Clipboard Error:', err);
+  });
+});
