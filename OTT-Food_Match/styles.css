@@ -1,0 +1,172 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+  background: #f8f5f2;
+  color: #2d2d2d;
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.card h2 {
+  margin-bottom: 14px;
+  font-size: 1.15rem;
+}
+
+.option-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.option-btn {
+  border: 1px solid #ddd;
+  background: #fafafa;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.option-btn:hover {
+  transform: translateY(-1px);
+  background: #f0f0f0;
+}
+
+.option-btn.selected {
+  background: #ff7a59;
+  color: white;
+  border-color: #ff7a59;
+  font-weight: 600;
+}
+
+.action-area {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 26px 0;
+}
+
+.primary-btn,
+.secondary-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.primary-btn {
+  background: #ff7a59;
+  color: white;
+}
+
+.primary-btn:hover {
+  opacity: 0.9;
+}
+
+.secondary-btn {
+  background: #ddd;
+  color: #333;
+}
+
+.secondary-btn:hover {
+  opacity: 0.9;
+}
+
+.result-section {
+  margin-top: 28px;
+}
+
+.result-section h2 {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.result-card {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.result-card h3 {
+  margin-bottom: 12px;
+}
+
+.result-item {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  margin-bottom: 10px;
+}
+
+.result-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.result-item p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.best-match {
+  background: #fff3ec;
+  border: 1px solid #ffd4c7;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 1.6rem;
+  }
+
+  .action-area {
+    flex-direction: column;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+  }
+}
