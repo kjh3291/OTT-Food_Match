@@ -95,17 +95,14 @@ body {
   color: white;
 }
 
-.primary-btn:hover {
+.primary-btn:hover,
+.secondary-btn:hover {
   opacity: 0.9;
 }
 
 .secondary-btn {
   background: #ddd;
   color: #333;
-}
-
-.secondary-btn:hover {
-  opacity: 0.9;
 }
 
 .result-section {
@@ -170,3 +167,4 @@ body {
     width: 100%;
   }
 }
+
