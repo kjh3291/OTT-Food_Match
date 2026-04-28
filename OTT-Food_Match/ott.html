@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTT 콘텐츠 목록</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="app">
+      <header class="header">
+        <h1 id="ottTitle">OTT 콘텐츠</h1>
+        <p>선택한 OTT에서 볼 수 있는 콘텐츠를 확인해보세요.</p>
+      </header>
+
+      <main>
+        <section class="card">
+          <h2>콘텐츠 목록</h2>
+
+          <div id="loadingText">
+            콘텐츠를 불러오는 중입니다...
+          </div>
+
+          <div id="contentList" class="ott-content-list"></div>
+        </section>
+
+        <div class="action-area">
+          <button id="backBtn" class="secondary-btn">
+            메인으로 돌아가기
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script src="ott.js"></script>
+  </body>
+</html>
