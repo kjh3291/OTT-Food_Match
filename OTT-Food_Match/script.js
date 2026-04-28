@@ -4,6 +4,13 @@ const selections = {
   meal: "",
 };
 
+const ottUrlMap = {
+  "넷플릭스": "netflix",
+  "디즈니+": "disney",
+  "티빙": "tving",
+  "웨이브": "wavve",
+};
+
 const recommendationDB = [
   {
     ott: "넷플릭스",
@@ -113,6 +120,12 @@ optionButtons.forEach((button) => {
       .forEach((btn) => btn.classList.remove("selected"));
 
     button.classList.add("selected");
+
+    // OTT 버튼을 누르면 OTT 상세 페이지로 이동
+    if (type === "ott") {
+      const ottParam = ottUrlMap[value];
+      window.location.href = `ott.html?ott=${ottParam}`;
+    }
   });
 });
 
