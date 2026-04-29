@@ -1,84 +1,87 @@
 <!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OTT 콘텐츠 목록</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="app">
-      <header class="header">
-        <h1 id="ottTitle">OTT 콘텐츠</h1>
-        <p>선택한 OTT에서 볼 수 있는 콘텐츠를 확인해보세요.</p>
-      </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTT 콘텐츠 목록</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-      <main>
-  <section class="card">
-    <h2>1. 장르 선택</h2>
-    <p style="margin-bottom: 12px; color: #666;">
-      보고 싶은 콘텐츠의 장르를 선택해주세요.
-    </p>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1 id="ottTitle">OTT 콘텐츠</h1>
+      <p>선택한 OTT에서 볼 수 있는 콘텐츠를 확인해보세요.</p>
+    </header>
 
-    <div class="option-group" id="genreOptions">
-      <button class="option-btn" data-type="genre" data-value="스릴러">스릴러</button>
-      <button class="option-btn" data-type="genre" data-value="코미디">코미디</button>
-      <button class="option-btn" data-type="genre" data-value="드라마">드라마</button>
-      <button class="option-btn" data-type="genre" data-value="액션">액션</button>
-      <button class="option-btn" data-type="genre" data-value="로맨스">로맨스</button>
-      <button class="option-btn" data-type="genre" data-value="예능">예능</button>
-      <button class="option-btn" data-type="genre" data-value="애니메이션">애니메이션</button>
-    </div>
-  </section>
+    <main>
+      <section class="card">
+        <h2>1. 장르 선택</h2>
+        <p style="margin-bottom: 12px; color: #666;">
+          보고 싶은 콘텐츠의 장르를 선택해주세요.
+        </p>
 
-  <section class="card">
-    <h2>2. 식사 상황 선택</h2>
-    <p style="margin-bottom: 12px; color: #666;">
-      어떤 상황에서 볼 예정인지 선택해주세요.
-    </p>
+        <div class="option-group" id="genreOptions">
+          <button class="option-btn" data-type="genre" data-value="스릴러">스릴러</button>
+          <button class="option-btn" data-type="genre" data-value="코미디">코미디</button>
+          <button class="option-btn" data-type="genre" data-value="드라마">드라마</button>
+          <button class="option-btn" data-type="genre" data-value="액션">액션</button>
+          <button class="option-btn" data-type="genre" data-value="로맨스">로맨스</button>
+          <button class="option-btn" data-type="genre" data-value="예능">예능</button>
+          <button class="option-btn" data-type="genre" data-value="애니메이션">애니메이션</button>
+        </div>
+      </section>
 
-    <div class="option-group" id="mealOptions">
-      <button class="option-btn" data-type="meal" data-value="혼밥">혼밥</button>
-      <button class="option-btn" data-type="meal" data-value="야식">야식</button>
-      <button class="option-btn" data-type="meal" data-value="친구와 함께">친구와 함께</button>
-      <button class="option-btn" data-type="meal" data-value="연인과 함께">연인과 함께</button>
-      <button class="option-btn" data-type="meal" data-value="간단한 식사">간단한 식사</button>
-      <button class="option-btn" data-type="meal" data-value="든든한 식사">든든한 식사</button>
-    </div>
-  </section>
+      <section class="card">
+        <h2>2. 식사 상황 선택</h2>
+        <p style="margin-bottom: 12px; color: #666;">
+          어떤 상황에서 볼 예정인지 선택해주세요.
+        </p>
 
-  <div class="action-area">
-    <button id="recommendContentBtn" class="primary-btn">
-      콘텐츠 추천 받기
-    </button>
+        <div class="option-group" id="mealOptions">
+          <button class="option-btn" data-type="meal" data-value="혼밥">혼밥</button>
+          <button class="option-btn" data-type="meal" data-value="야식">야식</button>
+          <button class="option-btn" data-type="meal" data-value="친구와 함께">친구와 함께</button>
+          <button class="option-btn" data-type="meal" data-value="연인과 함께">연인과 함께</button>
+          <button class="option-btn" data-type="meal" data-value="간단한 식사">간단한 식사</button>
+          <button class="option-btn" data-type="meal" data-value="든든한 식사">든든한 식사</button>
+        </div>
+      </section>
 
-    <button id="backBtn" class="secondary-btn">
-      메인으로 돌아가기
-    </button>
+      <div class="action-area">
+        <button id="recommendContentBtn" class="primary-btn">
+          콘텐츠 추천 받기
+        </button>
+
+        <button id="backBtn" class="secondary-btn">
+          메인으로 돌아가기
+        </button>
+      </div>
+
+      <section id="contentSection" class="result-section hidden">
+        <h2>🎬 추천 콘텐츠</h2>
+        <div id="contentList" class="ott-content-list"></div>
+      </section>
+
+      <section id="foodRecommendSection" class="result-section hidden">
+        <h2>🍕 음식 추천 결과</h2>
+
+        <div class="result-card best-match">
+          <h3 id="selectedContentTitle">선택한 콘텐츠</h3>
+          <p id="selectedContentInfo"></p>
+        </div>
+
+        <div class="result-card">
+          <h3>추천 음식</h3>
+          <div id="aiFoodResult"></div>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <section id="contentSection" class="result-section hidden">
-    <h2>🎬 추천 콘텐츠</h2>
-    <div id="contentList" class="ott-content-list"></div>
-  </section>
+  <script src="config.js"></script>
+  <script src="ott.js"></script>
+</body>
 
-  <section id="foodRecommendSection" class="result-section hidden">
-    <h2>🍕 음식 추천 결과</h2>
-
-    <div class="result-card best-match">
-      <h3 id="selectedContentTitle">선택한 콘텐츠</h3>
-      <p id="selectedContentInfo"></p>
-    </div>
-
-    <div class="result-card">
-      <h3>추천 음식</h3>
-      <div id="aiFoodResult"></div>
-    </div>
-  </section>
-</main>
-    </div>
-
-    <script src="ott.js"></script>
-  </body>
 </html>
