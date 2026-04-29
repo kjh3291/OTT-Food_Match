@@ -1,43 +1,6 @@
-// ott.js 맨 위
-if (typeof kakao === 'undefined') {
-  var kakao = { maps: null };
-  console.warn("⚠️ 카카오맵 라이브러리가 아직 로드되지 않았습니다.");
-}
-// --- [추가된 부분: API 연동 테스트 로직] ---
-
-// config.js에서 선언한 TMDB_API_KEY가 잘 불러와졌는지 확인 (콘솔 출력)
-console.log("현재 불러온 API 키:", CONFIG.TMDB_API_KEY ? "키 정상 인식됨" : "키를 찾을 수 없음!");
-
-// TMDB API 정상 작동 확인을 위한 테스트 함수
-async function testTMDBAPI() {
-  if (!CONFIG.TMDB_API_KEY) {
-    console.error("🚨 오류: API 키가 없습니다. config.js 연결을 확인하세요.");
-    return;
-  }
-
-  // 장르 목록을 불러오는 테스트 엔드포인트
-  const testUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${CONFIG.TMDB_API_KEY}&language=ko-KR`;
-
-  try {
-    const response = await fetch(testUrl);
-
-    // 정상적으로 데이터를 받았을 경우 (HTTP 상태 코드 200)
-    if (response.ok) {
-      const data = await response.json();
-      console.log("✅ TMDB API 연결 성공! 장르 데이터를 정상적으로 받아왔습니다.");
-      console.log("받아온 장르 데이터 미리보기:", data.genres);
-      // alert("API 연동 테스트 성공!"); // 필요하다면 화면에 알림을 띄울 수도 있습니다.
-    } else {
-      // 키가 틀렸거나 주소가 잘못되었을 경우
-      console.error(`🚨 API 요청 실패 (상태 코드: ${response.status})`);
-    }
-  } catch (error) {
-    console.error("🚨 네트워크 오류 또는 API 연동 실패:", error);
-  }
-}
-
-// 스크립트가 실행될 때 가장 먼저 테스트 함수를 호출합니다.
-testTMDBAPI();
+// ===============================
+// 1. 기본 설정
+// ===============================
 
 const ottNameMap = {
   netflix: "넷플릭스",
@@ -46,72 +9,22 @@ const ottNameMap = {
   wavve: "웨이브",
 };
 
-const sampleContents = {
-  netflix: [
-    {
-      title: "스릴러 추천작",
-      genre: "스릴러",
-      mealTags: ["야식", "혼밥"],
-      description: "긴장감 있는 분위기의 콘텐츠입니다.",
-    },
-    {
-      title: "코미디 시리즈",
-      genre: "코미디",
-      mealTags: ["혼밥", "간단한 식사", "친구와 함께"],
-      description: "가볍게 웃으면서 보기 좋은 콘텐츠입니다.",
-    },
-    {
-      title: "몰입형 드라마",
-      genre: "드라마",
-      mealTags: ["든든한 식사", "혼밥"],
-      description: "한 번 보면 계속 보게 되는 몰입감 있는 작품입니다.",
-    },
-  ],
+// TMDB Watch Provider ID
+// 주의: 티빙, 웨이브는 TMDB 데이터 상황에 따라 결과가 적거나 없을 수 있음
+const ottProviderMap = {
+  netflix: 8,     // Netflix
+  disney: 337,   // Disney Plus
+  wavve: 356,    // wavve
+  tving: 97,     // TVING으로 시도
+};
 
-  disney: [
-    {
-      title: "디즈니 애니메이션",
-      genre: "애니메이션",
-      mealTags: ["친구와 함께", "연인과 함께", "간단한 식사"],
-      description: "가족, 친구, 연인과 함께 보기 좋은 콘텐츠입니다.",
-    },
-    {
-      title: "마블 액션 영화",
-      genre: "액션",
-      mealTags: ["든든한 식사", "친구와 함께", "야식"],
-      description: "화려한 액션과 세계관을 즐길 수 있는 작품입니다.",
-    },
-  ],
-
-  tving: [
-    {
-      title: "인기 예능",
-      genre: "예능",
-      mealTags: ["혼밥", "간단한 식사", "친구와 함께"],
-      description: "밥 먹으면서 가볍게 보기 좋은 예능 콘텐츠입니다.",
-    },
-    {
-      title: "한국 드라마",
-      genre: "드라마",
-      mealTags: ["혼밥", "연인과 함께", "야식"],
-      description: "감정선이 좋은 한국형 드라마 콘텐츠입니다.",
-    },
-  ],
-
-  wavve: [
-    {
-      title: "감성 드라마",
-      genre: "드라마",
-      mealTags: ["혼밥", "야식"],
-      description: "혼밥이나 야식 시간에 잔잔하게 보기 좋습니다.",
-    },
-    {
-      title: "국내 예능",
-      genre: "예능",
-      mealTags: ["간단한 식사", "친구와 함께", "혼밥"],
-      description: "부담 없이 즐길 수 있는 국내 예능 콘텐츠입니다.",
-    },
-  ],
+const genreIdMap = {
+  "액션": 28,
+  "코미디": 35,
+  "드라마": 18,
+  "로맨스": 10749,
+  "스릴러": 53,
+  "애니메이션": 16,
 };
 
 const selections = {
@@ -121,6 +34,11 @@ const selections = {
 
 const urlParams = new URLSearchParams(window.location.search);
 const ottKey = urlParams.get("ott");
+
+
+// ===============================
+// 2. HTML 요소 가져오기
+// ===============================
 
 const ottTitle = document.getElementById("ottTitle");
 const optionButtons = document.querySelectorAll(".option-btn");
@@ -134,8 +52,51 @@ const selectedContentTitle = document.getElementById("selectedContentTitle");
 const selectedContentInfo = document.getElementById("selectedContentInfo");
 const aiFoodResult = document.getElementById("aiFoodResult");
 
+
+// ===============================
+// 3. 초기 화면 설정
+// ===============================
+
 const ottName = ottNameMap[ottKey] || "OTT";
 ottTitle.textContent = `${ottName} 콘텐츠 추천`;
+
+
+// ===============================
+// 4. TMDB API 연결 테스트
+// ===============================
+
+async function testTMDBAPI() {
+  const apiKey = window.CONFIG?.TMDB_API_KEY;
+
+  if (!apiKey) {
+    console.error("TMDB API Key가 없습니다. config.js를 확인하세요.");
+    return;
+  }
+
+  const testUrl = `${window.CONFIG.TMDB_BASE_URL}/genre/movie/list?api_key=${apiKey}&language=ko-KR`;
+
+  try {
+    const response = await fetch(testUrl);
+
+    if (!response.ok) {
+      console.error("TMDB API 연결 실패:", response.status);
+      return;
+    }
+
+    const data = await response.json();
+    console.log("TMDB API 연결 성공");
+    console.log("장르 데이터:", data.genres);
+  } catch (error) {
+    console.error("TMDB API 테스트 중 오류 발생:", error);
+  }
+}
+
+testTMDBAPI();
+
+
+// ===============================
+// 5. 장르 / 식사 상황 선택 기능
+// ===============================
 
 optionButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -155,7 +116,82 @@ optionButtons.forEach((button) => {
   });
 });
 
-recommendContentBtn.addEventListener("click", () => {
+
+// ===============================
+// 6. TMDB에서 영화 목록 가져오기
+// ===============================
+
+async function fetchMoviesFromTMDB(genre, ottKey) {
+  const apiKey = window.CONFIG?.TMDB_API_KEY;
+  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
+
+  if (!apiKey) {
+    alert("TMDB API Key가 없습니다. config.js를 확인해주세요.");
+    return [];
+  }
+
+  const genreId = genreIdMap[genre];
+  const providerId = ottProviderMap[ottKey];
+
+  if (!genreId) {
+    alert(`${genre} 장르는 현재 영화 API 검색에서 지원하지 않습니다.`);
+    return [];
+  }
+
+  if (!providerId) {
+    alert("선택한 OTT의 Provider ID가 없습니다.");
+    return [];
+  }
+
+  const url =
+    `${baseUrl}/discover/movie` +
+    `?api_key=${apiKey}` +
+    `&language=ko-KR` +
+    `&region=KR` +
+    `&watch_region=KR` +
+    `&with_watch_providers=${providerId}` +
+    `&with_watch_monetization_types=flatrate` +
+    `&with_genres=${genreId}` +
+    `&sort_by=popularity.desc` +
+    `&include_adult=false` +
+    `&page=1`;
+
+  console.log("요청 URL:", url);
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error("TMDB 영화 목록 요청 실패:", response.status);
+      alert("영화 목록을 불러오지 못했습니다.");
+      return [];
+    }
+
+    const data = await response.json();
+    console.log("TMDB 영화 목록 결과:", data);
+
+    return data.results.map((movie) => ({
+      id: movie.id,
+      title: movie.title || movie.name || "제목 없음",
+      genre: genre,
+      overview: movie.overview || "줄거리 정보가 없습니다.",
+      posterPath: movie.poster_path,
+      releaseDate: movie.release_date || "개봉일 정보 없음",
+      rating: movie.vote_average,
+    }));
+  } catch (error) {
+    console.error("TMDB API 요청 중 오류 발생:", error);
+    alert("API 요청 중 오류가 발생했습니다.");
+    return [];
+  }
+}
+
+
+// ===============================
+// 7. 콘텐츠 추천 버튼
+// ===============================
+
+recommendContentBtn.addEventListener("click", async () => {
   const { genre, meal } = selections;
 
   if (!genre || !meal) {
@@ -163,61 +199,59 @@ recommendContentBtn.addEventListener("click", () => {
     return;
   }
 
-  renderRecommendedContents(genre, meal);
+  contentList.innerHTML = `
+    <div class="result-card">
+      <p>영화 목록을 불러오는 중입니다...</p>
+    </div>
+  `;
+
+  contentSection.classList.remove("hidden");
+  foodRecommendSection.classList.add("hidden");
+
+  const movies = await fetchMoviesFromTMDB(genre, ottKey);
+
+  renderTMDBMovies(movies, genre, meal);
 });
 
-function getRecommendedContents(genre, meal) {
-  const contents = sampleContents[ottKey] || [];
 
-  const exactMatches = contents.filter((content) => {
-    return content.genre === genre && content.mealTags.includes(meal);
-  });
+// ===============================
+// 8. 영화 목록 화면 출력
+// ===============================
 
-  if (exactMatches.length > 0) {
-    return exactMatches;
-  }
-
-  const genreMatches = contents.filter((content) => {
-    return content.genre === genre;
-  });
-
-  if (genreMatches.length > 0) {
-    return genreMatches;
-  }
-
-  const mealMatches = contents.filter((content) => {
-    return content.mealTags.includes(meal);
-  });
-
-  if (mealMatches.length > 0) {
-    return mealMatches;
-  }
-
-  return contents;
-}
-
-function renderRecommendedContents(genre, meal) {
-  const recommendedContents = getRecommendedContents(genre, meal);
-
-  if (recommendedContents.length === 0) {
+function renderTMDBMovies(movies, genre, meal) {
+  if (!movies || movies.length === 0) {
     contentList.innerHTML = `
       <div class="result-card">
-        <p>추천할 콘텐츠가 없습니다.</p>
+        <p>선택한 조건에 맞는 영화가 없습니다.</p>
+        <p style="color:#666; margin-top:8px;">
+          다른 장르를 선택하거나, OTT를 바꿔서 다시 시도해보세요.
+        </p>
       </div>
     `;
-
-    contentSection.classList.remove("hidden");
     return;
   }
 
-  contentList.innerHTML = recommendedContents
-    .map((content, index) => {
+  contentList.innerHTML = movies
+    .slice(0, 10)
+    .map((movie, index) => {
+      const posterUrl = movie.posterPath
+        ? `https://image.tmdb.org/t/p/w300${movie.posterPath}`
+        : "";
+
       return `
         <div class="result-item">
-          <strong>${content.title}</strong>
-          <p>장르: ${content.genre}</p>
-          <p>추천 상황: ${content.mealTags.join(", ")}</p>
-          <p>${content.description}</p>
+          ${
+            posterUrl
+              ? `<img src="${posterUrl}" alt="${movie.title} 포스터" style="width:120px; border-radius:10px; margin-bottom:10px;">`
+              : ""
+          }
+
+          <strong>${movie.title}</strong>
+          <p>장르: ${genre}</p>
+          <p>개봉일: ${movie.releaseDate}</p>
+          <p>평점: ${movie.rating ? movie.rating.toFixed(1) : "정보 없음"}</p>
+          <p>${movie.overview}</p>
+
           <button class="primary-btn food-recommend-btn" data-index="${index}">
             이 콘텐츠에 어울리는 음식 추천받기
           </button>
@@ -230,16 +264,28 @@ function renderRecommendedContents(genre, meal) {
 
   foodRecommendButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const selectedIndex = button.dataset.index;
-      const selectedContent = recommendedContents[selectedIndex];
+      const selectedIndex = Number(button.dataset.index);
+      const selectedMovie = movies[selectedIndex];
 
-      recommendFoodForContent(selectedContent);
+      const contentForFood = {
+        title: selectedMovie.title,
+        genre: genre,
+        description: selectedMovie.overview,
+        mealTags: [meal],
+      };
+
+      recommendFoodForContent(contentForFood);
     });
   });
 
   contentSection.classList.remove("hidden");
   foodRecommendSection.classList.add("hidden");
 }
+
+
+// ===============================
+// 9. 음식 추천 기능
+// ===============================
 
 function recommendFoodForContent(content) {
   let foodRecommendation = {
@@ -252,7 +298,7 @@ function recommendFoodForContent(content) {
       name: "피자 + 콜라",
       reason: "스릴러는 긴장감이 강하기 때문에 손쉽게 먹을 수 있는 피자가 잘 어울립니다.",
     };
-  } else if (content.genre === "코미디" || content.genre === "예능") {
+  } else if (content.genre === "코미디") {
     foodRecommendation = {
       name: "떡볶이 + 튀김",
       reason: "가볍고 즐거운 분위기의 콘텐츠에는 부담 없이 먹기 좋은 분식 조합이 잘 맞습니다.",
@@ -279,53 +325,23 @@ function recommendFoodForContent(content) {
     };
   }
 
-  // ... (위쪽 if~else 음식 추천 로직은 그대로 둡니다) ...
-
   selectedContentTitle.textContent = `선택한 콘텐츠: ${content.title}`;
   selectedContentInfo.textContent = `장르: ${content.genre} / ${content.description}`;
 
-  // --- [여기서부터 수정!] ---
-
-  // 1. 결과 화면에 '지도보기 버튼'과 '지도가 들어갈 빈 박스'를 함께 그려줍니다.
   aiFoodResult.innerHTML = `
     <div class="result-item">
       <strong>🍔 추천 음식: ${foodRecommendation.name}</strong>
       <p>${foodRecommendation.reason}</p>
-      
-      <button id="showMapBtn" class="primary-btn" style="margin-top: 15px;">
-        🗺️ 내 주변 음식점 지도보기
-      </button>
-      
-      <div id="mapContainer" style="width: 100%; height: 350px; margin-top: 15px; display: none; border-radius: 8px; border: 1px solid #ddd;"></div>
     </div>
   `;
 
-  // 2. 방금 만든 버튼과 지도 공간을 찾아서 클릭 이벤트를 연결합니다.
-  const showMapBtn = document.getElementById("showMapBtn");
-  const mapContainer = document.getElementById("mapContainer");
-
-  showMapBtn.addEventListener("click", () => {
-    // 버튼을 누르면 지도를 화면에 보이게 하고, 버튼 자신은 숨깁니다.
-    mapContainer.style.display = "block";
-    showMapBtn.style.display = "none";
-
-    // 카카오맵 띄우기 로직 시작!
-    const mapOption = {
-      // 일단 기본 중심 좌표를 서울시청으로 잡아둡니다.
-      center: new kakao.maps.LatLng(37.566826, 126.9786567),
-      level: 3 // 확대 정도
-    };
-
-    // 지도를 진짜로 생성해서 mapContainer에 꽂아 넣습니다.
-    const map = new kakao.maps.Map(mapContainer, mapOption);
-
-    console.log("지도 렌더링 완료!");
-  });
-
-  // --- [수정 끝!] ---
-
   foodRecommendSection.classList.remove("hidden");
 }
+
+
+// ===============================
+// 10. 뒤로가기 버튼
+// ===============================
 
 backBtn.addEventListener("click", () => {
   window.location.href = "main.html";
