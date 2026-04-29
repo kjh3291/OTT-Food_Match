@@ -38,3 +38,16 @@ export function recommend(foods, lastFood) {
   result.lastShownAt = Date.now();
   return result;
 }
+
+///////////////////////////////////
+// 좋아요 및 싫어요 처리
+//////////////////////////////////
+export function like(food) {
+  food.likes++;
+  food.weight = Math.min(5, food.weight + 0.2);
+}
+
+export function dislike(food) {
+  food.dislikes++;
+  food.weight = Math.max(0.1, food.weight - 0.2);
+}
