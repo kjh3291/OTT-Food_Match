@@ -75,6 +75,19 @@ body {
 }
 /* -------------------------------- */
 
+/********************************* OTT html css 표시용*/
+.ott-content-list {
+  display: grid;
+  gap: 12px;
+}
+
+#loadingText {
+  color: #666;
+  font-size: 0.95rem;
+  padding: 12px;
+}
+/********************************/
+
 .option-btn:hover {
   transform: translateY(-1px);
   background: #f0f0f0;
