@@ -24,3 +24,17 @@ export function weightedRandom(foods) {
     random -= food.weight;
   }
 }
+
+///////////////////////////////////
+// 이전 추천과 중복 방지
+//////////////////////////////////
+export function recommend(foods, lastFood) {
+  let result;
+
+  do {
+    result = weightedRandom(foods);
+  } while (lastFood && result.name === lastFood.name);
+
+  result.lastShownAt = Date.now();
+  return result;
+}
