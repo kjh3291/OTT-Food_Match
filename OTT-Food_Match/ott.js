@@ -1,3 +1,8 @@
+// ott.js 맨 위
+if (typeof kakao === 'undefined') {
+  var kakao = { maps: null };
+  console.warn("⚠️ 카카오맵 라이브러리가 아직 로드되지 않았습니다.");
+}
 // --- [추가된 부분: API 연동 테스트 로직] ---
 
 // config.js에서 선언한 TMDB_API_KEY가 잘 불러와졌는지 확인 (콘솔 출력)
@@ -274,15 +279,50 @@ function recommendFoodForContent(content) {
     };
   }
 
+  // ... (위쪽 if~else 음식 추천 로직은 그대로 둡니다) ...
+
   selectedContentTitle.textContent = `선택한 콘텐츠: ${content.title}`;
   selectedContentInfo.textContent = `장르: ${content.genre} / ${content.description}`;
 
+  // --- [여기서부터 수정!] ---
+
+  // 1. 결과 화면에 '지도보기 버튼'과 '지도가 들어갈 빈 박스'를 함께 그려줍니다.
   aiFoodResult.innerHTML = `
     <div class="result-item">
-      <strong>${foodRecommendation.name}</strong>
+      <strong>🍔 추천 음식: ${foodRecommendation.name}</strong>
       <p>${foodRecommendation.reason}</p>
+      
+      <button id="showMapBtn" class="primary-btn" style="margin-top: 15px;">
+        🗺️ 내 주변 음식점 지도보기
+      </button>
+      
+      <div id="mapContainer" style="width: 100%; height: 350px; margin-top: 15px; display: none; border-radius: 8px; border: 1px solid #ddd;"></div>
     </div>
   `;
+
+  // 2. 방금 만든 버튼과 지도 공간을 찾아서 클릭 이벤트를 연결합니다.
+  const showMapBtn = document.getElementById("showMapBtn");
+  const mapContainer = document.getElementById("mapContainer");
+
+  showMapBtn.addEventListener("click", () => {
+    // 버튼을 누르면 지도를 화면에 보이게 하고, 버튼 자신은 숨깁니다.
+    mapContainer.style.display = "block";
+    showMapBtn.style.display = "none";
+
+    // 카카오맵 띄우기 로직 시작!
+    const mapOption = {
+      // 일단 기본 중심 좌표를 서울시청으로 잡아둡니다.
+      center: new kakao.maps.LatLng(37.566826, 126.9786567),
+      level: 3 // 확대 정도
+    };
+
+    // 지도를 진짜로 생성해서 mapContainer에 꽂아 넣습니다.
+    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+    console.log("지도 렌더링 완료!");
+  });
+
+  // --- [수정 끝!] ---
 
   foodRecommendSection.classList.remove("hidden");
 }
