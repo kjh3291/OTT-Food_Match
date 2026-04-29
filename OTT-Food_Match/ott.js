@@ -1,3 +1,39 @@
+// --- [추가된 부분: API 연동 테스트 로직] ---
+
+// config.js에서 선언한 TMDB_API_KEY가 잘 불러와졌는지 확인 (콘솔 출력)
+console.log("현재 불러온 API 키:", CONFIG.TMDB_API_KEY ? "키 정상 인식됨" : "키를 찾을 수 없음!");
+
+// TMDB API 정상 작동 확인을 위한 테스트 함수
+async function testTMDBAPI() {
+  if (!CONFIG.TMDB_API_KEY) {
+    console.error("🚨 오류: API 키가 없습니다. config.js 연결을 확인하세요.");
+    return;
+  }
+
+  // 장르 목록을 불러오는 테스트 엔드포인트
+  const testUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${CONFIG.TMDB_API_KEY}&language=ko-KR`;
+
+  try {
+    const response = await fetch(testUrl);
+
+    // 정상적으로 데이터를 받았을 경우 (HTTP 상태 코드 200)
+    if (response.ok) {
+      const data = await response.json();
+      console.log("✅ TMDB API 연결 성공! 장르 데이터를 정상적으로 받아왔습니다.");
+      console.log("받아온 장르 데이터 미리보기:", data.genres);
+      // alert("API 연동 테스트 성공!"); // 필요하다면 화면에 알림을 띄울 수도 있습니다.
+    } else {
+      // 키가 틀렸거나 주소가 잘못되었을 경우
+      console.error(`🚨 API 요청 실패 (상태 코드: ${response.status})`);
+    }
+  } catch (error) {
+    console.error("🚨 네트워크 오류 또는 API 연동 실패:", error);
+  }
+}
+
+// 스크립트가 실행될 때 가장 먼저 테스트 함수를 호출합니다.
+testTMDBAPI();
+
 const ottNameMap = {
   netflix: "넷플릭스",
   disney: "디즈니+",
