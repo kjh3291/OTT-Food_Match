@@ -214,3 +214,19 @@ body {
 @media (max-width: 600px) {
   .header h1 { font-size: 1.6rem; }
 }
+
+/* --- 로딩 스피너 애니메이션 --- */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ff7a59;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

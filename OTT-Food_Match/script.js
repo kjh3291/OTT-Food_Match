@@ -100,41 +100,81 @@ function updateUI() {
 }
 
 // 결과 생성 및 렌더링
-function showResult() {
-  // 입력된 항목들을 모두 숨김
+// [기존 코드 유지] 상태 관리 객체, 버튼 이벤트 등록, 다음/이전 버튼 이벤트 등...
+
+// --- 변경된 결과 생성 및 API 연동 로직 ---
+async function showResult() {
+  // 1. 입력 폼 숨기고 로딩 화면 띄우기
   document.getElementById("wizardForm").querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
+  const loadingSection = document.getElementById("loadingSection");
+  const resultSection = document.getElementById("resultSection");
   
-  const contentResult = document.getElementById("contentResult");
-  const foodResult = document.getElementById("foodResult");
-  const bestMatchText = document.getElementById("bestMatchText");
+  loadingSection.classList.remove("hidden");
 
-  // 동적 결과 텍스트 생성 로직
-  let ottText = state.primary === "ott" ? state.detail : "넷플릭스/티빙";
-  let foodText = state.primary === "food" ? state.detail : "피자 또는 치킨";
-  
-  // 상황에 따른 부가 설명
-  let reason = `${state.situation} 상황에 완벽하게 어울리는 조합입니다.`;
-  if (state.situation === "야식") reason = "밤에 즐기면 두 배로 맛있는 야식 특화 추천입니다.";
-  else if (state.situation === "혼밥") reason = "방해받지 않고 오롯이 나만의 시간을 즐길 수 있는 추천입니다.";
+  // 2. 서버로 보낼 사용자 선택 데이터 정리
+  const requestData = {
+    primaryChoice: state.primary, // 'ott' 또는 'food'
+    situation: state.situation,
+    detailChoice: state.detail
+  };
 
-  contentResult.innerHTML = `
-    <div class="result-item">
-      <strong>📺 ${ottText} 인기 콘텐츠</strong>
-      <p>장르: ${state.situation}에 어울리는 추천 장르</p>
-    </div>
-  `;
+  try {
+    /* // 🚧 [실제 API 연동 시 사용할 코드] 🚧
+    // 'YOUR_API_ENDPOINT_URL' 부분에 실제 서버 주소를 넣으세요.
+    const response = await fetch('YOUR_API_ENDPOINT_URL', {
+      method: 'POST', // 또는 GET (API 설계에 따라 다름)
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    });
 
-  foodResult.innerHTML = `
-    <div class="result-item">
-      <strong>🍽️ ${foodText}</strong>
-      <p>${reason}</p>
-    </div>
-  `;
+    if (!response.ok) throw new Error('API 호출에 실패했습니다.');
+    const data = await response.json(); 
+    */
 
-  bestMatchText.textContent = `현재 상황(${state.situation})을 고려하여, ${ottText} 시청 시 ${foodText} 메뉴를 곁들이는 것을 가장 강력하게 추천합니다!`;
+    // ⏳ [현재 테스트를 위한 가짜 API 지연(1.5초) 코드] - 실제 연동 시 지워주세요!
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    const data = {
+      ottTitle: state.primary === "ott" ? state.detail : "넷플릭스 오리지널",
+      ottGenre: `${state.situation}에 어울리는 추천 장르`,
+      foodName: state.primary === "food" ? state.detail : "피자 또는 치킨",
+      foodReason: `${state.situation} 상황에 완벽하게 어울리는 조합입니다.`,
+      bestMatchCombo: `현재 상황(${state.situation})을 고려하여, 최적의 메뉴와 콘텐츠를 추천합니다!`
+    };
+    // -------------------------------------------------------------
 
-  document.getElementById("resultSection").classList.remove("hidden");
+    // 3. API 응답 데이터(data)를 바탕으로 화면 렌더링
+    document.getElementById("contentResult").innerHTML = `
+      <div class="result-item">
+        <strong>📺 ${data.ottTitle}</strong>
+        <p>장르/특징: ${data.ottGenre}</p>
+      </div>
+    `;
+
+    document.getElementById("foodResult").innerHTML = `
+      <div class="result-item">
+        <strong>🍽️ ${data.foodName}</strong>
+        <p>${data.foodReason}</p>
+      </div>
+    `;
+
+    document.getElementById("bestMatchText").textContent = data.bestMatchCombo;
+
+    // 4. 로딩 화면 숨기고 결과 화면 보여주기
+    loadingSection.classList.add("hidden");
+    resultSection.classList.remove("hidden");
+
+  } catch (error) {
+    // API 에러 처리
+    console.error('Error fetching recommendation:', error);
+    loadingSection.classList.add("hidden");
+    alert("결과를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    location.reload();
+  }
 }
+
+// [기존 코드 유지] 초기화 버튼, 공유하기 기능 등...
 
 // 초기화 버튼
 document.getElementById("resetBtn").addEventListener("click", () => {
