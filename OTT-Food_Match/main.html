@@ -11,50 +11,64 @@
       <header class="header">
         <h1>🍿 뭐 볼까, 뭐 먹을까</h1>
         <p>OTT와 음식 조합을 한 번에 추천해주는 서비스</p>
+        
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
       </header>
 
-      <main>
-        <section class="card">
-          <h2>1. OTT 선택</h2>
-          <div class="option-group" id="ottOptions">
-            <button class="option-btn" data-type="ott" data-value="넷플릭스">넷플릭스</button>
-            <button class="option-btn" data-type="ott" data-value="디즈니+">디즈니+</button>
-            <button class="option-btn" data-type="ott" data-value="티빙">티빙</button>
-            <button class="option-btn" data-type="ott" data-value="웨이브">웨이브</button>
+      <main id="wizardForm">
+        <section class="card step-section active" id="step1">
+          <h2>1. 어떤 것을 먼저 고르시겠어요?</h2>
+          <div class="option-group vertical-group">
+            <button class="option-btn big-btn" data-step="1" data-key="primary" data-value="ott">
+              📺 볼 콘텐츠(OTT) 기준
+            </button>
+            <button class="option-btn big-btn" data-step="1" data-key="primary" data-value="food">
+              🍕 먹을 음식 메뉴 기준
+            </button>
           </div>
         </section>
 
-        <section class="card">
-          <h2>2. 분위기 선택</h2>
-          <div class="option-group" id="moodOptions">
-            <button class="option-btn" data-type="mood" data-value="가볍게">가볍게</button>
-            <button class="option-btn" data-type="mood" data-value="몰입감">몰입감</button>
-            <button class="option-btn" data-type="mood" data-value="웃긴">웃긴</button>
-            <button class="option-btn" data-type="mood" data-value="로맨틱">로맨틱</button>
-            <button class="option-btn" data-type="mood" data-value="스릴">스릴</button>
-            <button class="option-btn" data-type="mood" data-value="감성">감성</button>
+        <section class="card step-section hidden" id="step2">
+          <h2>2. 현재 식사 상황은 어떠신가요?</h2>
+          <div class="option-group">
+            <button class="option-btn" data-step="2" data-key="situation" data-value="혼밥">혼밥</button>
+            <button class="option-btn" data-step="2" data-key="situation" data-value="야식">야식</button>
+            <button class="option-btn" data-step="2" data-key="situation" data-value="친구와 함께">친구와 함께</button>
+            <button class="option-btn" data-step="2" data-key="situation" data-value="연인과 함께">연인과 함께</button>
+            <button class="option-btn" data-step="2" data-key="situation" data-value="간단한 식사">간단한 식사</button>
+            <button class="option-btn" data-step="2" data-key="situation" data-value="든든한 식사">든든한 식사</button>
           </div>
         </section>
 
-        <section class="card">
-          <h2>3. 식사 상황 선택</h2>
-          <div class="option-group" id="mealOptions">
-            <button class="option-btn" data-type="meal" data-value="혼밥">혼밥</button>
-            <button class="option-btn" data-type="meal" data-value="야식">야식</button>
-            <button class="option-btn" data-type="meal" data-value="친구와 함께">친구와 함께</button>
-            <button class="option-btn" data-type="meal" data-value="연인과 함께">연인과 함께</button>
-            <button class="option-btn" data-type="meal" data-value="간단한 식사">간단한 식사</button>
-            <button class="option-btn" data-type="meal" data-value="든든한 식사">든든한 식사</button>
+        <section class="card step-section hidden" id="step3-ott">
+          <h2>3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
+          <div class="option-group">
+            <button class="option-btn" data-step="3" data-key="detail" data-value="넷플릭스">넷플릭스</button>
+            <button class="option-btn" data-step="3" data-key="detail" data-value="디즈니+">디즈니+</button>
+            <button class="option-btn" data-step="3" data-key="detail" data-value="티빙">티빙</button>
+            <button class="option-btn" data-step="3" data-key="detail" data-value="웨이브">웨이브</button>
           </div>
         </section>
 
-        <div class="action-area">
-          <button id="recommendBtn" class="primary-btn">추천 받기</button>
-          <button id="resetBtn" class="secondary-btn">초기화</button>
+        <section class="card step-section hidden" id="step3-food">
+          <h2>3. 어떤 종류의 음식이 끌리시나요?</h2>
+          <div class="option-group">
+            <button class="option-btn" data-step="3" data-key="detail" data-value="치킨/피자">치킨/피자</button>
+            <button class="option-btn" data-step="3" data-key="detail" data-value="분식(떡볶이 등)">분식(떡볶이 등)</button>
+            <button class="option-btn" data-step="3" data-key="detail" data-value="한식(국밥/찌개)">한식(국밥/찌개)</button>
+            <button class="option-btn" data-step="3" data-key="detail" data-value="양식(파스타 등)">양식(파스타 등)</button>
+          </div>
+        </section>
+
+        <div class="action-area hidden" id="navArea">
+          <button id="prevBtn" class="secondary-btn">이전 단계</button>
+          <button id="nextBtn" class="primary-btn">다음 단계</button>
         </div>
 
         <section id="resultSection" class="result-section hidden">
-          <h2>추천 결과</h2>
+          <h2>✨ 맞춤 추천 결과 ✨</h2>
 
           <div class="result-card">
             <h3>🎬 추천 콘텐츠</h3>
@@ -67,12 +81,13 @@
           </div>
 
           <div class="result-card best-match">
-            <h3>✨ Best Match Combo</h3>
+            <h3>💡 Best Match Combo</h3>
             <p id="bestMatchText"></p>
           </div>
           
-          <div class="action-area" style="margin-top: 16px;">
-            <button id="shareBtn" class="secondary-btn" style="width: 100%;">결과 공유하기 🔗</button>
+          <div class="action-area" style="flex-direction: column; gap: 8px; margin-top: 16px;">
+            <button id="shareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
+            <button id="resetBtn" class="secondary-btn" style="width: 100%;">처음부터 다시하기</button>
           </div>
         </section>
       </main>
