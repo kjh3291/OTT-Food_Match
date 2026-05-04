@@ -1,199 +1,154 @@
-const selections = {
-  ott: "",
-  mood: "",
-  meal: "",
+// 1. 상태 관리 객체 (현재 어느 단계인지, 무엇을 선택했는지 저장)
+const state = {
+  currentStep: 1,
+  primary: "",   // 'ott' 또는 'food'
+  situation: "", // '혼밥', '야식' 등
+  detail: ""     // '넷플릭스', '치킨/피자' 등
 };
 
-const recommendationDB = [
-  {
-    ott: "넷플릭스",
-    mood: "스릴",
-    meal: "야식",
-    content: {
-      title: "스릴러 영화 추천",
-      genre: "범죄 / 스릴러",
-      reason: "긴장감 있는 전개로 야식 시간에 몰입해서 보기 좋아요.",
-    },
-    food: {
-      name: "피자 + 콜라",
-      reason: "손이 자주 가지 않아도 편하게 먹을 수 있어 스릴러와 잘 어울려요.",
-    },
-  },
-  {
-    ott: "넷플릭스",
-    mood: "웃긴",
-    meal: "혼밥",
-    content: {
-      title: "코미디 시리즈 추천",
-      genre: "코미디",
-      reason: "가볍게 웃으면서 혼자 편하게 보기 좋아요.",
-    },
-    food: {
-      name: "햄버거 세트",
-      reason: "부담 없이 빠르게 먹을 수 있어 가벼운 시청 분위기와 잘 맞아요.",
-    },
-  },
-  {
-    ott: "디즈니+",
-    mood: "로맨틱",
-    meal: "연인과 함께",
-    content: {
-      title: "로맨스 영화 추천",
-      genre: "로맨스 / 드라마",
-      reason: "감정선이 부드러워 함께 보기 좋은 분위기를 만들어줘요.",
-    },
-    food: {
-      name: "파스타 + 샐러드",
-      reason: "분위기 있는 식사와 함께 즐기기 좋아요.",
-    },
-  },
-  {
-    ott: "티빙",
-    mood: "가볍게",
-    meal: "간단한 식사",
-    content: {
-      title: "예능 프로그램 추천",
-      genre: "예능",
-      reason: "짧고 편하게 볼 수 있어서 식사 중 부담이 적어요.",
-    },
-    food: {
-      name: "김밥 + 떡볶이",
-      reason: "간단하지만 만족감 있는 조합이라 캐주얼한 시청과 잘 맞아요.",
-    },
-  },
-  {
-    ott: "웨이브",
-    mood: "감성",
-    meal: "혼밥",
-    content: {
-      title: "감성 드라마 추천",
-      genre: "드라마",
-      reason: "천천히 몰입하며 보기 좋아 혼자 먹는 시간과 잘 어울려요.",
-    },
-    food: {
-      name: "우동",
-      reason: "따뜻하고 천천히 먹기 좋아 감성적인 분위기와 잘 맞아요.",
-    },
-  },
-  {
-    ott: "넷플릭스",
-    mood: "몰입감",
-    meal: "든든한 식사",
-    content: {
-      title: "몰입형 시리즈 추천",
-      genre: "액션 / 미스터리",
-      reason: "집중해서 보기 좋은 작품이라 든든한 식사와 함께하기 좋아요.",
-    },
-    food: {
-      name: "치킨 + 감자튀김",
-      reason: "만족감이 크고 오래 보면서 먹기 좋은 메뉴예요.",
-    },
-  },
-];
+// HTML 요소 맵핑
+const steps = {
+  1: document.getElementById("step1"),
+  2: document.getElementById("step2"),
+  "3-ott": document.getElementById("step3-ott"),
+  "3-food": document.getElementById("step3-food")
+};
 
-const optionButtons = document.querySelectorAll(".option-btn");
-const recommendBtn = document.getElementById("recommendBtn");
-const resetBtn = document.getElementById("resetBtn");
+const navArea = document.getElementById("navArea");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const progressBar = document.getElementById("progressBar");
+const progressFill = document.getElementById("progressFill");
 
-const resultSection = document.getElementById("resultSection");
-const contentResult = document.getElementById("contentResult");
-const foodResult = document.getElementById("foodResult");
-const bestMatchText = document.getElementById("bestMatchText");
-const shareBtn = document.getElementById("shareBtn"); // 공유하기 버튼 추가
-
-optionButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const type = button.dataset.type;
+// 버튼 이벤트 등록
+document.querySelectorAll(".option-btn").forEach((button) => {
+  button.addEventListener("click", (e) => {
+    const step = button.dataset.step;
+    const key = button.dataset.key;
     const value = button.dataset.value;
 
-    selections[type] = value;
+    // 데이터 저장
+    state[key] = value;
 
-    document
-      .querySelectorAll(`.option-btn[data-type="${type}"]`)
-      .forEach((btn) => btn.classList.remove("selected"));
-
+    // 시각적 활성화 처리 (같은 그룹 내 다른 버튼 선택 해제)
+    const parent = button.closest(".option-group");
+    parent.querySelectorAll(".option-btn").forEach((btn) => btn.classList.remove("selected"));
     button.classList.add("selected");
+
+    // 1단계 선택 시 네비게이션과 프로그레스 바 표시
+    if (state.currentStep === 1) {
+      navArea.classList.remove("hidden");
+      progressBar.style.display = "block";
+    }
   });
 });
 
-recommendBtn.addEventListener("click", () => {
-  const { ott, mood, meal } = selections;
+// 다음 단계 버튼
+nextBtn.addEventListener("click", () => {
+  // 예외 처리: 현재 단계에서 선택을 안 하고 넘어가려 할 때
+  if (state.currentStep === 1 && !state.primary) return alert("기준을 선택해주세요.");
+  if (state.currentStep === 2 && !state.situation) return alert("상황을 선택해주세요.");
+  if (state.currentStep === 3 && !state.detail) return alert("상세 항목을 선택해주세요.");
 
-  if (!ott || !mood || !meal) {
-    alert("OTT, 분위기, 식사 상황을 모두 선택해주세요.");
-    return;
+  if (state.currentStep < 3) {
+    state.currentStep++;
+    updateUI();
+  } else {
+    // 마지막 3단계에서 다음을 누르면 결과 표시
+    showResult();
   }
-
-  let match = recommendationDB.find(
-    (item) => item.ott === ott && item.mood === mood && item.meal === meal,
-  );
-
-  if (!match) {
-    match = {
-      ott,
-      mood,
-      meal,
-      content: {
-        title: `${ott} 추천 콘텐츠`,
-        genre: `${mood} 분위기 콘텐츠`,
-        reason: `${mood}한 분위기와 ${meal} 상황에 어울리는 콘텐츠를 추천해요.`,
-      },
-      food: {
-        name: "치킨 또는 피자",
-        reason: `${meal} 상황에서 무난하게 잘 어울리는 음식 조합이에요.`,
-      },
-    };
-  }
-
-  renderResult(match);
 });
 
-resetBtn.addEventListener("click", () => {
-  selections.ott = "";
-  selections.mood = "";
-  selections.meal = "";
-
-  optionButtons.forEach((btn) => btn.classList.remove("selected"));
-  resultSection.classList.add("hidden");
-
-  contentResult.innerHTML = "";
-  foodResult.innerHTML = "";
-  bestMatchText.textContent = "";
+// 이전 단계 버튼
+prevBtn.addEventListener("click", () => {
+  if (state.currentStep > 1) {
+    state.currentStep--;
+    updateUI();
+  }
 });
 
-function renderResult(data) {
+// UI 업데이트 함수 (화면 전환 및 프로그레스 바 조절)
+function updateUI() {
+  // 모든 섹션 숨기기
+  document.querySelectorAll(".step-section").forEach(el => el.classList.remove("active", "hidden"));
+  document.querySelectorAll(".step-section").forEach(el => el.classList.add("hidden"));
+
+  // 진행률 바 업데이트 (3단계 기준)
+  progressFill.style.width = `${(state.currentStep / 3) * 100}%`;
+
+  // 이전/다음 버튼 텍스트 변경
+  if (state.currentStep === 1) {
+    navArea.classList.add("hidden"); // 1단계는 버튼 선택 즉시 활성화되므로 숨김
+    steps[1].classList.remove("hidden");
+    steps[1].classList.add("active");
+  } else if (state.currentStep === 2) {
+    navArea.classList.remove("hidden");
+    steps[2].classList.remove("hidden");
+    steps[2].classList.add("active");
+    nextBtn.textContent = "다음 단계";
+  } else if (state.currentStep === 3) {
+    nextBtn.textContent = "추천 결과 보기 ✨";
+    // 1단계에서 무엇을 골랐는지에 따라 분기
+    if (state.primary === "ott") {
+      steps["3-ott"].classList.remove("hidden");
+      steps["3-ott"].classList.add("active");
+    } else {
+      steps["3-food"].classList.remove("hidden");
+      steps["3-food"].classList.add("active");
+    }
+  }
+}
+
+// 결과 생성 및 렌더링
+function showResult() {
+  // 입력된 항목들을 모두 숨김
+  document.getElementById("wizardForm").querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
+  
+  const contentResult = document.getElementById("contentResult");
+  const foodResult = document.getElementById("foodResult");
+  const bestMatchText = document.getElementById("bestMatchText");
+
+  // 동적 결과 텍스트 생성 로직
+  let ottText = state.primary === "ott" ? state.detail : "넷플릭스/티빙";
+  let foodText = state.primary === "food" ? state.detail : "피자 또는 치킨";
+  
+  // 상황에 따른 부가 설명
+  let reason = `${state.situation} 상황에 완벽하게 어울리는 조합입니다.`;
+  if (state.situation === "야식") reason = "밤에 즐기면 두 배로 맛있는 야식 특화 추천입니다.";
+  else if (state.situation === "혼밥") reason = "방해받지 않고 오롯이 나만의 시간을 즐길 수 있는 추천입니다.";
+
   contentResult.innerHTML = `
     <div class="result-item">
-      <strong>${data.content.title}</strong>
-      <p>장르: ${data.content.genre}</p>
-      <p>${data.content.reason}</p>
+      <strong>📺 ${ottText} 인기 콘텐츠</strong>
+      <p>장르: ${state.situation}에 어울리는 추천 장르</p>
     </div>
   `;
 
   foodResult.innerHTML = `
     <div class="result-item">
-      <strong>${data.food.name}</strong>
-      <p>${data.food.reason}</p>
+      <strong>🍽️ ${foodText}</strong>
+      <p>${reason}</p>
     </div>
   `;
 
-  bestMatchText.textContent = `${data.ott}의 ${data.mood} 분위기 콘텐츠와 ${data.food.name} 조합을 추천합니다. (${data.meal} 상황에 적합)`;
+  bestMatchText.textContent = `현재 상황(${state.situation})을 고려하여, ${ottText} 시청 시 ${foodText} 메뉴를 곁들이는 것을 가장 강력하게 추천합니다!`;
 
-  resultSection.classList.remove("hidden");
+  document.getElementById("resultSection").classList.remove("hidden");
 }
 
-// 💡 공유하기 기능 추가
-shareBtn.addEventListener("click", () => {
-  const { ott, mood, meal } = selections;
-  
-  // 클립보드에 복사될 텍스트 포맷 생성
-  const shareText = `🍿 뭐 볼까, 뭐 먹을까 🍕\n\n[나의 선택]\n📺 OTT: ${ott}\n✨ 분위기: ${mood}\n🍽️ 상황: ${meal}\n\n[추천 결과]\n🎬 콘텐츠: ${bestMatchText.textContent.split("의")[0]}의 추천작\n🍕 음식: ${document.querySelector('#foodResult strong').innerText}\n\n우리 이거 같이 볼래? 👀`;
+// 초기화 버튼
+document.getElementById("resetBtn").addEventListener("click", () => {
+  location.reload(); // 가장 깔끔한 초기화 방법 (새로고침)
+});
 
-  // 클립보드 API를 사용해 텍스트 복사
+// 공유하기 기능
+document.getElementById("shareBtn").addEventListener("click", () => {
+  let ottText = state.primary === "ott" ? state.detail : "추천 OTT";
+  let foodText = state.primary === "food" ? state.detail : "추천 음식";
+  
+  const shareText = `🍿 뭐 볼까, 뭐 먹을까 🍕\n\n[나의 선택]\n✨ 상황: ${state.situation}\n\n[추천 결과]\n📺 콘텐츠: ${ottText}\n🍽️ 음식: ${foodText}\n\n우리 이거 같이 볼래? 👀`;
+
   navigator.clipboard.writeText(shareText).then(() => {
-    alert("추천 결과가 클립보드에 복사되었습니다!\n친구에게 붙여넣기(Ctrl+V)로 공유해보세요.");
-  }).catch((err) => {
-    alert("복사에 실패했습니다.");
-    console.error('Clipboard Error:', err);
+    alert("추천 결과가 복사되었습니다!");
   });
 });
