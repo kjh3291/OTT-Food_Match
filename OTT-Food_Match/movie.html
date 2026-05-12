@@ -9,30 +9,42 @@
 </head>
 
 <body>
-  <div class="app">
-    <header class="header">
-      <h1 id="moviePageTitle">영화 선택</h1>
+  <div class="app movie-app">
+    <header class="header movie-header">
+      <h1 id="moviePageTitle">OTT 영화</h1>
       <p id="moviePageInfo">선택한 조건에 맞는 영화를 확인해보세요.</p>
     </header>
 
     <main>
-      <section class="card">
-        <h2>3. 영화 선택</h2>
-        <p style="margin-bottom: 12px; color: #666;">
-          마음에 드는 영화 포스터를 클릭하면 아래에 음식 추천 영역이 나타납니다.
-        </p>
+      <section class="card movie-top-card">
+        <h2>장르 카테고리</h2>
+        
+        <div class="genre-tab-group" id="genreTabGroup">
+          <button class="genre-tab selected" data-genre="액션">액션</button>
+          <button class="genre-tab" data-genre="코미디">코미디</button>
+          <button class="genre-tab" data-genre="드라마">드라마</button>
+          <button class="genre-tab" data-genre="로맨스">로맨스</button>
+          <button class="genre-tab" data-genre="스릴러">스릴러</button>
+          <button class="genre-tab" data-genre="애니메이션">애니메이션</button>
+        </div>
+      </section>
 
+      <section class="card">
+        <div class="movie-section-title">
+          <h2 id="selectedGenreTitle">액션 영화</h2>
+          <p>영화 포스터를 클릭하면 설명과 추천 음식이 표시됩니다.</p>
+        </div>
         <div id="loadingText">
           영화 목록을 불러오는 중입니다...
         </div>
-
         <div id="movieList" class="movie-grid"></div>
       </section>
 
       <div class="action-area">
-        <button id="backToSelectBtn" class="secondary-btn">
-          장르/식사 상황 다시 선택하기
+        <button id="backToMainBtn" class="secondary-btn">
+          메인으로 돌아가기
         </button>
+
       </div>
     </main>
   </div>
