@@ -76,10 +76,6 @@ body {
 /* -------------------------------- */
 
 /********************************* OTT html css 표시용*/
-.ott-content-list {
-  display: grid;
-  gap: 12px;
-}
 
 #loadingText {
   color: #666;
@@ -87,6 +83,68 @@ body {
   padding: 12px;
 }
 /********************************/
+
+/* ===============================
+   OTT 아이콘 선택 화면
+================================ */
+
+.ott-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.ott-logo-card {
+  border: none;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px 12px;
+  cursor: pointer;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: 0.2s ease;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.ott-logo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+.ott-icon-img {
+  width: 86px;
+  height: 86px;
+  border-radius: 22px;
+  object-fit: cover;
+}
+
+.ott-logo-card span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .ott-logo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .ott-logo-card {
+    min-height: 130px;
+    padding: 14px 10px;
+  }
+
+  .ott-icon-img {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+  }
+}
 
 .option-btn:hover {
   transform: translateY(-1px);
@@ -258,14 +316,6 @@ body {
   margin-bottom: 4px;
 }
 
-.movie-food-panel {
-  margin-top: 12px;
-  padding: 14px;
-  border-radius: 14px;
-  background: #fff3ec;
-  border: 1px solid #ffd4c7;
-}
-
 .selected-movie-box {
   margin-bottom: 12px;
 }
@@ -283,13 +333,127 @@ body {
   margin-bottom: 6px;
 }
 
-.select-movie-btn {
-  width: 100%;
-  margin-top: 12px;
-}
-
 .food-result-box {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px solid #ffd4c7;
+}
+
+/* ===============================
+   영화 페이지 상단 장르 탭
+================================ */
+
+.movie-app {
+  max-width: 1080px;
+}
+
+.movie-header {
+  margin-bottom: 18px;
+}
+
+.movie-top-card {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.genre-tab-group {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.genre-tab-group::-webkit-scrollbar {
+  display: none;
+}
+
+.genre-tab {
+  flex: 0 0 auto;
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  color: #333;
+  padding: 11px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.genre-tab:hover {
+  background: #eeeeee;
+  transform: translateY(-1px);
+}
+
+.genre-tab.selected {
+  background: #2d2d2d;
+  color: white;
+  border-color: #2d2d2d;
+}
+
+.movie-section-title {
+  margin-bottom: 12px;
+}
+
+.movie-section-title h2 {
+  margin-bottom: 4px;
+}
+
+.movie-section-title p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+
+/* ===============================
+   영화 설명 + 음식 추천 패널
+================================ */
+
+.movie-detail-panel {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #fff3ec;
+  border: 1px solid #ffd4c7;
+}
+
+.movie-detail-panel h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.movie-detail-panel p {
+  color: #555;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 600px) {
+  .ott-logo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ott-logo-card {
+    min-height: 100px;
+  }
+
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .movie-card {
+    padding: 10px;
+  }
+
+  .movie-info strong {
+    font-size: 0.92rem;
+  }
+
+  .movie-info p {
+    font-size: 0.82rem;
+  }
 }
