@@ -5,11 +5,11 @@ const ottUrlMap = {
   "웨이브": "wavve",
 };
 
-const optionButtons = document.querySelectorAll(".option-btn");
+const ottCards = document.querySelectorAll(".ott-logo-card");
 
-optionButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const value = button.dataset.value;
+ottCards.forEach((card) => {
+  card.addEventListener("click", () => {
+    const value = card.dataset.value;
     const ottParam = ottUrlMap[value];
 
     if (!ottParam) {
