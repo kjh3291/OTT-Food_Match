@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>영화 선택</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="header">
+      <h1 id="moviePageTitle">영화 선택</h1>
+      <p id="moviePageInfo">선택한 조건에 맞는 영화를 확인해보세요.</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>3. 영화 선택</h2>
+        <p style="margin-bottom: 12px; color: #666;">
+          마음에 드는 영화 포스터를 클릭하면 아래에 음식 추천 영역이 나타납니다.
+        </p>
+
+        <div id="loadingText">
+          영화 목록을 불러오는 중입니다...
+        </div>
+
+        <div id="movieList" class="movie-grid"></div>
+      </section>
+
+      <div class="action-area">
+        <button id="backToSelectBtn" class="secondary-btn">
+          장르/식사 상황 다시 선택하기
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="movie.js"></script>
+</body>
+
+</html>
