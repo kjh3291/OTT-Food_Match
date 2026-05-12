@@ -4,38 +4,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OTT 콘텐츠 목록</title>
+  <title>식사 상황 선택</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <div class="app">
     <header class="header">
-      <h1 id="ottTitle">OTT 콘텐츠</h1>
-      <p>선택한 OTT에서 볼 수 있는 콘텐츠를 확인해보세요.</p>
+      <h1 id="ottTitle">식사 상황 선택</h1>
+      <p>어떤 상황에서 영화를 볼 예정인지 선택해주세요.</p>
     </header>
 
     <main>
       <section class="card">
-        <h2>1. 장르 선택</h2>
-        <p style="margin-bottom: 12px; color: #666;">
-          보고 싶은 콘텐츠의 장르를 하나 이상 선택해주세요.
-        </p>
-
-        <div class="option-group" id="genreOptions">
-          <button class="option-btn" data-type="genre" data-value="스릴러">스릴러</button>
-          <button class="option-btn" data-type="genre" data-value="코미디">코미디</button>
-          <button class="option-btn" data-type="genre" data-value="드라마">드라마</button>
-          <button class="option-btn" data-type="genre" data-value="액션">액션</button>
-          <button class="option-btn" data-type="genre" data-value="로맨스">로맨스</button>
-          <button class="option-btn" data-type="genre" data-value="애니메이션">애니메이션</button>
-        </div>
-      </section>
-
-      <section class="card">
         <h2>2. 식사 상황 선택</h2>
         <p style="margin-bottom: 12px; color: #666;">
-          어떤 상황에서 볼 예정인지 선택해주세요.
+          선택한 상황에 따라 영화에 어울리는 음식 추천이 달라집니다.
         </p>
 
         <div class="option-group" id="mealOptions">
@@ -49,7 +33,7 @@
       </section>
 
       <div class="action-area">
-        <button id="recommendContentBtn" class="primary-btn">
+        <button id="goMovieBtn" class="primary-btn">
           영화 보러가기
         </button>
 
@@ -60,7 +44,6 @@
     </main>
   </div>
 
-  <script src="config.js"></script>
   <script src="ott.js"></script>
 </body>
 
