@@ -192,3 +192,28 @@ document.getElementById("shareBtn").addEventListener("click", () => {
     alert("추천 결과가 복사되었습니다!");
   });
 });
+
+// --- 다크 모드 토글 로직 ---
+const darkModeToggle = document.getElementById("darkModeToggle");
+const body = document.body;
+
+// 1. 페이지 로드 시 로컬 스토리지에 저장된 테마 확인
+if (localStorage.getItem("theme") === "dark") {
+  body.classList.add("dark-mode");
+  darkModeToggle.textContent = "☀️ 라이트 모드";
+}
+
+// 2. 버튼 클릭 시 테마 전환 및 저장
+darkModeToggle.addEventListener("click", () => {
+  body.classList.toggle("dark-mode");
+  
+  if (body.classList.contains("dark-mode")) {
+    // 다크 모드 켜짐
+    localStorage.setItem("theme", "dark");
+    darkModeToggle.textContent = "☀️ 라이트 모드";
+  } else {
+    // 다크 모드 꺼짐 (라이트 모드)
+    localStorage.setItem("theme", "light");
+    darkModeToggle.textContent = "🌙 다크 모드";
+  }
+});
