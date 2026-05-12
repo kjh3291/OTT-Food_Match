@@ -365,9 +365,11 @@ if (selectedMeal === "든든한 식사") {
 // 12. 뒤로가기 버튼
 // ===============================
 
-backToMainBtn.addEventListener("click", () => {
-  window.location.href = "main.html";
-});
+if (backToMainBtn) {
+  backToMainBtn.addEventListener("click", () => {
+    window.location.href = "main.html";
+  });
+}
 
 
 // ===============================
