@@ -79,6 +79,7 @@ body {
   text-align: center;
 }
 
+/* --- 가로 스크롤이 적용된 부분 --- */
 .option-group {
   display: flex;
   flex-wrap: nowrap;
@@ -100,6 +101,23 @@ body {
 
 .option-btn {
   flex: 0 0 auto;
+  flex-wrap: nowrap; /* 줄바꿈 방지 */
+  gap: 10px;
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  padding-bottom: 5px; /* 스크롤바 영역 확보 */
+  
+  /* 스크롤바 숨기기 (더 깔끔한 모바일 UI를 위해) */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Chrome, Safari 등에서 스크롤바 숨기기 */
+.option-group::-webkit-scrollbar {
+  display: none; 
+}
+
+.option-btn {
+  flex: 0 0 auto; /* 버튼이 좁아져도 찌그러지지 않도록 크기 유지 */
   border: 1px solid #ddd;
   background: #fafafa;
   padding: 12px 20px;
@@ -108,6 +126,20 @@ body {
   transition: 0.2s ease;
   font-size: 0.95rem;
 }
+/* -------------------------------- */
+
+/********************************* OTT html css 표시용*/
+.ott-content-list {
+  display: grid;
+  gap: 12px;
+}
+
+#loadingText {
+  color: #666;
+  font-size: 0.95rem;
+  padding: 12px;
+}
+/********************************/
 
 .big-btn {
   padding: 18px;
