@@ -50,7 +50,7 @@ body {
   transition: width 0.4s ease-in-out;
 }
 
-/* --- 단계별 섹션 --- */
+/* --- 단계별 섹션 표시/숨김 및 애니메이션 --- */
 .step-section {
   display: none;
   animation: slideUp 0.4s ease-out forwards;
@@ -79,24 +79,19 @@ body {
   text-align: center;
 }
 
+/* --- 버튼들을 중앙으로 배치하는 옵션 그룹 --- */
 .option-group {
   display: flex;
-  flex-wrap: wrap; /* nowrap을 wrap으로 변경 (버튼이 많으면 자연스럽게 아랫줄로 넘어감) */
-  justify-content: center; /* 👈 가로 기준 가운데 정렬 (핵심!) */
+  flex-wrap: wrap; /* 창 크기에 맞게 자동으로 줄바꿈되도록 변경 */
+  justify-content: center; /* 가로 기준 가운데 정렬 */
   gap: 10px;
   padding-bottom: 5px;
 }
 
-.option-group::-webkit-scrollbar {
-  display: none; 
-}
-
 .vertical-group {
   flex-direction: column;
-  align-items: center; /* 👈 세로 기준 가운데 정렬 (핵심!) */
-  overflow-x: visible;
+  align-items: center; /* 세로 정렬 시 수평 중앙 배치 */
 }
-
 
 .option-btn {
   flex: 0 0 auto;
@@ -114,9 +109,11 @@ body {
   font-size: 1.05rem;
   font-weight: 500;
   border-radius: 12px;
-  width: 100%; /* 버튼이 카드 너비에 꽉 차게 하려면 100%, 적당히 하려면 80% 등을 줍니다 */
-  max-width: 300px; /* 최대 너비 제한 */
+  width: 100%;
+  max-width: 320px; /* 1단계 가독성을 위해 너비 최적화 제한 */
+  text-align: center;
 }
+
 .option-btn:hover {
   background: #f0f0f0;
 }
@@ -293,7 +290,7 @@ body.dark-mode .best-match {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  pointer-events: none; /* 💡 클릭 방지 해제 (이게 없으면 버튼이 안 눌립니다) */
+  pointer-events: none; /* 컨테이너 자체 영역이 마우스 클릭을 가로막지 못하게 설정 */
 }
 
 .custom-toast {
