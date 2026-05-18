@@ -19,7 +19,7 @@ body {
 
 .header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .header h1 {
@@ -32,22 +32,75 @@ body {
   font-size: 1rem;
 }
 
+/* --- 프로그레스 바 --- */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  margin-top: 20px;
+  overflow: hidden;
+  display: none; /* 첫 화면에선 숨김 처리 등 JS로 제어 가능 */
+}
+
+.progress-fill {
+  height: 100%;
+  background: #ff7a59;
+  width: 33%;
+  transition: width 0.4s ease-in-out;
+}
+
+/* --- 단계별 섹션 표시/숨김 및 애니메이션 --- */
+.step-section {
+  display: none;
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.step-section.active {
+  display: block;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .card {
   background: #ffffff;
   border-radius: 18px;
-  padding: 20px;
+  padding: 24px;
   margin-bottom: 18px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
 .card h2 {
-  margin-bottom: 14px;
-  font-size: 1.15rem;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  text-align: center;
 }
 
 /* --- 가로 스크롤이 적용된 부분 --- */
 .option-group {
   display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.option-group::-webkit-scrollbar {
+  display: none; 
+}
+
+.vertical-group {
+  flex-direction: column;
+  overflow-x: visible;
+}
+
+.option-btn {
+  flex: 0 0 auto;
   flex-wrap: nowrap; /* 줄바꿈 방지 */
   gap: 10px;
   overflow-x: auto; /* 가로 스크롤 활성화 */
@@ -67,7 +120,7 @@ body {
   flex: 0 0 auto; /* 버튼이 좁아져도 찌그러지지 않도록 크기 유지 */
   border: 1px solid #ddd;
   background: #fafafa;
-  padding: 10px 16px;
+  padding: 12px 20px;
   border-radius: 999px;
   cursor: pointer;
   transition: 0.2s ease;
@@ -88,8 +141,14 @@ body {
 }
 /********************************/
 
+.big-btn {
+  padding: 18px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  border-radius: 12px;
+}
+
 .option-btn:hover {
-  transform: translateY(-1px);
   background: #f0f0f0;
 }
 
@@ -111,15 +170,17 @@ body {
 .secondary-btn {
   border: none;
   border-radius: 12px;
-  padding: 12px 20px;
+  padding: 14px 20px;
   font-size: 1rem;
   cursor: pointer;
   transition: 0.2s ease;
+  flex: 1;
 }
 
 .primary-btn {
   background: #ff7a59;
   color: white;
+  font-weight: bold;
 }
 
 .primary-btn:hover,
@@ -133,12 +194,13 @@ body {
 }
 
 .result-section {
-  margin-top: 28px;
+  animation: slideUp 0.5s ease-out forwards;
 }
 
 .result-section h2 {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-align: center;
+  color: #ff7a59;
 }
 
 .result-card {
@@ -163,7 +225,8 @@ body {
 .result-item strong {
   display: block;
   margin-bottom: 4px;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: #ff7a59;
 }
 
 .result-item p {
@@ -177,20 +240,78 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 600px) {
-  .header h1 {
-    font-size: 1.6rem;
-  }
+  .header h1 { font-size: 1.6rem; }
+}
 
-  .action-area {
-    flex-direction: column;
-  }
+/* --- 로딩 스피너 애니메이션 --- */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ff7a59;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 1s linear infinite;
+}
 
-  .primary-btn,
-  .secondary-btn {
-    width: 100%;
-  }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- 다크 모드 (Dark Mode) 스타일 --- */
+body.dark-mode {
+  background: #141414;
+  color: #e0e0e0;
+}
+
+body.dark-mode .card,
+body.dark-mode .result-card {
+  background: #222222;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .header p,
+body.dark-mode .result-item p {
+  color: #aaa;
+}
+
+body.dark-mode .option-btn {
+  background: #333333;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .option-btn:hover {
+  background: #444444;
+}
+
+/* 선택된 버튼은 다크 모드에서도 동일한 포인트 컬러 유지 */
+body.dark-mode .option-btn.selected {
+  background: #ff7a59;
+  color: white;
+  border-color: #ff7a59;
+}
+
+body.dark-mode .secondary-btn {
+  background: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .secondary-btn:hover {
+  background: #555;
+}
+
+body.dark-mode .result-item {
+  background: #2a2a2a;
+}
+
+/* Best Match 박스는 어두운 배경에 맞게 반투명 오렌지색으로 변경 */
+body.dark-mode .best-match {
+  background: rgba(255, 122, 89, 0.1);
+  border: 1px solid #ff7a59;
 }
