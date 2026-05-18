@@ -1,9 +1,9 @@
-// 1. 상태 관리 객체 (현재 어느 단계인지, 무엇을 선택했는지 저장)
+// 1. 상태 관리 객체
 const state = {
   currentStep: 1,
-  primary: "",   // 'ott' 또는 'food'
-  situation: "", // '혼밥', '야식' 등
-  detail: ""     // '넷플릭스', '치킨/피자' 등
+  primary: "",
+  situation: "",
+  detail: ""
 };
 
 // HTML 요소 맵핑
@@ -20,24 +20,20 @@ const nextBtn = document.getElementById("nextBtn");
 const progressBar = document.getElementById("progressBar");
 const progressFill = document.getElementById("progressFill");
 
-// 버튼 이벤트 등록 (.option-btn이 있는 페이지에서만 작동)
+// 버튼 이벤트 등록 (현재 페이지에 있는 버튼만 작동)
 document.querySelectorAll(".option-btn").forEach((button) => {
   button.addEventListener("click", (e) => {
-    const step = button.dataset.step;
     const key = button.dataset.key;
     const value = button.dataset.value;
 
-    // 데이터 저장
     if (key) state[key] = value;
 
-    // 시각적 활성화 처리 (같은 그룹 내 다른 버튼 선택 해제)
     const parent = button.closest(".option-group");
     if (parent) {
       parent.querySelectorAll(".option-btn").forEach((btn) => btn.classList.remove("selected"));
     }
     button.classList.add("selected");
 
-    // 1단계 선택 시 네비게이션과 프로그레스 바 표시 (요소가 있을 때만)
     if (state.currentStep === 1 && navArea && progressBar) {
       navArea.classList.remove("hidden");
       progressBar.style.display = "block";
@@ -45,11 +41,11 @@ document.querySelectorAll(".option-btn").forEach((button) => {
   });
 });
 
-// 다음 단계 버튼 수정본
+// 다음 단계 버튼
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-     👇
-    if (state.currentStep === 1 && !state.primary) return showCustomAlert("기준을 먼저 선택해주세요.");
+    // 아무것도 선택하지 않았을 때 커스텀 경고창 표시
+    if (state.currentStep === 1 && !state.primary) return showCustomAlert("기준을 선택해주세요.");
     if (state.currentStep === 2 && !state.situation) return showCustomAlert("현재 상황을 선택해주세요.");
     if (state.currentStep === 3 && !state.detail) return showCustomAlert("상세 항목을 선택해주세요.");
 
@@ -72,16 +68,14 @@ if (prevBtn) {
   });
 }
 
-// UI 업데이트 함수 (화면 전환 및 프로그레스 바 조절)
+// UI 업데이트 로직
 function updateUI() {
   document.querySelectorAll(".step-section").forEach(el => {
     el.classList.remove("active", "hidden");
     el.classList.add("hidden");
   });
 
-  if (progressFill) {
-    progressFill.style.width = `${(state.currentStep / 3) * 100}%`;
-  }
+  if (progressFill) progressFill.style.width = `${(state.currentStep / 3) * 100}%`;
 
   if (state.currentStep === 1) {
     if (navArea) navArea.classList.add("hidden");
@@ -109,12 +103,10 @@ function updateUI() {
   }
 }
 
-// 결과 생성 및 렌더링 (가짜 API 지연 포함)
+// 결과 생성 (로딩 화면 포함)
 async function showResult() {
   const wizardForm = document.getElementById("wizardForm");
-  if (wizardForm) {
-    wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
-  }
+  if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
   
   const loadingSection = document.getElementById("loadingSection");
   const resultSection = document.getElementById("resultSection");
@@ -122,34 +114,24 @@ async function showResult() {
   if (loadingSection) loadingSection.classList.remove("hidden");
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5초 로딩
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     const data = {
-      ottTitle: state.primary === "ott" ? state.detail : "넷플릭스 오리지널",
+      ottTitle: state.primary === "ott" ? state.detail : "추천 OTT 콘텐츠",
       ottGenre: `${state.situation}에 어울리는 추천 장르`,
       foodName: state.primary === "food" ? state.detail : "피자 또는 치킨",
       foodReason: `${state.situation} 상황에 완벽하게 어울리는 조합입니다.`,
-      bestMatchCombo: `현재 상황(${state.situation})을 고려하여, 최적의 메뉴와 콘텐츠를 추천합니다!`
+      bestMatchCombo: `현재 상황(${state.situation})을 고려하여, 최적의 조합을 추천합니다!`
     };
 
     const contentResult = document.getElementById("contentResult");
     if (contentResult) {
-      contentResult.innerHTML = `
-        <div class="result-item">
-          <strong>📺 ${data.ottTitle}</strong>
-          <p>장르/특징: ${data.ottGenre}</p>
-        </div>
-      `;
+      contentResult.innerHTML = `<div class="result-item"><strong>📺 ${data.ottTitle}</strong><p>장르/특징: ${data.ottGenre}</p></div>`;
     }
 
     const foodResult = document.getElementById("foodResult");
     if (foodResult) {
-      foodResult.innerHTML = `
-        <div class="result-item">
-          <strong>🍽️ ${data.foodName}</strong>
-          <p>${data.foodReason}</p>
-        </div>
-      `;
+      foodResult.innerHTML = `<div class="result-item"><strong>🍽️ ${data.foodName}</strong><p>${data.foodReason}</p></div>`;
     }
 
     const bestMatchText = document.getElementById("bestMatchText");
@@ -159,56 +141,43 @@ async function showResult() {
     if (resultSection) resultSection.classList.remove("hidden");
 
   } catch (error) {
-    console.error('Error fetching recommendation:', error);
+    console.error('오류 발생:', error);
     if (loadingSection) loadingSection.classList.add("hidden");
-    alert("결과를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
-    location.reload();
+    showCustomAlert("결과를 불러오는 중 문제가 발생했습니다.");
+    setTimeout(() => location.reload(), 2000);
   }
 }
 
 // 초기화 버튼
 const resetBtn = document.getElementById("resetBtn");
-if (resetBtn) {
-  resetBtn.addEventListener("click", () => {
-    location.reload(); 
-  });
-}
+if (resetBtn) resetBtn.addEventListener("click", () => location.reload());
 
-// 공유하기 기능
+// 공유하기 버튼 (커스텀 경고창 연동)
 const shareBtn = document.getElementById("shareBtn");
 if (shareBtn) {
   shareBtn.addEventListener("click", () => {
     let ottText = state.primary === "ott" ? state.detail : "추천 OTT";
     let foodText = state.primary === "food" ? state.detail : "추천 음식";
-    
     const shareText = `🍿 뭐 볼까, 뭐 먹을까 🍕\n\n[나의 선택]\n✨ 상황: ${state.situation}\n\n[추천 결과]\n📺 콘텐츠: ${ottText}\n🍽️ 음식: ${foodText}\n\n우리 이거 같이 볼래? 👀`;
 
     navigator.clipboard.writeText(shareText).then(() => {
-      alert("추천 결과가 복사되었습니다!");
+      showCustomAlert("추천 결과가 복사되었습니다!");
     });
   });
 }
 
-// ==========================================
-// 🌙 공통 다크모드 유지 및 토글 로직
-// ==========================================
+// --- 다크 모드 토글 로직 ---
 const darkModeToggle = document.getElementById("darkModeToggle");
 const body = document.body;
 
-// 1. 페이지 로드 시 로컬 스토리지에 저장된 테마 확인 (어느 페이지에서든 적용됨)
 if (localStorage.getItem("theme") === "dark") {
   body.classList.add("dark-mode");
-  // 현재 페이지에 토글 버튼이 있을 때만 텍스트를 바꿈
-  if (darkModeToggle) { 
-    darkModeToggle.textContent = "☀️ 라이트 모드";
-  }
+  if (darkModeToggle) darkModeToggle.textContent = "☀️ 라이트 모드";
 }
 
-// 2. 현재 페이지에 다크모드 버튼이 '존재할 때만' 클릭 이벤트 연결
 if (darkModeToggle) {
   darkModeToggle.addEventListener("click", () => {
     body.classList.toggle("dark-mode");
-    
     if (body.classList.contains("dark-mode")) {
       localStorage.setItem("theme", "dark");
       darkModeToggle.textContent = "☀️ 라이트 모드";
@@ -219,11 +188,8 @@ if (darkModeToggle) {
   });
 }
 
-// ==========================================
-// 💡 커스텀 토스트 알림창(경고창) 함수
-// ==========================================
+// --- 커스텀 경고창(Toast) 함수 ---
 function showCustomAlert(message) {
-  // 1. 알림창들을 담을 컨테이너가 없으면 만듭니다.
   let toastContainer = document.getElementById("toast-container");
   if (!toastContainer) {
     toastContainer = document.createElement("div");
@@ -231,23 +197,18 @@ function showCustomAlert(message) {
     document.body.appendChild(toastContainer);
   }
 
-  // 2. 알림창 요소를 생성합니다.
   const toast = document.createElement("div");
   toast.className = "custom-toast";
   toast.innerHTML = `<span>⚠️</span> ${message}`;
 
-  // 3. 화면에 추가하고 부드럽게 나타나는 애니메이션 실행
   toastContainer.appendChild(toast);
   
-  // 브라우저가 요소를 렌더링할 아주 짧은 시간을 준 뒤 클래스 추가
   setTimeout(() => {
     toast.classList.add("show");
   }, 10);
 
-  // 4. 2.5초 뒤에 스르륵 사라지게 만듭니다.
   setTimeout(() => {
     toast.classList.remove("show");
-    // 애니메이션이 끝난 후 HTML에서 완전히 제거
     setTimeout(() => {
       toast.remove();
     }, 300);
