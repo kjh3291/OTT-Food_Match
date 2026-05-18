@@ -375,3 +375,65 @@ body.dark-mode .best-match {
   transform: translateY(0);
 }
 
+/* ===============================
+   3단계 OTT 로고 선택 카드
+================================ */
+
+.ott-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.ott-logo-card {
+  border: 1px solid #ddd;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 18px 12px;
+  cursor: pointer;
+  min-height: 145px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: 0.2s ease;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.ott-logo-card:hover {
+  transform: translateY(-4px);
+  background: #ffffff;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+.ott-logo-card.selected {
+  background: #ff7a59;
+  color: white;
+  border-color: #ff7a59;
+}
+
+.ott-logo-card.selected span {
+  color: white;
+}
+
+.ott-icon-img {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
+.ott-logo-card span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+}
+
+@media (max-width: 700px) {
+  .ott-logo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
