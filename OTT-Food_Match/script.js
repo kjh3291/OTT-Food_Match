@@ -41,10 +41,10 @@ document.querySelectorAll(".option-btn").forEach((button) => {
   });
 });
 
-// 다음 단계 버튼
+// 다음 단계 버튼 이벤트 바인딩
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    // 아무것도 선택하지 않았을 때 커스텀 경고창 표시
+    // 아무것도 선택하지 않았을 때 커스텀 경고창 함수로 우회 전달
     if (state.currentStep === 1 && !state.primary) return showCustomAlert("기준을 선택해주세요.");
     if (state.currentStep === 2 && !state.situation) return showCustomAlert("현재 상황을 선택해주세요.");
     if (state.currentStep === 3 && !state.detail) return showCustomAlert("상세 항목을 선택해주세요.");
@@ -58,7 +58,7 @@ if (nextBtn) {
   });
 }
 
-// 이전 단계 버튼
+// 이전 단계 버튼 이벤트 바인딩
 if (prevBtn) {
   prevBtn.addEventListener("click", () => {
     if (state.currentStep > 1) {
@@ -68,7 +68,7 @@ if (prevBtn) {
   });
 }
 
-// UI 업데이트 로직
+// UI 업데이트 로직 (마법사 폼 연출)
 function updateUI() {
   document.querySelectorAll(".step-section").forEach(el => {
     el.classList.remove("active", "hidden");
@@ -103,7 +103,7 @@ function updateUI() {
   }
 }
 
-// 결과 생성 (로딩 화면 포함)
+// 결과 처리 및 API 통신 뼈대 구현
 async function showResult() {
   const wizardForm = document.getElementById("wizardForm");
   if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
@@ -114,7 +114,7 @@ async function showResult() {
   if (loadingSection) loadingSection.classList.remove("hidden");
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1500)); // 지연 응답 시뮬레이션
     
     const data = {
       ottTitle: state.primary === "ott" ? state.detail : "추천 OTT 콘텐츠",
@@ -148,11 +148,11 @@ async function showResult() {
   }
 }
 
-// 초기화 버튼
+// 초기화 버튼 이벤트 처리
 const resetBtn = document.getElementById("resetBtn");
 if (resetBtn) resetBtn.addEventListener("click", () => location.reload());
 
-// 공유하기 버튼 (커스텀 경고창 연동)
+// 클립보드 기반 공유 로직
 const shareBtn = document.getElementById("shareBtn");
 if (shareBtn) {
   shareBtn.addEventListener("click", () => {
@@ -188,7 +188,7 @@ if (darkModeToggle) {
   });
 }
 
-// --- 커스텀 경고창(Toast) 함수 ---
+// --- 커스텀 경고창(Toast) 처리 함수 ---
 function showCustomAlert(message) {
   let toastContainer = document.getElementById("toast-container");
   if (!toastContainer) {
