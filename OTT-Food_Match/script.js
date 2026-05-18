@@ -46,17 +46,50 @@ document.querySelectorAll(".option-btn").forEach((button) => {
 // 다음 단계 버튼
 nextBtn.addEventListener("click", () => {
   // 예외 처리: 현재 단계에서 선택을 안 하고 넘어가려 할 때
-  if (state.currentStep === 1 && !state.primary) return alert("기준을 선택해주세요.");
-  if (state.currentStep === 2 && !state.situation) return alert("상황을 선택해주세요.");
-  if (state.currentStep === 3 && !state.detail) return alert("상세 항목을 선택해주세요.");
+  if (state.currentStep === 1 && !state.primary) {
+    alert("기준을 선택해주세요.");
+    return;
+  }
 
+  if (state.currentStep === 2 && !state.situation) {
+    alert("상황을 선택해주세요.");
+    return;
+  }
+
+  if (state.currentStep === 3 && !state.detail) {
+    alert("상세 항목을 선택해주세요.");
+    return;
+  }
+
+  // 1단계, 2단계에서는 다음 단계로 이동
   if (state.currentStep < 3) {
     state.currentStep++;
     updateUI();
-  } else {
-    // 마지막 3단계에서 다음을 누르면 결과 표시
-    showResult();
+    return;
   }
+
+  // 3단계에서 OTT 기준이면 ott.html로 이동
+  if (state.primary === "ott") {
+    const ottUrlMap = {
+      "넷플릭스": "netflix",
+      "디즈니+": "disney",
+      "티빙": "tving",
+      "웨이브": "wavve"
+    };
+
+    const ottParam = ottUrlMap[state.detail];
+
+    if (!ottParam) {
+      alert("올바른 OTT를 선택해주세요.");
+      return;
+    }
+
+    window.location.href = `ott.html?ott=${ottParam}`;
+    return;
+  }
+
+  // 3단계에서 음식 기준이면 기존 결과 화면 표시
+  showResult();
 });
 
 // 이전 단계 버튼
@@ -216,25 +249,4 @@ darkModeToggle.addEventListener("click", () => {
     localStorage.setItem("theme", "light");
     darkModeToggle.textContent = "🌙 다크 모드";
   }
-const ottUrlMap = {
-  "넷플릭스": "netflix",
-  "디즈니+": "disney",
-  "티빙": "tving",
-  "웨이브": "wavve",
-};
-
-const optionButtons = document.querySelectorAll(".option-btn");
-
-optionButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const value = button.dataset.value;
-    const ottParam = ottUrlMap[value];
-
-    if (!ottParam) {
-      alert("올바른 OTT를 선택해주세요.");
-      return;
-    }
-
-    window.location.href = `ott.html?ott=${ottParam}`;
-  });
 });
