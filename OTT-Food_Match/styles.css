@@ -315,3 +315,38 @@ body.dark-mode .best-match {
   background: rgba(255, 122, 89, 0.1);
   border: 1px solid #ff7a59;
 }
+
+/* --- 커스텀 경고창 (Toast 알림) 스타일 --- */
+#toast-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none; /* 클릭 방해 방지 */
+}
+
+.custom-toast {
+  background-color: rgba(255, 122, 89, 0.95); /* 앱 테마 색상 */
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 122, 89, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(20px); /* 처음에 살짝 아래에 위치 */
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* 통통 튀는 애니메이션 */
+}
+
+/* 알림창이 화면에 나타날 때의 상태 */
+.custom-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
