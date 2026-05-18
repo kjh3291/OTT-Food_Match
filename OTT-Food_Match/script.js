@@ -22,18 +22,45 @@ const progressFill = document.getElementById("progressFill");
 
 // 버튼 이벤트 등록 (현재 페이지에 있는 버튼만 작동)
 document.querySelectorAll(".option-btn").forEach((button) => {
-  button.addEventListener("click", (e) => {
+  button.addEventListener("click", () => {
     const key = button.dataset.key;
     const value = button.dataset.value;
 
-    if (key) state[key] = value;
+    // 이미 선택된 버튼을 다시 누르면 선택 해제
+    if (button.classList.contains("selected")) {
+      button.classList.remove("selected");
 
-    const parent = button.closest(".option-group");
-    if (parent) {
-      parent.querySelectorAll(".option-btn").forEach((btn) => btn.classList.remove("selected"));
+      if (key) {
+        state[key] = "";
+      }
+
+      // 1단계 선택을 취소하면 다음 버튼 숨기기
+      if (state.currentStep === 1 && navArea && progressBar) {
+        navArea.classList.add("hidden");
+        progressBar.style.display = "none";
+      }
+
+      return;
     }
+
+    // 같은 선택 그룹 찾기
+    // 일반 버튼은 .option-group, OTT 로고 카드는 .ott-logo-grid 사용
+    const parent = button.closest(".option-group, .ott-logo-grid");
+
+    if (parent) {
+      parent.querySelectorAll(".option-btn").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+    }
+
+    // 새 버튼 선택
     button.classList.add("selected");
 
+    if (key) {
+      state[key] = value;
+    }
+
+    // 1단계 선택 시 네비게이션과 프로그레스 바 표시
     if (state.currentStep === 1 && navArea && progressBar) {
       navArea.classList.remove("hidden");
       progressBar.style.display = "block";
