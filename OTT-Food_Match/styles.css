@@ -40,7 +40,7 @@ body {
   border-radius: 3px;
   margin-top: 20px;
   overflow: hidden;
-  display: none; /* 첫 화면에선 숨김 처리 등 JS로 제어 가능 */
+  display: none;
 }
 
 .progress-fill {
@@ -79,45 +79,22 @@ body {
   text-align: center;
 }
 
-/* --- 가로 스크롤이 적용된 부분 --- */
+/* --- 버튼들을 중앙으로 배치하는 옵션 그룹 --- */
 .option-group {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap; /* 창 크기에 맞게 자동으로 줄바꿈되도록 변경 */
+  justify-content: center; /* 가로 기준 가운데 정렬 */
   gap: 10px;
-  overflow-x: auto;
   padding-bottom: 5px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.option-group::-webkit-scrollbar {
-  display: none; 
 }
 
 .vertical-group {
   flex-direction: column;
-  overflow-x: visible;
+  align-items: center; /* 세로 정렬 시 수평 중앙 배치 */
 }
 
 .option-btn {
   flex: 0 0 auto;
-  flex-wrap: nowrap; /* 줄바꿈 방지 */
-  gap: 10px;
-  overflow-x: auto; /* 가로 스크롤 활성화 */
-  padding-bottom: 5px; /* 스크롤바 영역 확보 */
-  
-  /* 스크롤바 숨기기 (더 깔끔한 모바일 UI를 위해) */
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* Chrome, Safari 등에서 스크롤바 숨기기 */
-.option-group::-webkit-scrollbar {
-  display: none; 
-}
-
-.option-btn {
-  flex: 0 0 auto; /* 버튼이 좁아져도 찌그러지지 않도록 크기 유지 */
   border: 1px solid #ddd;
   background: #fafafa;
   padding: 12px 20px;
@@ -126,26 +103,15 @@ body {
   transition: 0.2s ease;
   font-size: 0.95rem;
 }
-/* -------------------------------- */
-
-/********************************* OTT html css 표시용*/
-.ott-content-list {
-  display: grid;
-  gap: 12px;
-}
-
-#loadingText {
-  color: #666;
-  font-size: 0.95rem;
-  padding: 12px;
-}
-/********************************/
 
 .big-btn {
   padding: 18px;
   font-size: 1.05rem;
   font-weight: 500;
   border-radius: 12px;
+  width: 100%;
+  max-width: 320px; /* 1단계 가독성을 위해 너비 최적화 제한 */
+  text-align: center;
 }
 
 .option-btn:hover {
@@ -290,7 +256,6 @@ body.dark-mode .option-btn:hover {
   background: #444444;
 }
 
-/* 선택된 버튼은 다크 모드에서도 동일한 포인트 컬러 유지 */
 body.dark-mode .option-btn.selected {
   background: #ff7a59;
   color: white;
@@ -310,8 +275,42 @@ body.dark-mode .result-item {
   background: #2a2a2a;
 }
 
-/* Best Match 박스는 어두운 배경에 맞게 반투명 오렌지색으로 변경 */
 body.dark-mode .best-match {
   background: rgba(255, 122, 89, 0.1);
   border: 1px solid #ff7a59;
 }
+
+/* --- 커스텀 경고창 (Toast 알림) 스타일 --- */
+#toast-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none; /* 컨테이너 자체 영역이 마우스 클릭을 가로막지 못하게 설정 */
+}
+
+.custom-toast {
+  background-color: rgba(255, 122, 89, 0.95); 
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 122, 89, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(20px); 
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+}
+
+.custom-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
