@@ -45,12 +45,13 @@ document.querySelectorAll(".option-btn").forEach((button) => {
   });
 });
 
-// 다음 단계 버튼
+// 다음 단계 버튼 수정본
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    if (state.currentStep === 1 && !state.primary) return alert("기준을 선택해주세요.");
-    if (state.currentStep === 2 && !state.situation) return alert("상황을 선택해주세요.");
-    if (state.currentStep === 3 && !state.detail) return alert("상세 항목을 선택해주세요.");
+     👇
+    if (state.currentStep === 1 && !state.primary) return showCustomAlert("기준을 먼저 선택해주세요.");
+    if (state.currentStep === 2 && !state.situation) return showCustomAlert("현재 상황을 선택해주세요.");
+    if (state.currentStep === 3 && !state.detail) return showCustomAlert("상세 항목을 선택해주세요.");
 
     if (state.currentStep < 3) {
       state.currentStep++;
@@ -216,4 +217,39 @@ if (darkModeToggle) {
       darkModeToggle.textContent = "🌙 다크 모드";
     }
   });
+}
+
+// ==========================================
+// 💡 커스텀 토스트 알림창(경고창) 함수
+// ==========================================
+function showCustomAlert(message) {
+  // 1. 알림창들을 담을 컨테이너가 없으면 만듭니다.
+  let toastContainer = document.getElementById("toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "toast-container";
+    document.body.appendChild(toastContainer);
+  }
+
+  // 2. 알림창 요소를 생성합니다.
+  const toast = document.createElement("div");
+  toast.className = "custom-toast";
+  toast.innerHTML = `<span>⚠️</span> ${message}`;
+
+  // 3. 화면에 추가하고 부드럽게 나타나는 애니메이션 실행
+  toastContainer.appendChild(toast);
+  
+  // 브라우저가 요소를 렌더링할 아주 짧은 시간을 준 뒤 클래스 추가
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+
+  // 4. 2.5초 뒤에 스르륵 사라지게 만듭니다.
+  setTimeout(() => {
+    toast.classList.remove("show");
+    // 애니메이션이 끝난 후 HTML에서 완전히 제거
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 2500);
 }
