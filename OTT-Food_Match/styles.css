@@ -19,7 +19,7 @@ body {
 
 .header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .header h1 {
@@ -32,122 +32,89 @@ body {
   font-size: 1rem;
 }
 
+/* --- 프로그레스 바 --- */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  margin-top: 20px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #ff7a59;
+  width: 33%;
+  transition: width 0.4s ease-in-out;
+}
+
+/* --- 단계별 섹션 표시/숨김 및 애니메이션 --- */
+.step-section {
+  display: none;
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.step-section.active {
+  display: block;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .card {
   background: #ffffff;
   border-radius: 18px;
-  padding: 20px;
+  padding: 24px;
   margin-bottom: 18px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
 .card h2 {
-  margin-bottom: 14px;
-  font-size: 1.15rem;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  text-align: center;
 }
 
-/* --- 가로 스크롤이 적용된 부분 --- */
+/* --- 버튼들을 중앙으로 배치하는 옵션 그룹 --- */
 .option-group {
   display: flex;
-  flex-wrap: nowrap; /* 줄바꿈 방지 */
+  flex-wrap: wrap; /* 창 크기에 맞게 자동으로 줄바꿈되도록 변경 */
+  justify-content: center; /* 가로 기준 가운데 정렬 */
   gap: 10px;
-  overflow-x: auto; /* 가로 스크롤 활성화 */
-  padding-bottom: 5px; /* 스크롤바 영역 확보 */
-  
-  /* 스크롤바 숨기기 (더 깔끔한 모바일 UI를 위해) */
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
+  padding-bottom: 5px;
 }
 
-/* Chrome, Safari 등에서 스크롤바 숨기기 */
-.option-group::-webkit-scrollbar {
-  display: none; 
+.vertical-group {
+  flex-direction: column;
+  align-items: center; /* 세로 정렬 시 수평 중앙 배치 */
 }
 
 .option-btn {
-  flex: 0 0 auto; /* 버튼이 좁아져도 찌그러지지 않도록 크기 유지 */
+  flex: 0 0 auto;
   border: 1px solid #ddd;
   background: #fafafa;
-  padding: 10px 16px;
+  padding: 12px 20px;
   border-radius: 999px;
   cursor: pointer;
   transition: 0.2s ease;
   font-size: 0.95rem;
 }
-/* -------------------------------- */
 
-/********************************* OTT html css 표시용*/
-
-#loadingText {
-  color: #666;
-  font-size: 0.95rem;
-  padding: 12px;
-}
-/********************************/
-
-/* ===============================
-   OTT 아이콘 선택 화면
-================================ */
-
-.ott-logo-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
-
-.ott-logo-card {
-  border: none;
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 18px 12px;
-  cursor: pointer;
-  min-height: 150px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  transition: 0.2s ease;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-}
-
-.ott-logo-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
-}
-
-.ott-icon-img {
-  width: 86px;
-  height: 86px;
-  border-radius: 22px;
-  object-fit: cover;
-}
-
-.ott-logo-card span {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #333;
-}
-
-@media (max-width: 600px) {
-  .ott-logo-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-
-  .ott-logo-card {
-    min-height: 130px;
-    padding: 14px 10px;
-  }
-
-  .ott-icon-img {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
-  }
+.big-btn {
+  padding: 18px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 320px; /* 1단계 가독성을 위해 너비 최적화 제한 */
+  text-align: center;
 }
 
 .option-btn:hover {
-  transform: translateY(-1px);
   background: #f0f0f0;
 }
 
@@ -169,15 +136,17 @@ body {
 .secondary-btn {
   border: none;
   border-radius: 12px;
-  padding: 12px 20px;
+  padding: 14px 20px;
   font-size: 1rem;
   cursor: pointer;
   transition: 0.2s ease;
+  flex: 1;
 }
 
 .primary-btn {
   background: #ff7a59;
   color: white;
+  font-weight: bold;
 }
 
 .primary-btn:hover,
@@ -191,12 +160,13 @@ body {
 }
 
 .result-section {
-  margin-top: 28px;
+  animation: slideUp 0.5s ease-out forwards;
 }
 
 .result-section h2 {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-align: center;
+  color: #ff7a59;
 }
 
 .result-card {
@@ -221,7 +191,8 @@ body {
 .result-item strong {
   display: block;
   margin-bottom: 4px;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: #ff7a59;
 }
 
 .result-item p {
@@ -235,139 +206,7 @@ body {
 }
 
 .hidden {
-  display: none;
-}
-
-@media (max-width: 600px) {
-  .header h1 {
-    font-size: 1.6rem;
-  }
-
-  .action-area {
-    flex-direction: column;
-  }
-
-  .primary-btn,
-  .secondary-btn {
-    width: 100%;
-  }
-}
-
-/* ===============================
-   영화 목록 페이지
-================================ */
-
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 18px;
-  margin-top: 16px;
-}
-
-.movie-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-}
-
-.movie-poster-area {
-  cursor: pointer;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f2f2f2;
-  transition: 0.2s ease;
-}
-
-.movie-poster-area:hover {
-  transform: translateY(-3px);
-  opacity: 0.9;
-}
-
-.movie-poster {
-  width: 100%;
-  display: block;
-  border-radius: 14px;
-}
-
-.no-poster {
-  height: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #777;
-  background: #eee;
-  border-radius: 14px;
-}
-
-.movie-info {
-  margin-top: 10px;
-}
-
-.movie-info strong {
-  display: block;
-  font-size: 1rem;
-  margin-bottom: 6px;
-}
-
-.movie-info p {
-  color: #555;
-  font-size: 0.9rem;
-  margin-bottom: 4px;
-}
-
-.selected-movie-box {
-  margin-bottom: 12px;
-}
-
-.selected-movie-box h3,
-.food-result-box h3 {
-  font-size: 1rem;
-  margin-bottom: 8px;
-}
-
-.selected-movie-box p,
-.food-result-box p {
-  color: #555;
-  font-size: 0.92rem;
-  margin-bottom: 6px;
-}
-
-.food-result-box {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid #ffd4c7;
-}
-
-/* ===============================
-   영화 페이지 상단 장르 탭
-================================ */
-
-.movie-app {
-  max-width: 1080px;
-}
-
-.movie-header {
-  margin-bottom: 18px;
-}
-
-.movie-top-card {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.genre-tab-group {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.genre-tab-group::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 
 .genre-tab {
@@ -432,28 +271,107 @@ body {
 }
 
 @media (max-width: 600px) {
-  .ott-logo-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .ott-logo-card {
-    min-height: 100px;
-  }
-
-  .movie-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .movie-card {
-    padding: 10px;
-  }
-
-  .movie-info strong {
-    font-size: 0.92rem;
-  }
-
-  .movie-info p {
-    font-size: 0.82rem;
-  }
+  .header h1 { font-size: 1.6rem; }
 }
+
+/* --- 로딩 스피너 애니메이션 --- */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #ff7a59;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- 다크 모드 (Dark Mode) 스타일 --- */
+body.dark-mode {
+  background: #141414;
+  color: #e0e0e0;
+}
+
+body.dark-mode .card,
+body.dark-mode .result-card {
+  background: #222222;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .header p,
+body.dark-mode .result-item p {
+  color: #aaa;
+}
+
+body.dark-mode .option-btn {
+  background: #333333;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .option-btn:hover {
+  background: #444444;
+}
+
+body.dark-mode .option-btn.selected {
+  background: #ff7a59;
+  color: white;
+  border-color: #ff7a59;
+}
+
+body.dark-mode .secondary-btn {
+  background: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .secondary-btn:hover {
+  background: #555;
+}
+
+body.dark-mode .result-item {
+  background: #2a2a2a;
+}
+
+body.dark-mode .best-match {
+  background: rgba(255, 122, 89, 0.1);
+  border: 1px solid #ff7a59;
+}
+
+/* --- 커스텀 경고창 (Toast 알림) 스타일 --- */
+#toast-container {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none; /* 컨테이너 자체 영역이 마우스 클릭을 가로막지 못하게 설정 */
+}
+
+.custom-toast {
+  background-color: rgba(255, 122, 89, 0.95); 
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 122, 89, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(20px); 
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+}
+
+.custom-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
