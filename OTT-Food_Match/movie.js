@@ -364,3 +364,52 @@ async function initMoviePage() {
 }
 
 initMoviePage();
+
+// ===============================
+// 14. 설정 팝업 + 다크 모드
+// ===============================
+
+const settingBtn = document.getElementById("settingBtn");
+const settingPopup = document.getElementById("settingPopup");
+const darkModeToggle = document.getElementById("darkModeToggle");
+const body = document.body;
+
+// 설정 버튼을 누르면 작은 설정 팝업을 열고 닫는다.
+if (settingBtn && settingPopup) {
+  settingBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    settingPopup.classList.toggle("hidden");
+  });
+
+  settingPopup.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", () => {
+    settingPopup.classList.add("hidden");
+  });
+}
+
+// 기존에 저장된 다크 모드 설정이 있으면 영화 페이지에도 그대로 적용한다.
+if (localStorage.getItem("theme") === "dark") {
+  body.classList.add("dark-mode");
+
+  if (darkModeToggle) {
+    darkModeToggle.textContent = "☀️ 라이트 모드";
+  }
+}
+
+// 다크 모드 버튼을 누르면 body에 dark-mode 클래스를 추가하거나 제거한다.
+if (darkModeToggle) {
+  darkModeToggle.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
+
+    if (body.classList.contains("dark-mode")) {
+      localStorage.setItem("theme", "dark");
+      darkModeToggle.textContent = "☀️ 라이트 모드";
+    } else {
+      localStorage.setItem("theme", "light");
+      darkModeToggle.textContent = "🌙 다크 모드";
+    }
+  });
+}
