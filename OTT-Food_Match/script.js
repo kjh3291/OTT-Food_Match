@@ -3,7 +3,42 @@ const state = {
   currentStep: 1,
   primary: "",
   situation: "",
-  detail: ""
+  detail: "",
+  ott: ""
+};
+
+// 다국어 번역 데이터 사전
+const translations = {
+  ko: {
+    settingBtn: "⚙ 설정", settingTitle: "설정", langToggle: "🌐 English",
+    mainTitle: "🍿 뭐 볼까, 뭐 먹을까", mainDesc: "OTT와 음식 조합을 한 번에 추천해주는 서비스",
+    step1Title: "1. 어떤 것을 먼저 고르시겠어요?", step1Opt1: "📺 볼 콘텐츠(OTT) 기준", step1Opt2: "🍕 먹을 음식 메뉴 기준",
+    step2Title: "2. 현재 식사 상황은 어떠신가요?",
+    meal_honbab: "혼밥", meal_yasik: "야식", meal_friends: "친구와 함께", meal_couple: "연인과 함께", meal_light: "간단한 식사", meal_heavy: "든든한 식사",
+    step3OttTitle: "3. 이용 중인 OTT 플랫폼을 알려주세요.", step3FoodTitle: "3. 어떤 종류의 음식이 끌리시나요?",
+    food_chicken_pizza: "치킨/피자", food_bunsik: "분식(떡볶이 등)", food_korean: "한식(국밥/찌개)", food_western: "양식(파스타 등)",
+    prevBtn: "이전 단계", nextBtn: "다음 단계", nextBtnResult: "추천 결과 보기 ✨",
+    loadingTitle: "맞춤 조합을 찾는 중입니다...", loadingDesc: "잠시만 기다려주세요 🍿",
+    resultTitle: "✨ 맞춤 추천 결과 ✨", resContentTitle: "🎬 추천 콘텐츠", resFoodTitle: "🍕 추천 음식", resComboTitle: "💡 Best Match Combo",
+    shareBtn: "결과 공유하기 🔗", resetBtn: "처음부터 다시하기",
+    alert_primary: "기준을 선택해주세요.", alert_situation: "현재 상황을 선택해주세요.", alert_detail: "상세 항목을 선택해주세요.",
+    alert_ott: "올바른 OTT를 선택해주세요.", alert_error: "결과를 불러오는 중 문제가 발생했습니다.", alert_copied: "추천 결과가 복사되었습니다!"
+  },
+  en: {
+    settingBtn: "⚙ Settings", settingTitle: "Settings", langToggle: "🌐 한국어",
+    mainTitle: "🍿 What to Watch, What to Eat", mainDesc: "OTT and food combination recommendation service",
+    step1Title: "1. Which one would you like to choose first?", step1Opt1: "📺 Based on Content (OTT)", step1Opt2: "🍕 Based on Food Menu",
+    step2Title: "2. What is your current meal situation?",
+    meal_honbab: "Eating Alone", meal_yasik: "Late Night Snack", meal_friends: "With Friends", meal_couple: "With Partner", meal_light: "Light Meal", meal_heavy: "Hearty Meal",
+    step3OttTitle: "3. Please select your OTT platform.", step3FoodTitle: "3. What kind of food are you craving?",
+    food_chicken_pizza: "Chicken/Pizza", food_bunsik: "Street Food", food_korean: "Korean Food", food_western: "Western Food",
+    prevBtn: "Previous", nextBtn: "Next", nextBtnResult: "View Recommendation ✨",
+    loadingTitle: "Finding the perfect match...", loadingDesc: "Please wait a moment 🍿",
+    resultTitle: "✨ Custom Recommendation Results ✨", resContentTitle: "🎬 Recommended Content", resFoodTitle: "🍕 Recommended Food", resComboTitle: "💡 Best Match Combo",
+    shareBtn: "Share Results 🔗", resetBtn: "Restart",
+    alert_primary: "Please select a criteria.", alert_situation: "Please select your current situation.", alert_detail: "Please select a detailed item.",
+    alert_ott: "Please select a valid OTT.", alert_error: "A problem occurred while fetching results.", alert_copied: "Recommendation results copied!"
+  }
 };
 
 // HTML 요소 맵핑
@@ -11,7 +46,8 @@ const steps = {
   1: document.getElementById("step1"),
   2: document.getElementById("step2"),
   "3-ott": document.getElementById("step3-ott"),
-  "3-food": document.getElementById("step3-food")
+  "3-food": document.getElementById("step3-food"),
+  "4-food": document.getElementById("step4-food")
 };
 
 const navArea = document.getElementById("navArea");
@@ -71,7 +107,6 @@ document.querySelectorAll(".option-btn").forEach((button) => {
 // 다음 단계 버튼 이벤트 바인딩
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    // 선택하지 않았을 때 경고
     if (state.currentStep === 1 && !state.primary) {
       showCustomAlert("기준을 선택해주세요.");
       return;
@@ -82,46 +117,71 @@ if (nextBtn) {
       return;
     }
 
-    if (state.currentStep === 3 && !state.detail) {
-      showCustomAlert("상세 항목을 선택해주세요.");
+    if (state.currentStep === 3 && state.primary === "ott" && !state.detail) {
+      showCustomAlert("OTT를 선택해주세요.");
       return;
     }
 
-    // 1단계, 2단계는 다음 화면으로 이동
-    if (state.currentStep < 3) {
-      state.currentStep++;
+    if (state.currentStep === 3 && state.primary === "food" && !state.ott) {
+      showCustomAlert("OTT를 선택해주세요.");
+      return;
+    }
+
+    if (state.currentStep === 4 && state.primary === "food" && !state.detail) {
+      showCustomAlert("음식 종류를 선택해주세요.");
+      return;
+    }
+
+    if (state.currentStep === 1) {
+      state.currentStep = 2;
       updateUI();
       return;
     }
 
-    // 3단계에서 OTT 기준을 선택한 경우 movie.html로 이동
-    if (state.primary === "ott") {
-      const ottUrlMap = {
-        "넷플릭스": "netflix",
-        "디즈니+": "disney",
-        "티빙": "tving",
-        "웨이브": "wavve"
-      };
-
-      const ottParam = ottUrlMap[state.detail];
-
-      if (!ottParam) {
-        showCustomAlert("올바른 OTT를 선택해주세요.");
-        return;
-      }
-
-      const mealParam = encodeURIComponent(state.situation);
-
-      window.location.href = `movie.html?ott=${ottParam}&meal=${mealParam}`;
+    if (state.currentStep === 2) {
+      state.currentStep = 3;
+      updateUI();
       return;
     }
 
-    // 음식 기준 선택 시에는 기존 결과 화면 사용
-    showResult();
+    if (state.currentStep === 3 && state.primary === "food") {
+      state.currentStep = 4;
+      updateUI();
+      return;
+    }
+
+    const ottUrlMap = {
+      "넷플릭스": "netflix",
+      "디즈니+": "disney",
+      "티빙": "tving",
+      "웨이브": "wavve"
+    };
+
+    let selectedOttName = "";
+
+    if (state.primary === "ott") {
+      selectedOttName = state.detail;
+    }
+
+    if (state.primary === "food") {
+      selectedOttName = state.ott;
+    }
+
+    const ottParam = ottUrlMap[selectedOttName];
+
+    if (!ottParam) {
+      showCustomAlert("올바른 OTT를 선택해주세요.");
+      return;
+    }
+
+    const mealParam = encodeURIComponent(state.situation);
+    const foodParam = encodeURIComponent(state.detail);
+
+    window.location.href = `movie.html?ott=${ottParam}&meal=${mealParam}&food=${foodParam}`;
   });
 }
 
-// 이전 단계 버튼 이벤트 바인딩
+
 if (prevBtn) {
   prevBtn.addEventListener("click", () => {
     if (state.currentStep > 1) {
@@ -138,30 +198,70 @@ function updateUI() {
     el.classList.add("hidden");
   });
 
-  if (progressFill) progressFill.style.width = `${(state.currentStep / 3) * 100}%`;
+  const totalStep = state.primary === "food" ? 4 : 3;
+
+  if (progressFill) {
+    progressFill.style.width = `${(state.currentStep / totalStep) * 100}%`;
+  }
 
   if (state.currentStep === 1) {
     if (navArea) navArea.classList.add("hidden");
+
     if (steps[1]) {
       steps[1].classList.remove("hidden");
       steps[1].classList.add("active");
     }
-  } else if (state.currentStep === 2) {
+
+    if (nextBtn) {
+      nextBtn.textContent = "다음 단계";
+    }
+  }
+
+  else if (state.currentStep === 2) {
     if (navArea) navArea.classList.remove("hidden");
+
     if (steps[2]) {
       steps[2].classList.remove("hidden");
       steps[2].classList.add("active");
     }
-    if (nextBtn) nextBtn.textContent = "다음 단계";
-  } else if (state.currentStep === 3) {
-    if (nextBtn) nextBtn.textContent = "추천 결과 보기 ✨";
-    
+
+    if (nextBtn) {
+      nextBtn.textContent = "다음 단계";
+    }
+  }
+
+  else if (state.currentStep === 3) {
+    if (navArea) navArea.classList.remove("hidden");
+
     if (state.primary === "ott" && steps["3-ott"]) {
       steps["3-ott"].classList.remove("hidden");
       steps["3-ott"].classList.add("active");
-    } else if (steps["3-food"]) {
+
+      if (nextBtn) {
+        nextBtn.textContent = "추천 영화 보러가기";
+      }
+    }
+
+    else if (state.primary === "food" && steps["3-food"]) {
       steps["3-food"].classList.remove("hidden");
       steps["3-food"].classList.add("active");
+
+      if (nextBtn) {
+        nextBtn.textContent = "음식 선택하러 가기";
+      }
+    }
+  }
+
+  else if (state.currentStep === 4) {
+    if (navArea) navArea.classList.remove("hidden");
+
+    if (steps["4-food"]) {
+      steps["4-food"].classList.remove("hidden");
+      steps["4-food"].classList.add("active");
+    }
+
+    if (nextBtn) {
+      nextBtn.textContent = "추천 영화 보러가기";
     }
   }
 }
