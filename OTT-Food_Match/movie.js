@@ -26,7 +26,7 @@ const genreIdMap = {
   "애니메이션": 16,
 };
 
-let selectedGenre = "액션";
+let selectedGenre = "전체";
 let currentMovies = [];
 
 
@@ -78,7 +78,12 @@ genreTabs.forEach((tab) => {
   tab.addEventListener("click", async () => {
     const genre = tab.dataset.genre;
 
-    selectedGenre = genre;
+    if (!genre) {
+      alert("장르 정보가 없습니다. movie.html의 data-genre 값을 확인해주세요.");
+      return;
+    }
+
+    selectedGenre = genre.trim();
 
     genreTabs.forEach((btn) => btn.classList.remove("selected"));
     tab.classList.add("selected");
@@ -128,12 +133,12 @@ async function fetchMoviesFromTMDB(genre) {
 
   const genreId = genreIdMap[genre];
 
-  if (!genreId) {
+  if (genre !== "전체" && !genreId) {
     alert("지원하지 않는 장르입니다.");
     return [];
   }
 
-  const url =
+  let url =
     `${baseUrl}/discover/movie` +
     `?api_key=${apiKey}` +
     `&language=ko-KR` +
@@ -141,10 +146,13 @@ async function fetchMoviesFromTMDB(genre) {
     `&watch_region=KR` +
     `&with_watch_providers=${providerId}` +
     `&with_watch_monetization_types=flatrate` +
-    `&with_genres=${genreId}` +
     `&sort_by=popularity.desc` +
     `&include_adult=false` +
     `&page=1`;
+
+  if (genre !== "전체") {
+    url += `&with_genres=${genreId}`;
+  }
 
   console.log("요청 URL:", url);
 
@@ -331,33 +339,7 @@ function recommendFood(movie) {
       reason: "애니메이션은 편하게 보기 좋은 경우가 많아서 간단하고 대중적인 햄버거 세트가 잘 어울립니다.",
     };
   }
-
   return foodRecommendation;
-}
-
-if (selectedMeal === "야식") {
-  foodRecommendation.name += " + 탄산음료";
-  foodRecommendation.reason += " 야식 상황에서는 자극적이고 만족감 있는 조합이 잘 어울립니다.";
-}
-
-if (selectedMeal === "혼밥") {
-  foodRecommendation.reason += " 혼자 볼 때도 준비가 간단하고 먹기 편한 메뉴입니다.";
-}
-
-if (selectedMeal === "친구와 함께") {
-  foodRecommendation.reason += " 친구와 함께 나눠 먹기 좋은 조합입니다.";
-}
-
-if (selectedMeal === "연인과 함께") {
-  foodRecommendation.reason += " 연인과 함께 볼 때도 분위기를 해치지 않는 음식입니다.";
-}
-
-if (selectedMeal === "간단한 식사") {
-  foodRecommendation.reason += " 간단하게 먹고 싶을 때 부담 없이 선택하기 좋습니다.";
-}
-
-if (selectedMeal === "든든한 식사") {
-  foodRecommendation.reason += " 든든하게 먹고 싶을 때 만족도가 높은 조합입니다.";
 }
 
 
