@@ -233,6 +233,26 @@ if (shareBtn) {
 const darkModeToggle = document.getElementById("darkModeToggle");
 const body = document.body;
 
+// --- 설정 팝업 열기/닫기 로직 ---
+const settingBtn = document.getElementById("settingBtn");
+const settingPopup = document.getElementById("settingPopup");
+
+if (settingBtn && settingPopup) {
+  settingBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    settingPopup.classList.toggle("hidden");
+  });
+
+  settingPopup.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", () => {
+    settingPopup.classList.add("hidden");
+  });
+}
+
+
 if (localStorage.getItem("theme") === "dark") {
   body.classList.add("dark-mode");
   if (darkModeToggle) darkModeToggle.textContent = "☀️ 라이트 모드";

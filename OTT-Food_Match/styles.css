@@ -437,3 +437,89 @@ body.dark-mode .best-match {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ===============================
+   설정 버튼 + 설정 팝업
+================================ */
+
+.setting-area {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
+.setting-btn {
+  border: none;
+  background: #ffffff;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: 0.2s ease;
+}
+
+.setting-btn:hover {
+  transform: translateY(-1px);
+  background: #f0f0f0;
+}
+
+.setting-popup {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  width: 180px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  z-index: 1000;
+  text-align: left;
+}
+
+.setting-popup h3 {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.setting-option-btn {
+  width: 100%;
+  border: none;
+  background: #f7f7f7;
+  color: #333;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.setting-option-btn:hover {
+  background: #eeeeee;
+}
+
+/* 다크 모드일 때 설정 팝업 색상 */
+body.dark-mode .setting-btn,
+body.dark-mode .setting-popup {
+  background: #222222;
+  color: #e0e0e0;
+}
+
+body.dark-mode .setting-popup h3 {
+  color: #e0e0e0;
+}
+
+body.dark-mode .setting-option-btn {
+  background: #333333;
+  color: #e0e0e0;
+}
+
+body.dark-mode .setting-option-btn:hover {
+  background: #444444;
+}
