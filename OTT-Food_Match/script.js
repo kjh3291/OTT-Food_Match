@@ -22,18 +22,45 @@ const progressFill = document.getElementById("progressFill");
 
 // 버튼 이벤트 등록 (현재 페이지에 있는 버튼만 작동)
 document.querySelectorAll(".option-btn").forEach((button) => {
-  button.addEventListener("click", (e) => {
+  button.addEventListener("click", () => {
     const key = button.dataset.key;
     const value = button.dataset.value;
 
-    if (key) state[key] = value;
+    // 이미 선택된 버튼을 다시 누르면 선택 해제
+    if (button.classList.contains("selected")) {
+      button.classList.remove("selected");
 
-    const parent = button.closest(".option-group");
-    if (parent) {
-      parent.querySelectorAll(".option-btn").forEach((btn) => btn.classList.remove("selected"));
+      if (key) {
+        state[key] = "";
+      }
+
+      // 1단계 선택을 취소하면 다음 버튼 숨기기
+      if (state.currentStep === 1 && navArea && progressBar) {
+        navArea.classList.add("hidden");
+        progressBar.style.display = "none";
+      }
+
+      return;
     }
+
+    // 같은 선택 그룹 찾기
+    // 일반 버튼은 .option-group, OTT 로고 카드는 .ott-logo-grid 사용
+    const parent = button.closest(".option-group, .ott-logo-grid");
+
+    if (parent) {
+      parent.querySelectorAll(".option-btn").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+    }
+
+    // 새 버튼 선택
     button.classList.add("selected");
 
+    if (key) {
+      state[key] = value;
+    }
+
+    // 1단계 선택 시 네비게이션과 프로그레스 바 표시
     if (state.currentStep === 1 && navArea && progressBar) {
       navArea.classList.remove("hidden");
       progressBar.style.display = "block";
@@ -44,17 +71,53 @@ document.querySelectorAll(".option-btn").forEach((button) => {
 // 다음 단계 버튼 이벤트 바인딩
 if (nextBtn) {
   nextBtn.addEventListener("click", () => {
-    // 아무것도 선택하지 않았을 때 커스텀 경고창 함수로 우회 전달
-    if (state.currentStep === 1 && !state.primary) return showCustomAlert("기준을 선택해주세요.");
-    if (state.currentStep === 2 && !state.situation) return showCustomAlert("현재 상황을 선택해주세요.");
-    if (state.currentStep === 3 && !state.detail) return showCustomAlert("상세 항목을 선택해주세요.");
+    // 선택하지 않았을 때 경고
+    if (state.currentStep === 1 && !state.primary) {
+      showCustomAlert("기준을 선택해주세요.");
+      return;
+    }
 
+    if (state.currentStep === 2 && !state.situation) {
+      showCustomAlert("현재 상황을 선택해주세요.");
+      return;
+    }
+
+    if (state.currentStep === 3 && !state.detail) {
+      showCustomAlert("상세 항목을 선택해주세요.");
+      return;
+    }
+
+    // 1단계, 2단계는 다음 화면으로 이동
     if (state.currentStep < 3) {
       state.currentStep++;
       updateUI();
-    } else {
-      showResult();
+      return;
     }
+
+    // 3단계에서 OTT 기준을 선택한 경우 movie.html로 이동
+    if (state.primary === "ott") {
+      const ottUrlMap = {
+        "넷플릭스": "netflix",
+        "디즈니+": "disney",
+        "티빙": "tving",
+        "웨이브": "wavve"
+      };
+
+      const ottParam = ottUrlMap[state.detail];
+
+      if (!ottParam) {
+        showCustomAlert("올바른 OTT를 선택해주세요.");
+        return;
+      }
+
+      const mealParam = encodeURIComponent(state.situation);
+
+      window.location.href = `movie.html?ott=${ottParam}&meal=${mealParam}`;
+      return;
+    }
+
+    // 음식 기준 선택 시에는 기존 결과 화면 사용
+    showResult();
   });
 }
 
@@ -169,6 +232,26 @@ if (shareBtn) {
 // --- 다크 모드 토글 로직 ---
 const darkModeToggle = document.getElementById("darkModeToggle");
 const body = document.body;
+
+// --- 설정 팝업 열기/닫기 로직 ---
+const settingBtn = document.getElementById("settingBtn");
+const settingPopup = document.getElementById("settingPopup");
+
+if (settingBtn && settingPopup) {
+  settingBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    settingPopup.classList.toggle("hidden");
+  });
+
+  settingPopup.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", () => {
+    settingPopup.classList.add("hidden");
+  });
+}
+
 
 if (localStorage.getItem("theme") === "dark") {
   body.classList.add("dark-mode");
