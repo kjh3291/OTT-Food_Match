@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>영화 선택</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app movie-app">
+    <header class="header movie-header">
+  <div class="setting-area">
+    <button id="settingBtn" class="setting-btn">
+      ⚙ 설정
+    </button>
+
+    <div id="settingPopup" class="setting-popup hidden">
+      <h3>설정</h3>
+
+      <button id="darkModeToggle" class="setting-option-btn">
+        🌙 다크 모드
+      </button>
+    </div>
+  </div>
+
+  <h1 id="moviePageTitle">OTT 영화</h1>
+  <p id="moviePageInfo">선택한 조건에 맞는 영화를 확인해보세요.</p>
+</header>
+
+    <main>
+      <section class="card movie-top-card">
+        <h2>장르 카테고리</h2>
+        
+        <div class="genre-tab-group" id="genreTabGroup">
+          <button class="genre-tab selected" data-genre="전체">전체</button>
+          <button class="genre-tab" data-genre="액션">액션</button>
+          <button class="genre-tab" data-genre="코미디">코미디</button>
+          <button class="genre-tab" data-genre="드라마">드라마</button>
+          <button class="genre-tab" data-genre="로맨스">로맨스</button>
+          <button class="genre-tab" data-genre="스릴러">스릴러</button>
+          <button class="genre-tab" data-genre="애니메이션">애니메이션</button>
+</div>
+      </section>
+
+      <section class="card">
+        <div class="movie-section-title">
+          <h2 id="selectedGenreTitle">전체 영화</h2>
+          <p>영화 포스터를 클릭하면 설명과 추천 음식이 표시됩니다.</p>
+        </div>
+        <div id="loadingText">
+          영화 목록을 불러오는 중입니다...
+        </div>
+        <div id="movieList" class="movie-grid"></div>
+      </section>
+
+      <div class="action-area">
+  <button id="backToMainBtn" class="secondary-btn" onclick="location.href='main.html'">
+    메인으로 돌아가기
+  </button>
+</div>
+    </main>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="movie.js"></script>
+</body>
+
+</html>
