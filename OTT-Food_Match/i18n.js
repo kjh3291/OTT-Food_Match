@@ -1,11 +1,12 @@
 // ==========================================
-// 🌐 통합 다국어(i18n) 관리 모듈
+// 🌐 통합 다국어(i18n) 및 모달 관리 모듈
 // ==========================================
 
 const i18nData = {
   ko: {
-    // ⚙️ 공통 및 설정
-    settingBtn: "⚙ 설정", settingTitle: "설정", langToggle: "🌐 English",
+    // ⚙️ 공통, 설정 및 모달
+    settingBtn: "⚙ 설정", settingTitle: "설정", 
+    langMenuBtn: "🌐 언어 설정", langModalTitle: "언어 설정", closeLangModal: "닫기",
     prevBtn: "이전 단계", nextBtn: "다음 단계", nextBtnResult: "추천 결과 보기 ✨",
     alert_primary: "기준을 선택해주세요.", alert_situation: "현재 상황을 선택해주세요.", alert_detail: "상세 항목을 선택해주세요.",
     alert_ott: "올바른 OTT를 선택해주세요.", alert_error: "결과를 불러오는 중 문제가 발생했습니다.", alert_copied: "결과가 이미지로 저장되었습니다!",
@@ -32,7 +33,8 @@ const i18nData = {
   },
   en: {
     // ⚙️ Common & Settings
-    settingBtn: "⚙ Settings", settingTitle: "Settings", langToggle: "🌐 한국어",
+    settingBtn: "⚙ Settings", settingTitle: "Settings", 
+    langMenuBtn: "🌐 Language", langModalTitle: "Language Settings", closeLangModal: "Close",
     prevBtn: "Previous", nextBtn: "Next", nextBtnResult: "View Result ✨",
     alert_primary: "Please select a criteria.", alert_situation: "Please select your current situation.", alert_detail: "Please select a detailed item.",
     alert_ott: "Please select a valid OTT.", alert_error: "A problem occurred while fetching results.", alert_copied: "Result saved as an image!",
@@ -59,28 +61,16 @@ const i18nData = {
   }
 };
 
-// 현재 설정된 언어 가져오기
-function getLang() {
-  return localStorage.getItem("lang") || "ko";
-}
+function getLang() { return localStorage.getItem("lang") || "ko"; }
+function t(key) { return i18nData[getLang()][key] || key; }
 
-// 특정 키의 텍스트를 반환하는 헬퍼 함수 (JS 파일들에서 사용)
-function t(key) {
-  const lang = getLang();
-  return i18nData[lang][key] || key;
-}
-
-// 화면 전체의 텍스트를 현재 언어로 업데이트하는 함수
 function applyLanguage() {
   const lang = getLang();
-  
-  // 1. HTML 태그에 ID가 부여된 텍스트 자동 변환
   Object.keys(i18nData[lang]).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = i18nData[lang][id];
   });
 
-  // 2. 다크모드 텍스트 예외처리 (언어 + 다크모드 상태 결합)
   const darkModeToggle = document.getElementById("darkModeToggle");
   if (darkModeToggle) {
     if (document.body.classList.contains("dark-mode")) {
@@ -90,22 +80,51 @@ function applyLanguage() {
     }
   }
 
-  // 3. 언어가 변경되었음을 다른 스크립트(.js)들에게 알림 이벤트 발송
   document.dispatchEvent(new Event("languageChanged"));
 }
 
-// 초기화 및 이벤트 리스너 등록
 document.addEventListener("DOMContentLoaded", () => {
-  const langToggle = document.getElementById("langToggle");
-  if (langToggle) {
-    langToggle.addEventListener("click", () => {
+  // 💡 1. 모달 및 설정창 요소 가져오기
+  const langMenuBtn = document.getElementById("langMenuBtn");
+  const langModal = document.getElementById("langModal");
+  const closeLangModal = document.getElementById("closeLangModal");
+  const settingPopup = document.getElementById("settingPopup");
+
+  // 💡 2. '언어 설정' 메뉴 클릭 시 팝업 닫고 모달 열기
+  if (langMenuBtn && langModal) {
+    langMenuBtn.addEventListener("click", () => {
+      if (settingPopup) settingPopup.classList.add("hidden"); // 설정창 닫기
+      langModal.classList.add("show"); // 언어 선택 모달 열기
+      
+      // 현재 적용된 언어를 찾아 버튼 스타일 강조
       const currentLang = getLang();
-      localStorage.setItem("lang", currentLang === "ko" ? "en" : "ko");
-      applyLanguage();
+      document.querySelectorAll(".lang-select-btn").forEach(btn => {
+        if(btn.dataset.lang === currentLang) btn.classList.add("active-lang");
+        else btn.classList.remove("active-lang");
+      });
     });
   }
+
+  // 💡 3. 모달 닫기 로직 (닫기 버튼 누르거나, 배경 어두운 곳 클릭 시)
+  if (closeLangModal) {
+    closeLangModal.addEventListener("click", () => langModal.classList.remove("show"));
+  }
+  if (langModal) {
+    langModal.addEventListener("click", (e) => {
+      if (e.target === langModal) langModal.classList.remove("show");
+    });
+  }
+
+  // 💡 4. 모달 안에서 언어(한국어/영어)를 선택했을 때의 처리
+  document.querySelectorAll(".lang-select-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const selectedLang = e.target.dataset.lang;
+      localStorage.setItem("lang", selectedLang); // 선택한 언어 저장
+      applyLanguage(); // 즉시 화면 전체 글자 변경
+      langModal.classList.remove("show"); // 선택 후 모달 자동 닫기
+    });
+  });
   
-  // 스크립트 로드 시 즉시 언어 적용
   applyLanguage();
 });
 
