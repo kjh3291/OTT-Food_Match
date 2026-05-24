@@ -770,3 +770,45 @@ body.dark-mode .lang-select-btn:hover { background: #444; }
 body.dark-mode .lang-select-btn.active-lang {
   border-color: #ff7a59; color: #ff7a59; background: rgba(255, 122, 89, 0.15);
 }
+
+/* =========================================
+   🌙 다크 모드 텍스트 가시성 보정 패치
+========================================= */
+
+/* 1. 모든 제목 텍스트를 확실한 흰색으로 강제 변경 */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode .modal-content h3 {
+  color: #ffffff !important;
+}
+
+/* 2. 본문 및 설명 글씨(p)를 밝은 회색으로 덮어쓰기 */
+body.dark-mode p,
+body.dark-mode .result-card p,
+body.dark-mode .movie-detail-panel p {
+  color: #dddddd !important;
+}
+
+/* 3. HTML 내부에 인라인(style="color:#666")으로 들어간 어두운 회색 강제 보정 */
+body.dark-mode [style*="color: #666"],
+body.dark-mode [style*="color:#666"],
+body.dark-mode [style*="color: rgb(102, 102, 102)"] {
+  color: #aaaaaa !important;
+}
+
+/* 4. OTT 로고 밑의 글씨 및 주요 강조 글씨 보정 */
+body.dark-mode .ott-logo-card span,
+body.dark-mode .movie-info strong,
+body.dark-mode label,
+body.dark-mode span {
+  color: #eeeeee;
+}
+
+/* 5. 선택된 버튼 내부의 글씨는 완벽한 흰색으로 유지 */
+body.dark-mode .option-btn.selected,
+body.dark-mode .genre-tab.selected,
+body.dark-mode .option-btn.selected span {
+  color: #ffffff !important;
+}
