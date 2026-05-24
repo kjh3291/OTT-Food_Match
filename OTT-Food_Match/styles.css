@@ -812,3 +812,47 @@ body.dark-mode .genre-tab.selected,
 body.dark-mode .option-btn.selected span {
   color: #ffffff !important;
 }
+
+/* =========================================
+   ✨ UI 요소 중앙 정렬 패치
+========================================= */
+
+/* 1. 장르 탭 버튼들을 가로 중앙으로 정렬 */
+.genre-tab-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center !important;
+  gap: 10px;
+}
+
+/* 2. 메인 화면의 선택 버튼(혼밥, 야식 등)들을 중앙 정렬 */
+.option-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center !important;
+  gap: 10px;
+}
+
+/* 3. 1단계(볼 콘텐츠/음식 메뉴)의 큰 버튼들을 중앙 정렬 */
+.vertical-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  width: 100%;
+}
+
+/* 4. 각종 카드 내부의 제목과 설명을 중앙 정렬 */
+.card h2, 
+.card p, 
+.movie-section-title h2, 
+.movie-section-title p {
+  text-align: center !important;
+}
+
+/* 5. OTT 선택 로고 그리드 중앙 정렬 */
+.ott-logo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center !important;
+  gap: 12px;
+}
