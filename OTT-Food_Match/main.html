@@ -14,7 +14,7 @@
           <div id="settingPopup" class="setting-popup hidden">
             <h3 id="settingTitle">설정</h3>
             <button id="darkModeToggle" class="setting-option-btn">🌙 다크 모드</button>
-            <button id="langToggle" class="setting-option-btn">🌐 English</button>
+            <button id="langMenuBtn" class="setting-option-btn">🌐 언어 설정</button>
           </div>
         </div>
 
@@ -30,12 +30,8 @@
         <section class="card step-section active" id="step1">
           <h2 id="step1Title">1. 어떤 것을 먼저 고르시겠어요?</h2>
           <div class="option-group vertical-group">
-            <button id="step1Opt1" class="option-btn big-btn" data-step="1" data-key="primary" data-value="ott">
-              📺 볼 콘텐츠(OTT) 기준
-            </button>
-            <button id="step1Opt2" class="option-btn big-btn" data-step="1" data-key="primary" data-value="food">
-              🍕 먹을 음식 메뉴 기준
-            </button>
+            <button id="step1Opt1" class="option-btn big-btn" data-step="1" data-key="primary" data-value="ott">📺 볼 콘텐츠(OTT) 기준</button>
+            <button id="step1Opt2" class="option-btn big-btn" data-step="1" data-key="primary" data-value="food">🍕 먹을 음식 메뉴 기준</button>
           </div>
         </section>
 
@@ -55,86 +51,47 @@
           <h2 id="step3OttTitle">3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
           <div class="ott-logo-grid">
             <button class="option-btn ott-logo-card" data-step="3" data-key="detail" data-value="넷플릭스">
-              <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
-              <span>Netflix</span>
+              <img src="images/netflix.png" alt="넷플릭스" class="ott-icon-img"><span>Netflix</span>
             </button>
             <button class="option-btn ott-logo-card" data-step="3" data-key="detail" data-value="디즈니+">
-              <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
-              <span>Disney+</span>
+              <img src="images/disney.png" alt="디즈니 플러스" class="ott-icon-img"><span>Disney+</span>
             </button>
             <button class="option-btn ott-logo-card" data-step="3" data-key="detail" data-value="티빙">
-              <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
-              <span>TVING</span>
+              <img src="images/tving.png" alt="티빙" class="ott-icon-img"><span>TVING</span>
             </button>
             <button class="option-btn ott-logo-card" data-step="3" data-key="detail" data-value="웨이브">
-              <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
-              <span>wavve</span>
+              <img src="images/wavve.png" alt="웨이브" class="ott-icon-img"><span>wavve</span>
             </button>
           </div>
         </section>
 
         <section class="card step-section hidden" id="step3-food">
-  <h2>3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
-
-  <div class="ott-logo-grid">
-    <button class="option-btn ott-logo-card" data-step="3" data-key="ott" data-value="넷플릭스">
-      <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
-      <span>Netflix</span>
-    </button>
-
-    <button class="option-btn ott-logo-card" data-step="3" data-key="ott" data-value="디즈니+">
-      <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
-      <span>Disney+</span>
-    </button>
-
-    <button class="option-btn ott-logo-card" data-step="3" data-key="ott" data-value="티빙">
-      <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
-      <span>TVING</span>
-    </button>
-
-    <button class="option-btn ott-logo-card" data-step="3" data-key="ott" data-value="웨이브">
-      <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
-      <span>wavve</span>
-    </button>
-  </div>
-</section>
-
-<section class="card step-section hidden" id="step4-food">
-  <h2>4. 어떤 종류의 음식이 끌리시나요?</h2>
-
-  <div class="option-group">
-    <button class="option-btn" data-step="4" data-key="detail" data-value="치킨/피자">치킨/피자</button>
-    <button class="option-btn" data-step="4" data-key="detail" data-value="분식(떡볶이 등)">분식(떡볶이 등)</button>
-    <button class="option-btn" data-step="4" data-key="detail" data-value="한식(국밥/찌개)">한식(국밥/찌개)</button>
-    <button class="option-btn" data-step="4" data-key="detail" data-value="양식(파스타 등)">양식(파스타 등)</button>
-  </div>
-</section>
+          <h2 id="step3FoodTitle">3. 어떤 종류의 음식이 끌리시나요?</h2>
+          <div class="option-group">
+            <button id="food_chicken_pizza" class="option-btn" data-step="3" data-key="detail" data-value="치킨/피자">치킨/피자</button>
+            <button id="food_bunsik" class="option-btn" data-step="3" data-key="detail" data-value="분식(떡볶이 등)">분식(떡볶이 등)</button>
+            <button id="food_korean" class="option-btn" data-step="3" data-key="detail" data-value="한식(국밥/찌개)">한식(국밥/찌개)</button>
+            <button id="food_western" class="option-btn" data-step="3" data-key="detail" data-value="양식(파스타 등)">양식(파스타 등)</button>
+          </div>
+        </section>
 
         <section class="card step-section hidden" id="step4-ott">
-  <h2>4. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
-
-  <div class="ott-logo-grid">
-    <button class="option-btn ott-logo-card" data-step="4" data-key="ott" data-value="넷플릭스">
-      <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
-      <span>Netflix</span>
-    </button>
-
-    <button class="option-btn ott-logo-card" data-step="4" data-key="ott" data-value="디즈니+">
-      <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
-      <span>Disney+</span>
-    </button>
-
-    <button class="option-btn ott-logo-card" data-step="4" data-key="ott" data-value="티빙">
-      <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
-      <span>TVING</span>
-    </button>
-
-    <button class="option-btn ott-logo-card" data-step="4" data-key="ott" data-value="웨이브">
-      <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
-      <span>wavve</span>
-    </button>
-  </div>
-</section>
+          <h2 id="step4OttTitle">4. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
+          <div class="ott-logo-grid">
+            <button class="option-btn ott-logo-card" data-step="4" data-key="selectedOtt" data-value="넷플릭스">
+              <img src="images/netflix.png" alt="넷플릭스" class="ott-icon-img"><span>Netflix</span>
+            </button>
+            <button class="option-btn ott-logo-card" data-step="4" data-key="selectedOtt" data-value="디즈니+">
+              <img src="images/disney.png" alt="디즈니 플러스" class="ott-icon-img"><span>Disney+</span>
+            </button>
+            <button class="option-btn ott-logo-card" data-step="4" data-key="selectedOtt" data-value="티빙">
+              <img src="images/tving.png" alt="티빙" class="ott-icon-img"><span>TVING</span>
+            </button>
+            <button class="option-btn ott-logo-card" data-step="4" data-key="selectedOtt" data-value="웨이브">
+              <img src="images/wavve.png" alt="웨이브" class="ott-icon-img"><span>wavve</span>
+            </button>
+          </div>
+        </section>
 
         <div class="action-area hidden" id="navArea">
           <button id="prevBtn" class="secondary-btn">이전 단계</button>
@@ -169,6 +126,19 @@
       </main>
     </div>
 
+    <div id="langModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 id="langModalTitle" style="margin-bottom: 10px;">언어 설정</h3>
+        <div class="lang-options">
+          <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
+          <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
+        </div>
+        <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
+      </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
