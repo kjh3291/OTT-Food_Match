@@ -26,14 +26,9 @@ const genreIdMap = {
   "애니메이션": 16,
 };
 
-const mealData = convertFoods(meals, "식사");
-const dessertData = convertFoods(desserts, "디저트");
-const fastfoodData = convertFoods(fastfoods, "패스트푸드");
-
-const allFoods = [...mealData, ...dessertData, ...fastfoodData];
-
 let selectedGenre = "전체";
 let currentMovies = [];
+
 
 // ===============================
 // 2. URL 값 가져오기
@@ -180,7 +175,6 @@ async function fetchMoviesFromTMDB(genre) {
       posterPath: movie.poster_path,
       releaseDate: movie.release_date || "개봉일 정보 없음",
       rating: movie.vote_average,
-      genre: genre,
     }));
   } catch (error) {
     console.error("TMDB API 요청 중 오류 발생:", error);
@@ -274,9 +268,7 @@ function closeAllDetailPanels() {
 
 function openMovieDetailPanel(movie, index) {
   const panel = document.getElementById(`movieDetailPanel-${index}`);
-  const categories = getCategoriesFromGenre(movie.genre);
-  const filteredFoods = getFoodsByCategories(categories);
-  const food = recommend(filteredFoods, null);
+  const foodRecommendation = recommendFood(movie);
 
   panel.innerHTML = `
     <div class="selected-movie-box">
@@ -287,7 +279,8 @@ function openMovieDetailPanel(movie, index) {
 
     <div class="food-result-box">
       <h3>🍽 추천 음식</h3>
-      <p><strong>${food.name}</strong></p>
+      <p><strong>${foodRecommendation.name}</strong></p>
+      <p>${foodRecommendation.reason}</p>
     </div>
   `;
 
@@ -299,36 +292,7 @@ function openMovieDetailPanel(movie, index) {
 // 11. 음식 추천 규칙
 // ===============================
 
-// ----------------------
-// 장르 → 카테고리
-// ----------------------
-
-function getCategoriesFromGenre(genre) {
-  switch (genre) {
-    case "액션":
-      return ["패스트푸드", "식사"];
-    case "코미디":
-      return ["식사"];
-    case "드라마":
-      return ["디저트"];
-    case "로맨스":
-      return ["디저트"];
-    case "스릴러":
-      return ["패스트푸드"];
-    case "애니메이션":
-      return ["패스트푸드", "디저트"];
-    default:
-      return ["식사"];
-  }
-}
-
-function getFoodsByCategories(categories) {
-  return allFoods.filter(food =>
-    categories.includes(food.category)
-  );
-}
-
-/*function recommendFood(movie) {
+function recommendFood(movie) {
   let foodRecommendation = {
     name: "치킨 + 콜라",
     reason: "OTT를 보면서 먹기 편하고 대부분의 영화와 무난하게 어울리는 조합입니다.",
@@ -377,7 +341,7 @@ function getFoodsByCategories(categories) {
   }
   return foodRecommendation;
 }
-*/
+
 
 // ===============================
 // 12. 뒤로가기 버튼
