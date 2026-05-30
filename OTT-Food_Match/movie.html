@@ -63,6 +63,33 @@
   </div>
 </div>
 
+
+  <div id="finalResultModal" class="modal-overlay hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content result-modal-content" style="max-width: 400px; width: 90%; background: #fff; padding: 20px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+      <div id="resultCaptureArea" style="padding: 10px; border-radius: 12px; text-align: center;">
+        <h2 id="modalResultTitle" style="color: #ff7a59; margin-bottom: 20px;">✨ 맞춤 추천 결과 ✨</h2>
+        
+        <div style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 12px;">
+          <h3 id="modalMovieHeader" style="margin-bottom: 12px; color: #ff7a59;">🎬 선택한 영화</h3>
+          <img id="modalMoviePoster" src="" alt="Poster" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px;">
+          <strong id="modalMovieTitle" style="display: block; margin-top: 8px; font-size: 1.1rem;"></strong>
+        </div>
+        
+        <div style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee;">
+          <h3 id="modalFoodHeader" style="margin-bottom: 12px; color: #ff7a59;">🍽 추천 음식</h3>
+          <div id="modalFoodEmoji" style="font-size: 3.5rem; margin: 10px 0;">🍕</div>
+          <strong id="modalFoodName" style="font-size: 1.2rem; display: block; margin-bottom: 8px;"></strong>
+          <p id="modalFoodReason" style="font-size: 0.9rem; color: #666;"></p>
+        </div>
+      </div>
+
+      <div class="action-area" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;" data-html2canvas-ignore>
+        <button id="modalShareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
+        <button id="closeFinalResultModal" class="secondary-btn" style="width: 100%;">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script src="config.js"></script> 
   <script src="i18n.js"></script>
