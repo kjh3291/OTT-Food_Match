@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const navArea = document.getElementById("navArea");
-  const prevBtn = document.getElementById("prevBtn"); // 복구됨
+  const prevBtn = document.getElementById("prevBtn"); 
   const nextBtn = document.getElementById("nextBtn");
   const progressBar = document.getElementById("progressBar");
   const progressFill = document.getElementById("progressFill");
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 💡 복구된 기능: 이전 버튼 클릭 처리
+  // 이전 버튼 클릭 처리
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
       if (state.currentStep > 1) {
@@ -72,9 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 💡 복구 및 강화된 UI 업데이트 로직 (화면 숨김/표시 완벽 제어)
+  // UI 업데이트 로직
   function updateUI() {
-    // 먼저 모든 섹션을 숨김 (active 제거, hidden 추가)
     Object.values(steps).forEach(el => {
       if(el) {
         el.classList.remove("active");
@@ -87,13 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const activeStep = state.currentStep === 3 ? (state.primary === "ott" ? "3-ott" : "3-food") : state.currentStep;
     
-    // 현재 단계의 섹션 보이기 (hidden 제거, active 추가)
     if (steps[activeStep]) {
       steps[activeStep].classList.remove("hidden");
       steps[activeStep].classList.add("active");
     }
     
-    // 네비게이션(이전/다음) 영역 처리
     if (state.currentStep === 1) {
       if (navArea) {
         if (state.primary) navArea.classList.remove("hidden");
@@ -106,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (nextBtn) nextBtn.textContent = (state.currentStep === maxSteps) ? t("nextBtnResult") : t("nextBtn");
   }
 
-  // 결과 처리 함수
+  // 💡 결과 처리 함수 (중국어 완벽 지원 패치)
   async function showResult() {
     const wizardForm = document.getElementById("wizardForm");
     if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
@@ -123,17 +120,43 @@ document.addEventListener("DOMContentLoaded", () => {
       const mealKey = mapSituation[state.situation] || "honbab";
       const mealInLang = t("meal_" + mealKey);
       
-      const ottName = state.primary === "ott" ? state.detail : state.selectedOtt;
+      const rawOttName = state.primary === "ott" ? state.detail : state.selectedOtt;
+      
+      // OTT 이름 번역 변환
+      const ottMapEn = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
+      const ottMapZh = { "넷플릭스": "网飞", "디즈니+": "迪士尼+", "티빙": "TVING", "웨이브": "wavve" };
+      const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (ottMapZh[rawOttName] || rawOttName));
 
-      const data = {
-        ottTitle: lang === "ko" ? `${ottName} 추천 콘텐츠` : `Recommended on ${ottName}`,
-        ottGenre: lang === "ko" ? `${state.situation}에 어울리는 추천 장르` : `Genres for ${mealInLang}`,
-        foodName: state.primary === "food" ? state.detail : (lang === "ko" ? "피자 또는 치킨" : "Pizza or Chicken"),
-        foodReason: lang === "ko" ? `${state.situation} 상황에 완벽하게 어울리는 조합입니다.` : `Perfect pairing for ${mealInLang}.`,
-        bestMatchCombo: lang === "ko" ? `현재 상황(${state.situation})을 고려하여 최적의 조합을 추천합니다!` : `Considering your setting (${mealInLang}), we recommend this combo!`
-      };
+      // 선택한 음식 메뉴 번역 변환
+      const foodMap = { "치킨/피자": "food_chicken_pizza", "분식(떡볶이 등)": "food_bunsik", "한식(국밥/찌개)": "food_korean", "양식(파스타 등)": "food_western" };
+      const translatedFood = state.primary === "food" ? t(foodMap[state.detail] || state.detail) : null;
 
-      if (document.getElementById("contentResult")) document.getElementById("contentResult").innerHTML = `<div class="result-item"><strong>📺 ${data.ottTitle}</strong><p>${lang === 'ko' ? '장르/특징' : 'Genre/Info'}: ${data.ottGenre}</p></div>`;
+      let data = {};
+      
+      if (lang === "ko") {
+        data.ottTitle = `${ottName} 추천 콘텐츠`;
+        data.ottGenre = `${state.situation}에 어울리는 추천 장르`;
+        data.foodName = translatedFood || "피자 또는 치킨";
+        data.foodReason = `${state.situation} 상황에 완벽하게 어울리는 조합입니다.`;
+        data.bestMatchCombo = `현재 상황(${state.situation})을 고려하여 최적의 조합을 추천합니다!`;
+        data.genreLabel = "장르/특징";
+      } else if (lang === "zh") {
+        data.ottTitle = `${ottName} 推荐内容`;
+        data.ottGenre = `适合 ${mealInLang} 的推荐类型`;
+        data.foodName = translatedFood || "披萨 或 炸鸡";
+        data.foodReason = `完美契合 ${mealInLang} 场景的绝佳搭配。`;
+        data.bestMatchCombo = `考虑到您当前的场景（${mealInLang}），我们为您推荐此最佳组合！`;
+        data.genreLabel = "类型/特点";
+      } else {
+        data.ottTitle = `Recommended on ${ottName}`;
+        data.ottGenre = `Genres for ${mealInLang}`;
+        data.foodName = translatedFood || "Pizza or Chicken";
+        data.foodReason = `Perfect pairing for ${mealInLang}.`;
+        data.bestMatchCombo = `Considering your setting (${mealInLang}), we recommend this combo!`;
+        data.genreLabel = "Genre/Info";
+      }
+
+      if (document.getElementById("contentResult")) document.getElementById("contentResult").innerHTML = `<div class="result-item"><strong>📺 ${data.ottTitle}</strong><p>${data.genreLabel}: ${data.ottGenre}</p></div>`;
       if (document.getElementById("foodResult")) document.getElementById("foodResult").innerHTML = `<div class="result-item"><strong>🍽️ ${data.foodName}</strong><p>${data.foodReason}</p></div>`;
       if (document.getElementById("bestMatchText")) document.getElementById("bestMatchText").textContent = data.bestMatchCombo;
 
@@ -187,7 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const darkModeToggle = document.getElementById("darkModeToggle");
   if (localStorage.getItem("theme") === "dark") {
      document.body.classList.add("dark-mode");
-     if (darkModeToggle) darkModeToggle.textContent = getLang() === "ko" ? "☀️ 라이트 모드" : "☀️ Light Mode";
   }
 
   if (darkModeToggle) {
@@ -216,3 +238,4 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
   }
 });
+
