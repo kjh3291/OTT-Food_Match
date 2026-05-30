@@ -18,7 +18,8 @@ let currentMovies = [];
 
 const urlParams = new URLSearchParams(window.location.search);
 const ottKey = urlParams.get("ott");
-const selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "";
+// 💡 파라미터가 없으면 '혼밥'을 기본값으로 설정합니다.
+let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
 
 const moviePageTitle = document.getElementById("moviePageTitle");
 const moviePageInfo = document.getElementById("moviePageInfo");
@@ -83,6 +84,24 @@ function getGenreKey(genre) {
   const map = { "전체": "all", "액션": "action", "코미디": "comedy", "드라마": "drama", "로맨스": "romance", "스릴러": "thriller", "애니메이션": "animation" };
   return map[genre] || "all";
 }
+
+// 💡 식사 상황 선택 버튼 이벤트 (ott.js 기능 통합)
+const mealButtons = document.querySelectorAll(".meal-btn");
+mealButtons.forEach(btn => {
+  // 초기 상태 반영
+  if (btn.dataset.value === selectedMeal) {
+    btn.classList.add("selected");
+  }
+
+  btn.addEventListener("click", () => {
+    mealButtons.forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    selectedMeal = btn.dataset.value;
+    
+    // 버튼 클릭 즉시 상단 텍스트(식사 상황) 업데이트
+    applyMovieLanguage();
+  });
+});
 
 genreTabs.forEach((tab) => {
   tab.addEventListener("click", async () => {
@@ -163,7 +182,6 @@ function renderMovies(movies) {
       </div>`;
   }).join("");
 
-  // 💡 클릭 이벤트 직접 바인딩
   document.querySelectorAll(".movie-card").forEach((card) => {
     card.addEventListener("click", () => {
       const idx = Number(card.dataset.index);
@@ -174,17 +192,15 @@ function renderMovies(movies) {
 
 function showFinalResultModal(movie) {
   const modal = document.getElementById("finalResultModal");
-  if (!modal) return; // 팝업창 뼈대가 없으면 동작을 멈춤
+  if (!modal) return;
 
   const lang = localStorage.getItem("lang") || "ko";
   const foodRec = recommendFood(selectedGenre);
   
-  // 텍스트 매핑
   document.getElementById("modalResultTitle").textContent = t("modalResultTitle") || "✨ 맞춤 추천 결과 ✨";
   document.getElementById("modalMovieHeader").textContent = t("modalMovieHeader") || "🎬 선택한 영화";
   document.getElementById("modalFoodHeader").textContent = t("modalFoodHeader") || "🍽 추천 음식";
 
-  // 영화 정보 세팅
   const posterEl = document.getElementById("modalMoviePoster");
   if (movie.posterPath) {
      posterEl.src = `https://image.tmdb.org/t/p/w300${movie.posterPath}`;
@@ -194,7 +210,6 @@ function showFinalResultModal(movie) {
   }
   document.getElementById("modalMovieTitle").textContent = movie.title;
   
-  // 음식 추천 아이콘 자동 분기
   let emoji = "🍽️";
   const fName = foodRec[lang].name;
   if (fName.includes("치킨") || fName.includes("Chicken") || fName.includes("炸鸡") || fName.includes("チキン")) emoji = "🍗";
@@ -204,17 +219,14 @@ function showFinalResultModal(movie) {
   else if (fName.includes("파스타") || fName.includes("Pasta") || fName.includes("意面") || fName.includes("パスタ")) emoji = "🍝";
   else if (fName.includes("햄버거") || fName.includes("Burger") || fName.includes("汉堡") || fName.includes("ハンバーガー")) emoji = "🍔";
 
-  // 음식 정보 세팅
   document.getElementById("modalFoodEmoji").textContent = emoji;
   document.getElementById("modalFoodName").textContent = foodRec[lang].name;
   document.getElementById("modalFoodReason").textContent = foodRec[lang].reason;
 
-  // 팝업창 띄우기
   modal.classList.remove("hidden");
   modal.style.display = "flex"; 
 }
 
-// 팝업창 닫기 이벤트
 const closeFinalResultModal = document.getElementById("closeFinalResultModal");
 if (closeFinalResultModal) {
   closeFinalResultModal.addEventListener("click", () => {
@@ -224,7 +236,6 @@ if (closeFinalResultModal) {
   });
 }
 
-// 결과 공유 버튼 이벤트
 const modalShareBtn = document.getElementById("modalShareBtn");
 if (modalShareBtn) {
   modalShareBtn.addEventListener("click", async () => {
@@ -282,4 +293,5 @@ if (settingBtn && settingPopup) {
 
 applyMovieLanguage();
 loadMoviesByGenre(selectedGenre);
+
 

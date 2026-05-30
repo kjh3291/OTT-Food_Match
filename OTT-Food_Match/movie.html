@@ -22,6 +22,18 @@
     </header>
 
     <main>
+      <section class="card" style="margin-bottom: 16px;">
+        <h2 id="step2Title">2. 현재 식사 상황은 어떠신가요?</h2>
+        <div class="option-group" id="mealOptions">
+          <button class="option-btn meal-btn" data-value="혼밥" id="meal_honbab">혼밥</button>
+          <button class="option-btn meal-btn" data-value="야식" id="meal_yasik">야식</button>
+          <button class="option-btn meal-btn" data-value="친구와 함께" id="meal_friends">친구와 함께</button>
+          <button class="option-btn meal-btn" data-value="연인과 함께" id="meal_couple">연인과 함께</button>
+          <button class="option-btn meal-btn" data-value="간단한 식사" id="meal_light">간단한 식사</button>
+          <button class="option-btn meal-btn" data-value="든든한 식사" id="meal_heavy">든든한 식사</button>
+        </div>
+      </section>
+
       <section class="card movie-top-card">
         <h2 id="genreTitle">장르 카테고리</h2>
         <div class="genre-tab-group" id="genreTabGroup">
@@ -51,18 +63,17 @@
   </div>
 
   <div id="langModal" class="modal-overlay">
-  <div class="modal-content">
-    <h3 id="langModalTitle" style="margin-bottom: 10px;">언어 설정</h3>
-    <div class="lang-options">
-      <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
-      <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
-      <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
-      <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
+    <div class="modal-content">
+      <h3 id="langModalTitle" style="margin-bottom: 10px;">언어 설정</h3>
+      <div class="lang-options">
+        <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
+        <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
+        <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
+        <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
+      </div>
+      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
     </div>
-    <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
   </div>
-</div>
-
 
   <div id="finalResultModal" class="modal-overlay hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
     <div class="modal-content result-modal-content" style="max-width: 400px; width: 90%; background: #fff; padding: 20px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
@@ -91,10 +102,9 @@
   </div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script src="config.js"></script> 
+  <script src="config.js"></script>
   <script src="i18n.js"></script>
-  <script src="food.js"></script>
-  <script src="food-algorithm.js"></script>
   <script src="movie.js"></script>
 </body>
 </html>
+
