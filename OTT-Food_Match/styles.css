@@ -931,3 +931,99 @@ body.dark-mode .recommend-divider {
     margin: 0 auto;
   }
 }
+
+/* ===============================
+   영화 정렬 / 더보기
+================================ */
+
+.movie-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sort-area {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sort-menu-btn {
+  border: none;
+  background: #ff7a59;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(255, 122, 89, 0.25);
+}
+
+.sort-menu {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  width: 120px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  z-index: 999;
+}
+
+.sort-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+.sort-option:hover {
+  background: #f5f5f5;
+}
+
+.load-more-area {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.load-more-area .primary-btn {
+  max-width: 220px;
+}
+
+body.dark-mode .sort-menu {
+  background: #222222;
+}
+
+body.dark-mode .sort-option {
+  color: #eeeeee;
+}
+
+body.dark-mode .sort-option:hover {
+  background: #333333;
+}
+
+@media (max-width: 600px) {
+  .movie-title-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sort-area {
+    align-self: center;
+  }
+
+  .sort-menu {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
