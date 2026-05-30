@@ -47,7 +47,6 @@ const i18nData = {
     noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.",
     noMoviesDesc: "Try selecting another genre or changing the OTT platform."
   },
-  // 💡 추가된 중국어(간체) 데이터 팩
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
     langMenuBtn: "🌐 语言设置", langModalTitle: "语言设置", closeLangModal: "关闭",
@@ -69,6 +68,28 @@ const i18nData = {
     releaseDate: "上映日期", rating: "评分", noReleaseInfo: "暂无上映信息", noRatingInfo: "暂无评分",
     noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。",
     noMoviesDesc: "尝试选择其他类型或更换 OTT 平台。"
+  },
+  ja: {
+    settingBtn: "⚙ 設定", settingTitle: "設定", 
+    langMenuBtn: "🌐 言語設定", langModalTitle: "言語設定", closeLangModal: "閉じる",
+    prevBtn: "前へ", nextBtn: "次へ", nextBtnResult: "おすすめ結果を見る ✨",
+    alert_primary: "基準を選択してください。", alert_situation: "現在の状況を選択してください。", alert_detail: "詳細項目を選択してください。",
+    alert_ott: "正しいOTTを選択してください。", alert_error: "結果の読み込み中に問題が発生しました。", alert_copied: "結果が画像として保存されました！",
+    mainTitle: "🍿 何見る？何食べる？", mainDesc: "OTTと食べ物の組み合わせを一度におすすめするサービス",
+    step1Title: "1. どちらを先に選びますか？", step1Opt1: "📺 コンテンツ(OTT)基準", step1Opt2: "🍕 食べ物基準",
+    step2Title: "2. 現在の食事の状況は？",
+    meal_honbab: "一人ご飯", meal_yasik: "夜食", meal_friends: "友達と一緒に", meal_couple: "恋人と一緒に", meal_light: "軽食", meal_heavy: "がっつり食事",
+    step3OttTitle: "3. ご利用のOTTプラットフォームを教えてください。", step3FoodTitle: "3. どんな食べ物が食べたいですか？", step4OttTitle: "4. ご利用のOTTプラットフォームを教えてください。",
+    food_chicken_pizza: "チキン/ピザ", food_bunsik: "粉食(トッポッキなど)", food_korean: "韓国料理", food_western: "洋食",
+    loadingTitle: "ぴったりな組み合わせを探しています...", loadingDesc: "少々お待ちください 🍿",
+    resultTitle: "✨ おすすめの結果 ✨", resContentTitle: "🎬 おすすめコンテンツ", resFoodTitle: "🍕 おすすめの食べ物", resComboTitle: "💡 ベストマッチコンボ",
+    shareBtn: "結果をシェアする 🔗", resetBtn: "最初からやり直す",
+    genreTitle: "ジャンルカテゴリー", tab_all: "すべて", tab_action: "アクション", tab_comedy: "コメディ", tab_drama: "ドラマ", tab_romance: "ロマンス", tab_thriller: "スリラー", tab_animation: "アニメ",
+    clickPosterInfo: "ポスターをクリックすると、説明とおすすめの食べ物が表示されます。", backToMainBtn: "メインに戻る",
+    loadingText: "映画リストを読み込んでいます...", movieDescHeader: "🎬 映画の説明", foodRecHeader: "🍽 おすすめの食べ物",
+    releaseDate: "公開日", rating: "評価", noReleaseInfo: "公開日情報なし", noRatingInfo: "情報なし",
+    noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。",
+    noMoviesDesc: "別のジャンルを選択するか、OTTプラットフォームを変更してみてください。"
   }
 };
 
@@ -85,9 +106,9 @@ function applyLanguage() {
   const darkModeToggle = document.getElementById("darkModeToggle");
   if (darkModeToggle) {
     if (document.body.classList.contains("dark-mode")) {
-      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : "☀️ 浅色模式");
+      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : "☀️ ライトモード"));
     } else {
-      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : "🌙 深色模式");
+      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : "🌙 ダークモード"));
     }
   }
   document.dispatchEvent(new Event("languageChanged"));
