@@ -241,16 +241,22 @@ function renderMovies(movies) {
   const movieCards = document.querySelectorAll(".movie-card");
 
   movieCards.forEach((card) => {
-    const posterArea = card.querySelector(".movie-poster-area");
+  const posterArea = card.querySelector(".movie-poster-area");
 
-    posterArea.addEventListener("click", () => {
-      const selectedIndex = Number(card.dataset.index);
-      const selectedMovie = movies[selectedIndex];
+  posterArea.addEventListener("click", () => {
+    const selectedIndex = Number(card.dataset.index);
+    const selectedMovie = movies[selectedIndex];
 
-      closeAllDetailPanels();
-      openMovieDetailPanel(selectedMovie, selectedIndex);
-    });
+    const mealParam = encodeURIComponent(selectedMeal);
+    const genreParam = encodeURIComponent(selectedMovie.genre || selectedGenre);
+
+    window.location.href =
+      `recommend.html?movieId=${selectedMovie.id}` +
+      `&ott=${ottKey}` +
+      `&meal=${mealParam}` +
+      `&genre=${genreParam}`;
   });
+});
 }
 
 
