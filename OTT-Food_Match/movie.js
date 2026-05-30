@@ -27,8 +27,13 @@ const loadingText = document.getElementById("loadingText");
 const movieList = document.getElementById("movieList");
 const backToMainBtn = document.getElementById("backToMainBtn");
 
+// 💡 OTT 키가 없을 때의 경고창 다국어 패치
 if (!ottKey) {
-  alert("OTT 정보가 없습니다. 메인 화면에서 OTT를 다시 선택해주세요.");
+  const lang = localStorage.getItem("lang") || "ko";
+  const msg = lang === "ko" ? "OTT 정보가 없습니다. 메인 화면에서 OTT를 다시 선택해주세요." :
+             (lang === "en" ? "No OTT info found. Please select an OTT on the main screen." :
+                              "未找到 OTT 信息，请在主页重新选择 OTT 平台。");
+  alert(msg);
   window.location.href = "main.html";
 }
 
@@ -184,7 +189,6 @@ function openMovieDetailPanel(movie, index) {
   panel.classList.remove("hidden");
 }
 
-// 💡 중국어(zh) 메뉴 및 추천 사유 데이터 세트 확장 추가
 function recommendFood(genre) {
   const foodRules = {
     "전체": {
@@ -230,7 +234,6 @@ if (backToMainBtn) {
   backToMainBtn.addEventListener("click", () => { window.location.href = "main.html"; });
 }
 
-// 🌐 i18n 모듈로부터 언어 변경 수신 시 전면 리렌더링
 document.addEventListener("languageChanged", () => {
   applyMovieLanguage();
   renderMovies(currentMovies);
