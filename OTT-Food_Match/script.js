@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. 상태 관리 객체
   const state = { currentStep: 1, primary: "", situation: "", detail: "", selectedOtt: "" };
 
   const steps = { 
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const progressBar = document.getElementById("progressBar");
   const progressFill = document.getElementById("progressFill");
 
-  // 버튼 이벤트 등록
   document.querySelectorAll(".option-btn").forEach((button) => {
     button.addEventListener("click", () => {
       const key = button.dataset.key;
@@ -39,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 다음 버튼 클릭 처리
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
       if (state.currentStep === 1 && !state.primary) return showCustomAlert(t("alert_primary"));
@@ -62,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 이전 버튼 클릭 처리
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
       if (state.currentStep > 1) {
@@ -72,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // UI 업데이트 로직
   function updateUI() {
     Object.values(steps).forEach(el => {
       if(el) {
@@ -103,7 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (nextBtn) nextBtn.textContent = (state.currentStep === maxSteps) ? t("nextBtnResult") : t("nextBtn");
   }
 
-  // 💡 결과 처리 함수 (중국어 완벽 지원 패치)
   async function showResult() {
     const wizardForm = document.getElementById("wizardForm");
     if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
@@ -122,12 +116,11 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const rawOttName = state.primary === "ott" ? state.detail : state.selectedOtt;
       
-      // OTT 이름 번역 변환
       const ottMapEn = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
       const ottMapZh = { "넷플릭스": "网飞", "디즈니+": "迪士尼+", "티빙": "TVING", "웨이브": "wavve" };
-      const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (ottMapZh[rawOttName] || rawOttName));
+      const ottMapJa = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
+      const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (lang === "zh" ? (ottMapZh[rawOttName] || rawOttName) : (ottMapJa[rawOttName] || rawOttName)));
 
-      // 선택한 음식 메뉴 번역 변환
       const foodMap = { "치킨/피자": "food_chicken_pizza", "분식(떡볶이 등)": "food_bunsik", "한식(국밥/찌개)": "food_korean", "양식(파스타 등)": "food_western" };
       const translatedFood = state.primary === "food" ? t(foodMap[state.detail] || state.detail) : null;
 
@@ -147,6 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
         data.foodReason = `完美契合 ${mealInLang} 场景的绝佳搭配。`;
         data.bestMatchCombo = `考虑到您当前的场景（${mealInLang}），我们为您推荐此最佳组合！`;
         data.genreLabel = "类型/特点";
+      } else if (lang === "ja") {
+        data.ottTitle = `${ottName} おすすめコンテンツ`;
+        data.ottGenre = `${mealInLang} にぴったりなジャンル`;
+        data.foodName = translatedFood || "ピザ または チキン";
+        data.foodReason = `${mealInLang} の状況に完璧に合う組み合わせです。`;
+        data.bestMatchCombo = `現在の状況（${mealInLang}）を考慮して、最適な組み合わせをおすすめします！`;
+        data.genreLabel = "ジャンル/特徴";
       } else {
         data.ottTitle = `Recommended on ${ottName}`;
         data.ottGenre = `Genres for ${mealInLang}`;
@@ -170,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 초기화 및 공유 기능
   const resetBtn = document.getElementById("resetBtn");
   if (resetBtn) resetBtn.addEventListener("click", () => location.reload());
 
@@ -197,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 설정 팝업 제어
   const settingBtn = document.getElementById("settingBtn");
   const settingPopup = document.getElementById("settingPopup");
   if (settingBtn && settingPopup) {
@@ -206,7 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
     settingPopup.addEventListener("click", (e) => e.stopPropagation());
   }
 
-  // 다크모드 제어
   const darkModeToggle = document.getElementById("darkModeToggle");
   if (localStorage.getItem("theme") === "dark") {
      document.body.classList.add("dark-mode");
@@ -222,7 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("languageChanged", updateUI);
 
-  // 커스텀 토스트 알림창
   function showCustomAlert(message) {
     let toastContainer = document.getElementById("toast-container");
     if (!toastContainer) {
