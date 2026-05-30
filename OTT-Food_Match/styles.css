@@ -856,3 +856,78 @@ body.dark-mode .option-btn.selected span {
   justify-content: center !important;
   gap: 12px;
 }
+
+/* ===============================
+   추천 상세 페이지
+================================ */
+
+.recommend-detail-card {
+  overflow: hidden;
+}
+
+.recommend-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.recommend-poster-box {
+  width: 100%;
+}
+
+.recommend-poster {
+  width: 100%;
+  border-radius: 18px;
+  display: block;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.recommend-content-box h2 {
+  text-align: left !important;
+  margin-bottom: 12px;
+}
+
+.recommend-content-box h3 {
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #ff7a59;
+}
+
+.recommend-content-box p {
+  color: #555;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  text-align: left !important;
+}
+
+.recommend-divider {
+  border: none;
+  border-top: 1px solid #eeeeee;
+  margin: 18px 0;
+}
+
+.reaction-area {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+body.dark-mode .recommend-content-box p {
+  color: #dddddd !important;
+}
+
+body.dark-mode .recommend-divider {
+  border-top-color: #333333;
+}
+
+@media (max-width: 700px) {
+  .recommend-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .recommend-poster {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+}
