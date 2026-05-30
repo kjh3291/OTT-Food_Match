@@ -1,7 +1,6 @@
 // ===============================
 // 1. 기본 설정 및 데이터 매핑
 // ===============================
-
 const ottNameMap = { netflix: "넷플릭스", disney: "디즈니+", tving: "티빙", wavve: "웨이브" };
 const ottNameMapEn = { netflix: "Netflix", disney: "Disney+", tving: "TVING", wavve: "wavve" };
 const ottNameMapZh = { netflix: "网飞", disney: "迪士尼+", tving: "TVING", wavve: "wavve" };
@@ -41,7 +40,6 @@ if (!ottKey) {
 
 function applyMovieLanguage() {
   const lang = localStorage.getItem("lang") || "ko";
-  
   if (typeof applyLanguage === "function") applyLanguage();
 
   let ottDisplay = ottNameMap[ottKey];
@@ -99,7 +97,7 @@ genreTabs.forEach((tab) => {
 async function loadMoviesByGenre(genre) {
   if (loadingText) {
     loadingText.classList.remove("hidden");
-    loadingText.textContent = t("loadingText");
+    loadingText.textContent = t("loadingText") || "영화 목록을 불러오는 중입니다...";
   }
   movieList.innerHTML = "";
   currentMovies = await fetchMoviesFromTMDB(genre);
@@ -114,16 +112,11 @@ async function fetchMoviesFromTMDB(genre) {
   if (!providerId) return [];
   const genreId = genreIdMap[genre];
 
-  // 💡 [핵심 패치 1] 설정된 언어에 맞춰서 TMDB 영화 데이터베이스에 요청할 언어 코드 분기
   const lang = localStorage.getItem("lang") || "ko";
-  let tmdbLang = "ko-KR"; // 기본은 한국어
-  if (lang === "en") tmdbLang = "en-US";
-  else if (lang === "zh") tmdbLang = "zh-CN";
-  else if (lang === "ja") tmdbLang = "ja-JP"; // 일본어 선택 시 ja-JP로 데이터 요청
+  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
+  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
 
-  // 💡 language=${tmdbLang} 로 동적 요청
   let url = `${baseUrl}/discover/movie?api_key=${apiKey}&language=${tmdbLang}&region=KR&watch_region=KR&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&sort_by=popularity.desc&include_adult=false&page=1`;
-  
   if (genre !== "전체") url += `&with_genres=${genreId}`;
 
   try {
@@ -147,114 +140,126 @@ function renderMovies(movies) {
   if (loadingText) loadingText.classList.add("hidden");
 
   if (!movies || movies.length === 0) {
-    movieList.innerHTML = `
-      <div class="result-card">
-        <p><strong>${t("noMoviesTitle")}</strong></p>
-        <p style="color:#666; margin-top:8px;">${t("noMoviesDesc")}</p>
-      </div>`;
+    movieList.innerHTML = `<div class="result-card"><p><strong>${t("noMoviesTitle") || "조건에 맞는 영화가 없습니다."}</strong></p></div>`;
     return;
   }
 
   movieList.innerHTML = movies.slice(0, 12).map((movie, index) => {
     const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w300${movie.posterPath}` : "";
-    const titleText = movie.title !== "No Title" ? movie.title : t("noTitle");
-    const releaseText = movie.releaseDate ? movie.releaseDate : t("noReleaseInfo");
-    const ratingText = movie.rating ? movie.rating.toFixed(1) : t("noRatingInfo");
+    const titleText = movie.title !== "No Title" ? movie.title : (t("noTitle") || "제목 없음");
+    const releaseText = movie.releaseDate ? movie.releaseDate : (t("noReleaseInfo") || "정보 없음");
+    const ratingText = movie.rating ? movie.rating.toFixed(1) : (t("noRatingInfo") || "정보 없음");
 
     return `
-      <div class="movie-card" data-index="${index}">
+      <div class="movie-card" data-index="${index}" style="cursor: pointer;">
         <div class="movie-poster-area">
           ${posterUrl ? `<img src="${posterUrl}" alt="Poster" class="movie-poster">` : `<div class="no-poster">No Image</div>`}
         </div>
         <div class="movie-info">
           <strong>${titleText}</strong>
-          <p>${t("releaseDate")}: ${releaseText}</p>
-          <p>${t("rating")}: ${ratingText}</p>
+          <p>${t("releaseDate") || "개봉일"}: ${releaseText}</p>
+          <p>${t("rating") || "평점"}: ${ratingText}</p>
         </div>
-        <div class="movie-detail-panel hidden" id="movieDetailPanel-${index}"></div>
       </div>`;
   }).join("");
 
+  // 💡 클릭 이벤트 직접 바인딩
   document.querySelectorAll(".movie-card").forEach((card) => {
-    card.querySelector(".movie-poster-area").addEventListener("click", () => {
+    card.addEventListener("click", () => {
       const idx = Number(card.dataset.index);
-      closeAllDetailPanels();
-      openMovieDetailPanel(movies[idx], idx);
+      showFinalResultModal(currentMovies[idx]);
     });
   });
 }
 
-function closeAllDetailPanels() {
-  document.querySelectorAll(".movie-detail-panel").forEach((panel) => {
-    panel.classList.add("hidden");
-    panel.innerHTML = "";
+function showFinalResultModal(movie) {
+  const modal = document.getElementById("finalResultModal");
+  if (!modal) return; // 팝업창 뼈대가 없으면 동작을 멈춤
+
+  const lang = localStorage.getItem("lang") || "ko";
+  const foodRec = recommendFood(selectedGenre);
+  
+  // 텍스트 매핑
+  document.getElementById("modalResultTitle").textContent = t("modalResultTitle") || "✨ 맞춤 추천 결과 ✨";
+  document.getElementById("modalMovieHeader").textContent = t("modalMovieHeader") || "🎬 선택한 영화";
+  document.getElementById("modalFoodHeader").textContent = t("modalFoodHeader") || "🍽 추천 음식";
+
+  // 영화 정보 세팅
+  const posterEl = document.getElementById("modalMoviePoster");
+  if (movie.posterPath) {
+     posterEl.src = `https://image.tmdb.org/t/p/w300${movie.posterPath}`;
+     posterEl.style.display = "block";
+  } else {
+     posterEl.style.display = "none";
+  }
+  document.getElementById("modalMovieTitle").textContent = movie.title;
+  
+  // 음식 추천 아이콘 자동 분기
+  let emoji = "🍽️";
+  const fName = foodRec[lang].name;
+  if (fName.includes("치킨") || fName.includes("Chicken") || fName.includes("炸鸡") || fName.includes("チキン")) emoji = "🍗";
+  else if (fName.includes("피자") || fName.includes("Pizza") || fName.includes("披萨") || fName.includes("ピザ")) emoji = "🍕";
+  else if (fName.includes("떡볶이") || fName.includes("Tteokbokki") || fName.includes("辣炒年糕") || fName.includes("トッポッキ")) emoji = "🥘";
+  else if (fName.includes("우동") || fName.includes("Noodles") || fName.includes("乌冬面") || fName.includes("うどん")) emoji = "🍜";
+  else if (fName.includes("파스타") || fName.includes("Pasta") || fName.includes("意面") || fName.includes("パスタ")) emoji = "🍝";
+  else if (fName.includes("햄버거") || fName.includes("Burger") || fName.includes("汉堡") || fName.includes("ハンバーガー")) emoji = "🍔";
+
+  // 음식 정보 세팅
+  document.getElementById("modalFoodEmoji").textContent = emoji;
+  document.getElementById("modalFoodName").textContent = foodRec[lang].name;
+  document.getElementById("modalFoodReason").textContent = foodRec[lang].reason;
+
+  // 팝업창 띄우기
+  modal.classList.remove("hidden");
+  modal.style.display = "flex"; 
+}
+
+// 팝업창 닫기 이벤트
+const closeFinalResultModal = document.getElementById("closeFinalResultModal");
+if (closeFinalResultModal) {
+  closeFinalResultModal.addEventListener("click", () => {
+    const modal = document.getElementById("finalResultModal");
+    modal.classList.add("hidden");
+    modal.style.display = "none";
   });
 }
 
-function openMovieDetailPanel(movie, index) {
-  const panel = document.getElementById(`movieDetailPanel-${index}`);
-  const foodRecommendation = recommendFood(selectedGenre);
-  const lang = localStorage.getItem("lang") || "ko";
-  const overviewText = movie.overview ? movie.overview : t("noOverview");
-
-  panel.innerHTML = `
-    <div class="selected-movie-box">
-      <h3>${t("movieDescHeader")}</h3>
-      <p><strong>${movie.title}</strong></p>
-      <p>${overviewText}</p>
-    </div>
-    <div class="food-result-box">
-      <h3>${t("foodRecHeader")}</h3>
-      <p><strong>${foodRecommendation[lang].name}</strong></p>
-      <p>${foodRecommendation[lang].reason}</p>
-    </div>`;
-  panel.classList.remove("hidden");
+// 결과 공유 버튼 이벤트
+const modalShareBtn = document.getElementById("modalShareBtn");
+if (modalShareBtn) {
+  modalShareBtn.addEventListener("click", async () => {
+    const captureArea = document.getElementById("resultCaptureArea");
+    const isDark = document.body.classList.contains("dark-mode");
+    captureArea.style.backgroundColor = isDark ? "#222222" : "#ffffff";
+    
+    try {
+      if (typeof html2canvas !== "undefined") {
+        const canvas = await html2canvas(captureArea, { scale: 2, useCORS: true });
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "Movie_Food_Result.png";
+        link.click();
+        alert(t("alert_copied") || "결과가 이미지로 저장되었습니다!");
+      } else {
+        alert("html2canvas 라이브러리가 로드되지 않았습니다.");
+      }
+    } catch (error) {
+      alert("이미지 저장 중 오류가 발생했습니다.");
+    } finally {
+      captureArea.style.backgroundColor = "transparent";
+    }
+  });
 }
 
 function recommendFood(genre) {
   const foodRules = {
-    "전체": {
-      ko: { name: "치킨 + 콜라", reason: "OTT를 보면서 먹기 편하고 대부분의 영화와 무난하게 어울리는 조합입니다." },
-      en: { name: "Chicken + Cola", reason: "Easy to eat while watching OTT and pairs well with most movies overall." },
-      zh: { name: "炸鸡 + 可乐", reason: "边看视频边吃很方便，和绝大多数电影都很百搭。" },
-      ja: { name: "チキン + コーラ", reason: "OTTを見ながら食べやすく、ほとんどの映画に無難に合う組み合わせです。" }
-    },
-    "스릴러": {
-      ko: { name: "피자 + 콜라", reason: "스릴러 영화는 긴장감이 강하기 때문에 화면에 집중하면서 간단히 집어 먹을 수 있는 피자가 잘 어울립니다." },
-      en: { name: "Pizza + Cola", reason: "Since thriller movies are highly intense, pizza is perfect to grab easily while staying focused on the screen." },
-      zh: { name: "披萨 + 可乐", reason: "惊悚片节奏紧张，最适合边盯着屏幕边随手拿着吃的披萨。" },
-      ja: { name: "ピザ + コーラ", reason: "スリラー映画は緊張感が強いため、画面に集中しながら簡単に手で食べられるピザがよく合います。" }
-    },
-    "코미디": {
-      ko: { name: "떡볶이 + 튀김", reason: "코미디 영화의 가볍고 즐거운 분위기에는 부담 없이 먹기 좋은 분식 조합이 잘 어울립니다." },
-      en: { name: "Tteokbokki + Fried Sides", reason: "The light and fun mood of comedy movies pairs perfectly with casual Korean street food." },
-      zh: { name: "辣炒年糕 + 炸物", reason: "喜剧片轻松愉快的氛围，与无负担、易入口的韩式街头小吃是绝配。" },
-      ja: { name: "トッポッキ + 揚げ物", reason: "コメディ映画の軽くて楽しい雰囲気には、気軽に食べられる粉食の組み合わせがよく合います。" }
-    },
-    "드라마": {
-      ko: { name: "우동", reason: "드라마 영화의 잔잔한 감정선과 따뜻한 국물 음식이 잘 어울립니다." },
-      en: { name: "Udon Noodles", reason: "The calm emotional storyline of drama movies pairs beautifully with warm, soothing noodle soup." },
-      zh: { name: "乌冬面", reason: "剧情片细腻动人的情感路线，与温暖、治愈的汤面非常契合。" },
-      ja: { name: "うどん", reason: "ドラマ映画の穏やかな感情線と温かいスープ料理がよく合います。" }
-    },
-    "로맨스": {
-      ko: { name: "파스타 + 샐러드", reason: "로맨스 영화의 부드러운 분위기에는 깔끔하고 분위기 있는 음식이 잘 어울립니다." },
-      en: { name: "Pasta + Salad", reason: "The sweet and gentle mood of romance movies matches well with elegant, clean dishes." },
-      zh: { name: "意面 + 沙拉", reason: "爱情片浪漫温柔的氛围，适合搭配精致、有情调的料理。" },
-      ja: { name: "パスタ + サラダ", reason: "ロマンス映画の柔らかい雰囲気には、すっきりとした雰囲気のある料理がよく合います。" }
-    },
-    "액션": {
-      ko: { name: "치킨 + 감자튀김", reason: "액션 영화의 빠르고 강한 분위기에는 든든하고 자극적인 음식이 잘 어울립니다." },
-      en: { name: "Chicken + French Fries", reason: "The fast and powerful vibe of action movies pairs great with satisfying and savory foods." },
-      zh: { name: "炸鸡 + 炸薯条", reason: "动作片节奏快、冲击力强，最适合搭配管饱且重口味的高热量美食。" },
-      ja: { name: "チキン + フライドポテト", reason: "アクション映画の速くて力強い雰囲気には、ボリュームたっぷりで刺激的な食べ物がよく合います。" }
-    },
-    "애니메이션": {
-      ko: { name: "햄버거 세트", reason: "애니메이션은 편하게 보기 좋은 경우가 많아서 간단하고 대중적인 햄버거 세트가 잘 어울립니다." },
-      en: { name: "Burger Combo", reason: "Animations are usually easy to enjoy, making a simple and popular burger set an excellent choice." },
-      zh: { name: "汉堡套餐", reason: "看动画片通常非常放松，搭配简单且大众化的汉堡套餐是个极佳的选择。" },
-      ja: { name: "ハンバーガーセット", reason: "アニメはリラックスして見やすいことが多いので、シンプルでポピュラーなハンバーガーセットがよく合います。" }
-    }
+    "전체": { ko: { name: "치킨 + 콜라", reason: "OTT를 보면서 먹기 편하고 대부분의 영화와 무난하게 어울리는 조합입니다." }, en: { name: "Chicken + Cola", reason: "Easy to eat while watching OTT and pairs well with most movies overall." }, zh: { name: "炸鸡 + 可乐", reason: "边看视频边吃很方便，和绝大多数电影都很百搭。" }, ja: { name: "チキン + コーラ", reason: "OTTを見ながら食べやすく、ほとんどの映画に無難に合う組み合わせです。" } },
+    "스릴러": { ko: { name: "피자 + 콜라", reason: "스릴러 영화는 긴장감이 강하기 때문에 화면에 집중하면서 간단히 집어 먹을 수 있는 피자가 잘 어울립니다." }, en: { name: "Pizza + Cola", reason: "Since thriller movies are highly intense, pizza is perfect to grab easily while staying focused on the screen." }, zh: { name: "披萨 + 可乐", reason: "惊悚片节奏紧张，最适合边盯着屏幕边随手拿着吃的披萨。" }, ja: { name: "ピザ + コーラ", reason: "スリラー映画は緊張感が強いため、画面に集中しながら簡単に手で食べられるピザがよく合います。" } },
+    "코미디": { ko: { name: "떡볶이 + 튀김", reason: "코미디 영화의 가볍고 즐거운 분위기에는 부담 없이 먹기 좋은 분식 조합이 잘 어울립니다." }, en: { name: "Tteokbokki + Fried Sides", reason: "The light and fun mood of comedy movies pairs perfectly with casual Korean street food." }, zh: { name: "辣炒年糕 + 炸物", reason: "喜剧片轻松愉快的氛围，与无负担、易入口的韩式街头小吃是绝配。" }, ja: { name: "トッポッキ + 揚げ物", reason: "コメディ映画の軽くて楽しい雰囲気には、気軽に食べられる粉食の組み合わせがよく合います。" } },
+    "드라마": { ko: { name: "우동", reason: "드라마 영화의 잔잔한 감정선과 따뜻한 국물 음식이 잘 어울립니다." }, en: { name: "Udon Noodles", reason: "The calm emotional storyline of drama movies pairs beautifully with warm, soothing noodle soup." }, zh: { name: "乌冬面", reason: "剧情片细腻动人的情感路线，与温暖、治愈的汤面非常契合。" }, ja: { name: "うどん", reason: "ドラマ映画の穏やかな感情線と温かいスープ料理がよく合います。" } },
+    "로맨스": { ko: { name: "파스타 + 샐러드", reason: "로맨스 영화의 부드러운 분위기에는 깔끔하고 분위기 있는 음식이 잘 어울립니다." }, en: { name: "Pasta + Salad", reason: "The sweet and gentle mood of romance movies matches well with elegant, clean dishes." }, zh: { name: "意面 + 沙拉", reason: "爱情片浪漫温柔的氛围，适合搭配精致、有情调的料理。" }, ja: { name: "パスタ + サラダ", reason: "ロマンス映画の柔らかい雰囲気には、すっきりとした雰囲気のある料理がよく合います。" } },
+    "액션": { ko: { name: "치킨 + 감자튀김", reason: "액션 영화의 빠르고 강한 분위기에는 든든하고 자극적인 음식이 잘 어울립니다." }, en: { name: "Chicken + French Fries", reason: "The fast and powerful vibe of action movies pairs great with satisfying and savory foods." }, zh: { name: "炸鸡 + 炸薯条", reason: "动作片节奏快、冲击力强，最适合搭配管饱且重口味的高热量美食。" }, ja: { name: "チキン + フライドポテト", reason: "アクション映画の速くて力強い雰囲気には、ボリュームたっぷりで刺激的な食べ物がよく合います。" } },
+    "애니메이션": { ko: { name: "햄버거 세트", reason: "애니메이션은 편하게 보기 좋은 경우가 많아서 간단하고 대중적인 햄버거 세트가 잘 어울립니다." }, en: { name: "Burger Combo", reason: "Animations are usually easy to enjoy, making a simple and popular burger set an excellent choice." }, zh: { name: "汉堡套餐", reason: "看动画片通常非常放松，搭配简单且大众化的汉堡套餐是个极佳的选择。" }, ja: { name: "ハンバーガーセット", reason: "アニメはリラックスして見やすいことが多いので、シンプルでポピュラーなハンバーガーセットがよく合います。" } }
   };
   return foodRules[genre] || foodRules["전체"];
 }
@@ -263,7 +268,6 @@ if (backToMainBtn) {
   backToMainBtn.addEventListener("click", () => { window.location.href = "main.html"; });
 }
 
-// 💡 [핵심 패치 2] 언어를 바꾸는 즉시 기존 한국어 영화를 지우고 새로운 언어 코드로 TMDB를 다시 호출
 document.addEventListener("languageChanged", async () => {
   applyMovieLanguage();
   await loadMoviesByGenre(selectedGenre); 
