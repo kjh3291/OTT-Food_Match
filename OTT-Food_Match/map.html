@@ -11,18 +11,61 @@
             padding: 20px;
         }
 
-        #map {
+        /* 💡 지도를 감싸는 부모 영역 (이 안에서 요소를 자유롭게 배치 가능) */
+        .map-wrapper {
+            position: relative;
             width: 100%;
             height: 500px;
             margin-top: 20px;
+        }
+
+        /* 💡 실제 지도가 렌더링되는 영역 (부모 영역의 크기를 100% 채움) */
+        #map {
+            width: 100%;
+            height: 100%;
             border-radius: 10px;
             border: 1px solid #ccc;
         }
 
-        .info-title {
-            padding: 5px;
-            font-size: 12px;
-            text-align: center;
+        /* 💡 검색창 영역 (우측 상단에 띄우기) */
+        .search-box {
+            position: absolute;
+            top: 15px;
+            /* 위에서부터 15px 띄움 */
+            right: 15px;
+            /* 오른쪽에서부터 15px 띄움 */
+            z-index: 10;
+            /* 지도(보통 1~2)보다 위에 보이도록 z-index를 높게 설정 */
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            /* 살짝 그림자를 주어 입체감 부여 */
+        }
+
+        .search-box input {
+            width: 180px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -30,18 +73,17 @@
 <body>
     <h2>📍 내 주변 음식점 지도</h2>
     <p>현재 위치를 기반으로 주변 식당을 검색합니다.</p>
-    <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-        <input type="text" id="keyword" placeholder="예: 강남역 치킨, 홍콩반점"
-            style="flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px;">
-        <button id="searchBtn"
-            style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-            식당 검색
-        </button>
+
+    <div class="map-wrapper">
+
+        <div class="search-box">
+            <input type="text" id="keyword" placeholder="예: 강남역 치킨">
+            <button id="searchBtn">검색</button>
+        </div>
+
+        <div id="map"></div>
+
     </div>
-
-    <div id="map"></div>
-
-    <div id="map"></div>
 
     <script type="text/javascript"
         src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4078cd5d7f89a4a3b866799c8c50b8fc&libraries=services"></script>
