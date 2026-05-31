@@ -1,23 +1,182 @@
-// 지도를 표시할 div 요소를 찾습니다.
 const mapContainer = document.getElementById('map');
-
-// 지도의 초기 설정값 (중심 좌표와 확대 정도)
 const mapOption = {
-    // 예시 좌표: 서울숲 (러닝 경로를 테스트하기 좋은 공원 위치입니다)
-    center: new kakao.maps.LatLng(37.5445888, 127.0374421),
+    center: new kakao.maps.LatLng(37.566826, 126.9786567),
     level: 3
 };
 
-// 1. 지도를 실제로 생성합니다.
 const map = new kakao.maps.Map(mapContainer, mapOption);
+const ps = new kakao.maps.services.Places(map);
+const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-// 2. (선택 사항) 중심 좌표에 빨간색 마커를 하나 올려봅니다.
-const markerPosition = new kakao.maps.LatLng(37.5445888, 127.0374421);
-const marker = new kakao.maps.Marker({
-    position: markerPosition
+let markers = [];
+// 💡 안전장치: 현재 사용자가 '검색'을 한 상태인지 확인하는 변수
+let isSearchMode = false;
+
+// 초기 내 위치 가져오기 및 검색 실행
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+        const locPosition = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        map.setCenter(locPosition);
+        searchPlaces(locPosition);
+    });
+}
+
+// 💡 수정됨: 지도가 움직임이 멈췄을 때 발생하는 이벤트
+kakao.maps.event.addListener(map, 'idle', function () {
+    // 검색 모드가 아닐 때(그냥 지도를 드래그할 때)만 주변 식당을 자동으로 불러옵니다.
+    if (!isSearchMode) {
+        const currentCenter = map.getCenter();
+        removeMarkers();
+        searchPlaces(currentCenter);
+    }
 });
 
-// 마커를 지도 위에 표시합니다.
-marker.setMap(map);
+kakao.maps.event.addListener(map, 'click', function () {
+    infowindow.close();
+});
 
-console.log("✅ 카카오맵 로드 및 마커 표시 완료!");
+// 주변 음식점 검색 함수 (기존 유지)
+function searchPlaces(pos) {
+    ps.categorySearch('FD6', function (data, status, pagination) {
+        if (status === kakao.maps.services.Status.OK) {
+            for (let i = 0; i < data.length; i++) {
+                displayPlaceMarker(data[i]);
+            }
+            if (pagination.hasNextPage) {
+                pagination.nextPage();
+            }
+        }
+    }, {
+        location: pos,
+        radius: 1000,
+        sort: kakao.maps.services.SortBy.DISTANCE
+    });
+}
+
+// 💡 [새로 추가된 부분] 키워드로 특정 식당 검색하기
+const searchBtn = document.getElementById('searchBtn');
+const keywordInput = document.getElementById('keyword');
+
+if (searchBtn && keywordInput) {
+    // 검색 버튼 클릭 시
+    searchBtn.addEventListener('click', searchByKeyword);
+    // 엔터키 입력 시
+    keywordInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') searchByKeyword();
+    });
+}
+
+function searchByKeyword() {
+    const keyword = keywordInput.value;
+
+    if (!keyword.replace(/^\s+|\s+$/g, '')) {
+        alert('검색어를 입력해주세요!');
+        isSearchMode = false; // 검색어가 없으면 다시 주변 자동 탐색 모드로 복귀
+        searchPlaces(map.getCenter());
+        return;
+    }
+
+    // 검색 모드 ON: 지도가 자동으로 마커를 덮어씌우는 것을 막습니다.
+    isSearchMode = true;
+
+    // 카카오맵 장소 검색 (음식점 FD6 카테고리 안에서만 검색되도록 제한)
+    ps.keywordSearch(keyword, function (data, status, pagination) {
+        if (status === kakao.maps.services.Status.OK) {
+            removeMarkers(); // 기존에 있던 주변 마커들 싹 지우기
+
+            for (let i = 0; i < data.length; i++) {
+                displayPlaceMarker(data[i]);
+            }
+
+            // 💡 [핵심] 검색 결과 중 가장 첫 번째(가장 가까운) 식당의 좌표 계산
+            const nearestPlace = data[0];
+            const moveLatLon = new kakao.maps.LatLng(nearestPlace.y, nearestPlace.x);
+
+            // 지도의 중심을 가장 가까운 식당으로 '부드럽게(panTo)' 이동시킵니다.
+            map.panTo(moveLatLon);
+
+        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+            alert('검색 결과가 존재하지 않습니다.');
+        } else if (status === kakao.maps.services.Status.ERROR) {
+            alert('검색 도중 오류가 발생했습니다.');
+        }
+    }, {
+        category_group_code: 'FD6',
+        location: map.getCenter(), // 💡 현재 화면의 중심점을 기준으로
+        sort: kakao.maps.services.SortBy.DISTANCE // 💡 거리가 가장 가까운 순서대로 정렬해서 가져옵니다!
+    });
+}
+
+// 검색된 음식점 마커 표시 및 클릭 시 가상 메뉴 띄우기 (기존 유지)
+function displayPlaceMarker(place) {
+    const marker = new kakao.maps.Marker({
+        map: map,
+        position: new kakao.maps.LatLng(place.y, place.x)
+    });
+
+    kakao.maps.event.addListener(marker, 'click', function () {
+        const restaurantName = place.place_name;
+        const fallbackMenus = getDynamicMenus(place.category_name);
+
+        let menuHtml = `<strong> 추천 메뉴</strong><ul style="padding-left: 15px;">`;
+
+        fallbackMenus.forEach(menu => {
+            menuHtml += `
+           <li style="margin-bottom: 5px;">
+             ${menu.name} - ${menu.price.toLocaleString()}원
+           </li>`;
+        });
+        menuHtml += `</ul>`;
+
+        const content = `
+          <div style="padding:15px; font-size:14px; width:280px; max-height: 250px; overflow-y: auto;">
+            <h4 style="margin-top:0; margin-bottom:5px;">${restaurantName}</h4>
+            <p style="color: gray; font-size: 12px; margin-top:0;">${place.category_name}</p>
+            <hr>
+            ${menuHtml}
+          </div>
+        `;
+
+        infowindow.setContent(content);
+        infowindow.open(map, marker);
+    });
+
+    markers.push(marker);
+}
+
+// 지도 위에 표시되고 있는 마커들을 모두 제거하는 함수 (기존 유지)
+function removeMarkers() {
+    for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+}
+
+// 카테고리별 동적(가상) 메뉴 반환 함수 (기존 유지)
+function getDynamicMenus(categoryName) {
+    if (categoryName.includes('치킨') || categoryName.includes('통닭')) {
+        return [
+            { name: "후라이드 치킨", price: 18000 },
+            { name: "양념 치킨", price: 19000 },
+            { name: "치즈볼", price: 5000 }
+        ];
+    } else if (categoryName.includes('중식') || categoryName.includes('중화요리')) {
+        return [
+            { name: "짜장면", price: 6500 },
+            { name: "짬뽕", price: 7500 },
+            { name: "탕수육", price: 17000 }
+        ];
+    } else if (categoryName.includes('커피') || categoryName.includes('카페')) {
+        return [
+            { name: "아메리카노", price: 4000 },
+            { name: "카페라떼", price: 4500 },
+            { name: "치즈케이크", price: 5500 }
+        ];
+    } else {
+        return [
+            { name: "추천 대표 메뉴", price: 9000 },
+            { name: "인기 사이드 메뉴", price: 5000 },
+            { name: "공기밥", price: 1000 }
+        ];
+    }
+}
