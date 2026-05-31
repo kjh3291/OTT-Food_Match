@@ -8,8 +8,9 @@ const map = new kakao.maps.Map(mapContainer, mapOption);
 const ps = new kakao.maps.services.Places(map);
 const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-// 생성된 마커들을 관리하기 위한 배열
 let markers = [];
+// 💡 안전장치: 현재 사용자가 '검색'을 한 상태인지 확인하는 변수
+let isSearchMode = false;
 
 // 초기 내 위치 가져오기 및 검색 실행
 if (navigator.geolocation) {
@@ -20,18 +21,21 @@ if (navigator.geolocation) {
     });
 }
 
-// 2. 지도가 움직임이 멈췄을 때(idle) 발생하는 이벤트를 등록
+// 💡 수정됨: 지도가 움직임이 멈췄을 때 발생하는 이벤트
 kakao.maps.event.addListener(map, 'idle', function () {
-    const currentCenter = map.getCenter();
-    removeMarkers();
-    searchPlaces(currentCenter);
+    // 검색 모드가 아닐 때(그냥 지도를 드래그할 때)만 주변 식당을 자동으로 불러옵니다.
+    if (!isSearchMode) {
+        const currentCenter = map.getCenter();
+        removeMarkers();
+        searchPlaces(currentCenter);
+    }
 });
 
 kakao.maps.event.addListener(map, 'click', function () {
     infowindow.close();
 });
 
-// 주변 음식점 검색 함수 (카카오맵 API)
+// 주변 음식점 검색 함수 (기존 유지)
 function searchPlaces(pos) {
     ps.categorySearch('FD6', function (data, status, pagination) {
         if (status === kakao.maps.services.Status.OK) {
@@ -49,25 +53,77 @@ function searchPlaces(pos) {
     });
 }
 
-// 검색된 음식점 마커 표시 및 클릭 시 가상 메뉴 띄우기
+// 💡 [새로 추가된 부분] 키워드로 특정 식당 검색하기
+const searchBtn = document.getElementById('searchBtn');
+const keywordInput = document.getElementById('keyword');
+
+if (searchBtn && keywordInput) {
+    // 검색 버튼 클릭 시
+    searchBtn.addEventListener('click', searchByKeyword);
+    // 엔터키 입력 시
+    keywordInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') searchByKeyword();
+    });
+}
+
+function searchByKeyword() {
+    const keyword = keywordInput.value;
+
+    if (!keyword.replace(/^\s+|\s+$/g, '')) {
+        alert('검색어를 입력해주세요!');
+        isSearchMode = false; // 검색어가 없으면 다시 주변 자동 탐색 모드로 복귀
+        searchPlaces(map.getCenter());
+        return;
+    }
+
+    // 검색 모드 ON: 지도가 자동으로 마커를 덮어씌우는 것을 막습니다.
+    isSearchMode = true;
+
+    // 카카오맵 장소 검색 (음식점 FD6 카테고리 안에서만 검색되도록 제한)
+    ps.keywordSearch(keyword, function (data, status, pagination) {
+        if (status === kakao.maps.services.Status.OK) {
+            removeMarkers(); // 기존에 있던 주변 마커들 싹 지우기
+
+            for (let i = 0; i < data.length; i++) {
+                displayPlaceMarker(data[i]);
+            }
+
+            // 💡 [핵심] 검색 결과 중 가장 첫 번째(가장 가까운) 식당의 좌표 계산
+            const nearestPlace = data[0];
+            const moveLatLon = new kakao.maps.LatLng(nearestPlace.y, nearestPlace.x);
+
+            // 지도의 중심을 가장 가까운 식당으로 '부드럽게(panTo)' 이동시킵니다.
+            map.panTo(moveLatLon);
+
+        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+            alert('검색 결과가 존재하지 않습니다.');
+        } else if (status === kakao.maps.services.Status.ERROR) {
+            alert('검색 도중 오류가 발생했습니다.');
+        }
+    }, {
+        category_group_code: 'FD6',
+        location: map.getCenter(), // 💡 현재 화면의 중심점을 기준으로
+        sort: kakao.maps.services.SortBy.DISTANCE // 💡 거리가 가장 가까운 순서대로 정렬해서 가져옵니다!
+    });
+}
+
+// 검색된 음식점 마커 표시 및 클릭 시 가상 메뉴 띄우기 (기존 유지)
 function displayPlaceMarker(place) {
     const marker = new kakao.maps.Marker({
         map: map,
         position: new kakao.maps.LatLng(place.y, place.x)
     });
 
-    // 마커를 클릭했을 때 발생하는 이벤트 (API 통신 없이 바로 가상 메뉴 생성)
     kakao.maps.event.addListener(marker, 'click', function () {
         const restaurantName = place.place_name;
         const fallbackMenus = getDynamicMenus(place.category_name);
 
-        let menuHtml = `<strong>💡 추천 가상 메뉴</strong><ul style="padding-left: 15px;">`;
+        let menuHtml = `<strong> 추천 메뉴</strong><ul style="padding-left: 15px;">`;
 
         fallbackMenus.forEach(menu => {
             menuHtml += `
            <li style="margin-bottom: 5px;">
              ${menu.name} - ${menu.price.toLocaleString()}원
-             <button onclick="window.addToCart('${restaurantName}', '${menu.name}', ${menu.price})" style="margin-left: 5px;">담기</button>
            </li>`;
         });
         menuHtml += `</ul>`;
@@ -88,7 +144,7 @@ function displayPlaceMarker(place) {
     markers.push(marker);
 }
 
-// 4. 지도 위에 표시되고 있는 마커들을 모두 제거하는 함수
+// 지도 위에 표시되고 있는 마커들을 모두 제거하는 함수 (기존 유지)
 function removeMarkers() {
     for (let i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
@@ -96,82 +152,8 @@ function removeMarkers() {
     markers = [];
 }
 
-// 전역 변수로 장바구니 배열 생성
-window.cart = [];
-
-// 장바구니에 메뉴를 담는 함수
-window.addToCart = function (storeName, menuName, price) {
-    cart.push({ storeName: storeName, menuName: menuName, price: price });
-    updateCartUI();
-    console.log(`${menuName} 메뉴가 장바구니에 담겼습니다!`);
-};
-
-// 장바구니에서 특정 메뉴 삭제하기
-window.removeFromCart = function (index) {
-    cart.splice(index, 1);
-    updateCartUI();
-};
-
-// 장바구니 화면 업데이트 함수
-function updateCartUI() {
-    const cartList = document.getElementById("cartList");
-    const totalPriceEl = document.getElementById("totalPrice");
-
-    if (cart.length === 0) {
-        cartList.innerHTML = '<li style="color: #888;">아직 담은 메뉴가 없습니다.</li>';
-        totalPriceEl.textContent = "0원";
-        return;
-    }
-
-    let html = "";
-    let total = 0;
-
-    cart.forEach((item, index) => {
-        html += `
-            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 5px;">
-                <div style="flex-grow: 1;">
-                    <span style="font-size: 11px; color: #888;">${item.storeName}</span><br>
-                    <strong>${item.menuName}</strong>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span>${item.price.toLocaleString()}원</span>
-                    <button onclick="window.removeFromCart(${index})" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 12px; padding: 2px 5px; border-radius: 3px; border: 1px solid #ffe3e3;">삭제</button>
-                </div>
-            </li>
-        `;
-        total += item.price;
-    });
-
-    cartList.innerHTML = html;
-    totalPriceEl.textContent = `${total.toLocaleString()}원`;
-}
-
-// 주문하기 버튼 이벤트
-const orderBtn = document.getElementById("orderBtn");
-
-if (orderBtn) {
-    orderBtn.addEventListener("click", () => {
-        if (!cart || cart.length === 0) {
-            alert("장바구니가 비어있습니다. 메뉴를 먼저 담아주세요!");
-            return;
-        }
-
-        const totalPriceElement = document.getElementById("totalPrice");
-        const priceText = totalPriceElement ? totalPriceElement.textContent : "0원";
-        const confirmOrder = confirm(`총 ${priceText}입니다. 결제하시겠습니까?`);
-
-        if (confirmOrder) {
-            alert("🎉 주문이 완료되었습니다! 라이더가 곧 배정을 받습니다.");
-            cart = [];
-            if (typeof updateCartUI === "function") {
-                updateCartUI();
-            }
-        }
-    });
-}
-
+// 카테고리별 동적(가상) 메뉴 반환 함수 (기존 유지)
 function getDynamicMenus(categoryName) {
-    // 카테고리 이름에 특정 단어가 포함되어 있는지 확인하여 가상 메뉴를 반환
     if (categoryName.includes('치킨') || categoryName.includes('통닭')) {
         return [
             { name: "후라이드 치킨", price: 18000 },
@@ -191,7 +173,6 @@ function getDynamicMenus(categoryName) {
             { name: "치즈케이크", price: 5500 }
         ];
     } else {
-        // 그 외 일반적인 식당용 가상 메뉴
         return [
             { name: "추천 대표 메뉴", price: 9000 },
             { name: "인기 사이드 메뉴", price: 5000 },
