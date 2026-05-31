@@ -1027,3 +1027,9 @@ body.dark-mode .sort-option:hover {
     transform: translateX(-50%);
   }
 }
+
+.primary-btn:disabled,
+.secondary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
