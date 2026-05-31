@@ -26,9 +26,18 @@ const genreIdMap = {
   "애니메이션": 16,
 };
 
+const mealData = convertFoods(meals, "식사");
+const dessertData = convertFoods(desserts, "디저트");
+const fastfoodData = convertFoods(fastfoods, "패스트푸드");
+
+const allFoods = [...mealData, ...dessertData, ...fastfoodData];
+
 let selectedGenre = "전체";
 let currentMovies = [];
 
+let currentSort = "popularity";
+let visibleMovieCount = 20;
+const MOVIES_PER_LOAD = 20;
 
 // ===============================
 // 2. URL 값 가져오기
@@ -53,6 +62,11 @@ const selectedGenreTitle = document.getElementById("selectedGenreTitle");
 const loadingText = document.getElementById("loadingText");
 const movieList = document.getElementById("movieList");
 const backToMainBtn = document.getElementById("backToMainBtn");
+
+const sortMenuBtn = document.getElementById("sortMenuBtn");
+const sortMenu = document.getElementById("sortMenu");
+const sortOptions = document.querySelectorAll(".sort-option");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
 
 
 // ===============================
@@ -104,6 +118,12 @@ async function loadMoviesByGenre(genre) {
   loadingText.textContent = "영화 목록을 불러오는 중입니다...";
   movieList.innerHTML = "";
 
+  if (loadMoreBtn) {
+    loadMoreBtn.classList.add("hidden");
+  }
+
+  visibleMovieCount = MOVIES_PER_LOAD;
+
   const movies = await fetchMoviesFromTMDB(genre);
   currentMovies = movies;
 
@@ -138,49 +158,131 @@ async function fetchMoviesFromTMDB(genre) {
     return [];
   }
 
-  let url =
-    `${baseUrl}/discover/movie` +
-    `?api_key=${apiKey}` +
-    `&language=ko-KR` +
-    `&region=KR` +
-    `&watch_region=KR` +
-    `&with_watch_providers=${providerId}` +
-    `&with_watch_monetization_types=flatrate` +
-    `&sort_by=popularity.desc` +
-    `&include_adult=false` +
-    `&page=1`;
+  const maxPagesToFetch = 8;
+  const allResults = [];
 
-  if (genre !== "전체") {
-    url += `&with_genres=${genreId}`;
+  function buildMovieUrl(page) {
+    let url =
+      `${baseUrl}/discover/movie` +
+      `?api_key=${apiKey}` +
+      `&language=ko-KR` +
+      `&region=KR` +
+      `&watch_region=KR` +
+      `&with_watch_providers=${providerId}` +
+      `&with_watch_monetization_types=flatrate` +
+      `&sort_by=popularity.desc` +
+      `&include_adult=false` +
+      `&page=${page}`;
+
+    if (genre !== "전체") {
+      url += `&with_genres=${genreId}`;
+    }
+
+    return url;
   }
 
-  console.log("요청 URL:", url);
-
   try {
-    const response = await fetch(url);
+    // 1페이지 먼저 요청
+    const firstResponse = await fetch(buildMovieUrl(1));
 
-    if (!response.ok) {
-      console.error("TMDB 영화 목록 요청 실패:", response.status);
+    if (!firstResponse.ok) {
+      console.error("TMDB 첫 페이지 요청 실패:", firstResponse.status);
       alert("영화 목록을 불러오지 못했습니다.");
       return [];
     }
 
-    const data = await response.json();
-    console.log("TMDB 영화 목록 결과:", data);
+    const firstData = await firstResponse.json();
 
-    return data.results.map((movie) => ({
+    console.log("TMDB 첫 페이지 결과:", firstData);
+
+    const totalPages = Math.min(firstData.total_pages || 1, maxPagesToFetch);
+
+    const firstMovies = firstData.results.map((movie) => ({
       id: movie.id,
       title: movie.title || movie.name || "제목 없음",
       overview: movie.overview || "줄거리 정보가 없습니다.",
       posterPath: movie.poster_path,
       releaseDate: movie.release_date || "개봉일 정보 없음",
-      rating: movie.vote_average,
+      rating: movie.vote_average || 0,
+      popularity: movie.popularity || 0,
+      genre: genre,
     }));
+
+    allResults.push(...firstMovies);
+
+    // 2페이지부터 totalPages까지 추가 요청
+    for (let page = 2; page <= totalPages; page++) {
+      const response = await fetch(buildMovieUrl(page));
+
+      if (!response.ok) {
+        console.error(`${page}페이지 요청 실패:`, response.status);
+        continue;
+      }
+
+      const data = await response.json();
+
+      const movies = data.results.map((movie) => ({
+        id: movie.id,
+        title: movie.title || movie.name || "제목 없음",
+        overview: movie.overview || "줄거리 정보가 없습니다.",
+        posterPath: movie.poster_path,
+        releaseDate: movie.release_date || "개봉일 정보 없음",
+        rating: movie.vote_average || 0,
+        popularity: movie.popularity || 0,
+        genre: genre,
+      }));
+
+      allResults.push(...movies);
+    }
+
+    console.log("최종 영화 개수:", allResults.length);
+    console.log("중복 제거 후 영화 개수:", removeDuplicateMovies(allResults).length);
+
+    return removeDuplicateMovies(allResults);
   } catch (error) {
     console.error("TMDB API 요청 중 오류 발생:", error);
     alert("API 요청 중 오류가 발생했습니다.");
     return [];
   }
+}
+
+function removeDuplicateMovies(movies) {
+  const movieMap = new Map();
+
+  movies.forEach((movie) => {
+    if (!movieMap.has(movie.id)) {
+      movieMap.set(movie.id, movie);
+    }
+  });
+
+  return Array.from(movieMap.values());
+}
+
+function sortMovies(movies) {
+  const sortedMovies = [...movies];
+
+  if (currentSort === "popularity") {
+    sortedMovies.sort((a, b) => b.popularity - a.popularity);
+  }
+
+  if (currentSort === "rating") {
+    sortedMovies.sort((a, b) => b.rating - a.rating);
+  }
+
+  if (currentSort === "latest") {
+    sortedMovies.sort((a, b) => {
+      const dateA = a.releaseDate === "개봉일 정보 없음" ? "0000-00-00" : a.releaseDate;
+      const dateB = b.releaseDate === "개봉일 정보 없음" ? "0000-00-00" : b.releaseDate;
+
+      return new Date(dateB) - new Date(dateA);
+    });
+  }
+
+  if (currentSort === "title") {
+    sortedMovies.sort((a, b) => a.title.localeCompare(b.title, "ko"));
+  }
+
+  return sortedMovies;
 }
 
 
@@ -200,11 +302,18 @@ function renderMovies(movies) {
         </p>
       </div>
     `;
+
+    if (loadMoreBtn) {
+      loadMoreBtn.classList.add("hidden");
+    }
+
     return;
   }
 
-  movieList.innerHTML = movies
-    .slice(0, 12)
+  const sortedMovies = sortMovies(movies);
+  const visibleMovies = sortedMovies.slice(0, visibleMovieCount);
+
+  movieList.innerHTML = visibleMovies
     .map((movie, index) => {
       const posterUrl = movie.posterPath
         ? `https://image.tmdb.org/t/p/w300${movie.posterPath}`
@@ -225,8 +334,6 @@ function renderMovies(movies) {
             <p>개봉일: ${movie.releaseDate}</p>
             <p>평점: ${movie.rating ? movie.rating.toFixed(1) : "정보 없음"}</p>
           </div>
-
-          <div class="movie-detail-panel hidden" id="movieDetailPanel-${index}"></div>
         </div>
       `;
     })
@@ -239,109 +346,31 @@ function renderMovies(movies) {
 
     posterArea.addEventListener("click", () => {
       const selectedIndex = Number(card.dataset.index);
-      const selectedMovie = movies[selectedIndex];
+      const selectedMovie = visibleMovies[selectedIndex];
 
-      closeAllDetailPanels();
-      openMovieDetailPanel(selectedMovie, selectedIndex);
+      const mealParam = encodeURIComponent(selectedMeal);
+      const genreParam = encodeURIComponent(selectedMovie.genre || selectedGenre);
+
+      window.location.href =
+        `recommend.html?movieId=${selectedMovie.id}` +
+        `&ott=${ottKey}` +
+        `&meal=${mealParam}` +
+        `&genre=${genreParam}`;
     });
   });
+
+  if (loadMoreBtn) {
+  if (visibleMovieCount < sortedMovies.length) {
+    loadMoreBtn.classList.remove("hidden");
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.textContent = `더보기 (${visibleMovies.length}/${sortedMovies.length})`;
+  } else {
+    loadMoreBtn.classList.remove("hidden");
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.textContent = `모든 영화를 확인했습니다 (${sortedMovies.length}개)`;
+  }
 }
-
-
-// ===============================
-// 9. 모든 영화 설명 패널 닫기
-// ===============================
-
-function closeAllDetailPanels() {
-  const panels = document.querySelectorAll(".movie-detail-panel");
-
-  panels.forEach((panel) => {
-    panel.classList.add("hidden");
-    panel.innerHTML = "";
-  });
 }
-
-
-// ===============================
-// 10. 영화 설명 + 음식 추천 패널 열기
-// ===============================
-
-function openMovieDetailPanel(movie, index) {
-  const panel = document.getElementById(`movieDetailPanel-${index}`);
-  const foodRecommendation = recommendFood(movie);
-
-  panel.innerHTML = `
-    <div class="selected-movie-box">
-      <h3>🎬 영화 설명</h3>
-      <p><strong>${movie.title}</strong></p>
-      <p>${movie.overview}</p>
-    </div>
-
-    <div class="food-result-box">
-      <h3>🍽 추천 음식</h3>
-      <p><strong>${foodRecommendation.name}</strong></p>
-      <p>${foodRecommendation.reason}</p>
-    </div>
-  `;
-
-  panel.classList.remove("hidden");
-}
-
-
-// ===============================
-// 11. 음식 추천 규칙
-// ===============================
-
-function recommendFood(movie) {
-  let foodRecommendation = {
-    name: "치킨 + 콜라",
-    reason: "OTT를 보면서 먹기 편하고 대부분의 영화와 무난하게 어울리는 조합입니다.",
-  };
-
-  if (selectedGenre === "스릴러") {
-    foodRecommendation = {
-      name: "피자 + 콜라",
-      reason: "스릴러 영화는 긴장감이 강하기 때문에 화면에 집중하면서 간단히 집어 먹을 수 있는 피자가 잘 어울립니다.",
-    };
-  }
-
-  if (selectedGenre === "코미디") {
-    foodRecommendation = {
-      name: "떡볶이 + 튀김",
-      reason: "코미디 영화의 가볍고 즐거운 분위기에는 부담 없이 먹기 좋은 분식 조합이 잘 어울립니다.",
-    };
-  }
-
-  if (selectedGenre === "드라마") {
-    foodRecommendation = {
-      name: "우동",
-      reason: "드라마 영화의 잔잔한 감정선과 따뜻한 국물 음식이 잘 어울립니다.",
-    };
-  }
-
-  if (selectedGenre === "로맨스") {
-    foodRecommendation = {
-      name: "파스타 + 샐러드",
-      reason: "로맨스 영화의 부드러운 분위기에는 깔끔하고 분위기 있는 음식이 잘 어울립니다.",
-    };
-  }
-
-  if (selectedGenre === "액션") {
-    foodRecommendation = {
-      name: "치킨 + 감자튀김",
-      reason: "액션 영화의 빠르고 강한 분위기에는 든든하고 자극적인 음식이 잘 어울립니다.",
-    };
-  }
-
-  if (selectedGenre === "애니메이션") {
-    foodRecommendation = {
-      name: "햄버거 세트",
-      reason: "애니메이션은 편하게 보기 좋은 경우가 많아서 간단하고 대중적인 햄버거 세트가 잘 어울립니다.",
-    };
-  }
-  return foodRecommendation;
-}
-
 
 // ===============================
 // 12. 뒤로가기 버튼
@@ -352,6 +381,56 @@ if (backToMainBtn) {
     window.location.href = "main.html";
   });
 }
+
+
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener("click", () => {
+    visibleMovieCount += MOVIES_PER_LOAD;
+    renderMovies(currentMovies);
+  });
+}
+
+if (sortMenuBtn && sortMenu) {
+  sortMenuBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    sortMenu.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", () => {
+    sortMenu.classList.add("hidden");
+  });
+
+  sortMenu.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+}
+
+sortOptions.forEach((option) => {
+  option.addEventListener("click", () => {
+    currentSort = option.dataset.sort;
+
+    if (currentSort === "popularity") {
+      sortMenuBtn.textContent = "인기순 ▾";
+    }
+
+    if (currentSort === "rating") {
+      sortMenuBtn.textContent = "평점순 ▾";
+    }
+
+    if (currentSort === "latest") {
+      sortMenuBtn.textContent = "최신순 ▾";
+    }
+
+    if (currentSort === "title") {
+      sortMenuBtn.textContent = "이름순 ▾";
+    }
+
+    sortMenu.classList.add("hidden");
+
+    visibleMovieCount = MOVIES_PER_LOAD;
+    renderMovies(currentMovies);
+  });
+});
 
 
 // ===============================
