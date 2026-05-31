@@ -18,7 +18,6 @@ let currentMovies = [];
 
 const urlParams = new URLSearchParams(window.location.search);
 const ottKey = urlParams.get("ott");
-// 💡 파라미터가 없으면 '혼밥'을 기본값으로 설정합니다.
 let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
 
 const moviePageTitle = document.getElementById("moviePageTitle");
@@ -73,10 +72,10 @@ function applyMovieLanguage() {
   
   if (selectedGenreTitle) {
     const genreKey = getGenreKey(selectedGenre);
-    if (lang === "ko") selectedGenreTitle.textContent = `${t("tab_" + genreKey)} 영화`;
-    else if (lang === "en") selectedGenreTitle.textContent = `${t("tab_" + genreKey)} Movies`;
-    else if (lang === "zh") selectedGenreTitle.textContent = `${t("tab_" + genreKey)} 电影`;
-    else if (lang === "ja") selectedGenreTitle.textContent = `${t("tab_" + genreKey)} 映画`;
+    if (lang === "ko") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} 영화`;
+    else if (lang === "en") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} Movies`;
+    else if (lang === "zh") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} 电影`;
+    else if (lang === "ja") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} 映画`;
   }
 }
 
@@ -85,20 +84,15 @@ function getGenreKey(genre) {
   return map[genre] || "all";
 }
 
-// 💡 식사 상황 선택 버튼 이벤트 (ott.js 기능 통합)
 const mealButtons = document.querySelectorAll(".meal-btn");
 mealButtons.forEach(btn => {
-  // 초기 상태 반영
   if (btn.dataset.value === selectedMeal) {
     btn.classList.add("selected");
   }
-
   btn.addEventListener("click", () => {
     mealButtons.forEach(b => b.classList.remove("selected"));
     btn.classList.add("selected");
     selectedMeal = btn.dataset.value;
-    
-    // 버튼 클릭 즉시 상단 텍스트(식사 상황) 업데이트
     applyMovieLanguage();
   });
 });
@@ -116,7 +110,7 @@ genreTabs.forEach((tab) => {
 async function loadMoviesByGenre(genre) {
   if (loadingText) {
     loadingText.classList.remove("hidden");
-    loadingText.textContent = t("loadingText") || "영화 목록을 불러오는 중입니다...";
+    loadingText.textContent = typeof t === 'function' ? t("loadingText") : "영화 목록을 불러오는 중입니다...";
   }
   movieList.innerHTML = "";
   currentMovies = await fetchMoviesFromTMDB(genre);
@@ -159,15 +153,15 @@ function renderMovies(movies) {
   if (loadingText) loadingText.classList.add("hidden");
 
   if (!movies || movies.length === 0) {
-    movieList.innerHTML = `<div class="result-card"><p><strong>${t("noMoviesTitle") || "조건에 맞는 영화가 없습니다."}</strong></p></div>`;
+    movieList.innerHTML = `<div class="result-card"><p><strong>${typeof t === 'function' ? t("noMoviesTitle") : "조건에 맞는 영화가 없습니다."}</strong></p></div>`;
     return;
   }
 
   movieList.innerHTML = movies.slice(0, 12).map((movie, index) => {
     const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w300${movie.posterPath}` : "";
-    const titleText = movie.title !== "No Title" ? movie.title : (t("noTitle") || "제목 없음");
-    const releaseText = movie.releaseDate ? movie.releaseDate : (t("noReleaseInfo") || "정보 없음");
-    const ratingText = movie.rating ? movie.rating.toFixed(1) : (t("noRatingInfo") || "정보 없음");
+    const titleText = movie.title !== "No Title" ? movie.title : (typeof t === 'function' ? t("noTitle") : "제목 없음");
+    const releaseText = movie.releaseDate ? movie.releaseDate : (typeof t === 'function' ? t("noReleaseInfo") : "정보 없음");
+    const ratingText = movie.rating ? movie.rating.toFixed(1) : (typeof t === 'function' ? t("noRatingInfo") : "정보 없음");
 
     return `
       <div class="movie-card" data-index="${index}" style="cursor: pointer;">
@@ -176,8 +170,8 @@ function renderMovies(movies) {
         </div>
         <div class="movie-info">
           <strong>${titleText}</strong>
-          <p>${t("releaseDate") || "개봉일"}: ${releaseText}</p>
-          <p>${t("rating") || "평점"}: ${ratingText}</p>
+          <p>${typeof t === 'function' ? t("releaseDate") : "개봉일"}: ${releaseText}</p>
+          <p>${typeof t === 'function' ? t("rating") : "평점"}: ${ratingText}</p>
         </div>
       </div>`;
   }).join("");
@@ -190,6 +184,20 @@ function renderMovies(movies) {
   });
 }
 
+function saveToHistory(movieTitle, foodName, emoji) {
+  let history = JSON.parse(localStorage.getItem("matchHistory")) || [];
+  const newRecord = {
+    date: new Date().toLocaleString(),
+    movieTitle: movieTitle,
+    foodName: foodName,
+    emoji: emoji
+  };
+  
+  history.unshift(newRecord);
+  if (history.length > 20) history.pop();
+  localStorage.setItem("matchHistory", JSON.stringify(history));
+}
+
 function showFinalResultModal(movie) {
   const modal = document.getElementById("finalResultModal");
   if (!modal) return;
@@ -197,9 +205,9 @@ function showFinalResultModal(movie) {
   const lang = localStorage.getItem("lang") || "ko";
   const foodRec = recommendFood(selectedGenre);
   
-  document.getElementById("modalResultTitle").textContent = t("modalResultTitle") || "✨ 맞춤 추천 결과 ✨";
-  document.getElementById("modalMovieHeader").textContent = t("modalMovieHeader") || "🎬 선택한 영화";
-  document.getElementById("modalFoodHeader").textContent = t("modalFoodHeader") || "🍽 추천 음식";
+  document.getElementById("modalResultTitle").textContent = typeof t === 'function' ? t("modalResultTitle") : "✨ 맞춤 추천 결과 ✨";
+  document.getElementById("modalMovieHeader").textContent = typeof t === 'function' ? t("modalMovieHeader") : "🎬 선택한 영화";
+  document.getElementById("modalFoodHeader").textContent = typeof t === 'function' ? t("modalFoodHeader") : "🍽 추천 음식";
 
   const posterEl = document.getElementById("modalMoviePoster");
   if (movie.posterPath) {
@@ -225,6 +233,8 @@ function showFinalResultModal(movie) {
 
   modal.classList.remove("hidden");
   modal.style.display = "flex"; 
+
+  saveToHistory(movie.title, fName, emoji);
 }
 
 const closeFinalResultModal = document.getElementById("closeFinalResultModal");
@@ -250,7 +260,7 @@ if (modalShareBtn) {
         link.href = canvas.toDataURL("image/png");
         link.download = "Movie_Food_Result.png";
         link.click();
-        alert(t("alert_copied") || "결과가 이미지로 저장되었습니다!");
+        alert(typeof t === 'function' ? t("alert_copied") : "결과가 저장되었습니다!");
       } else {
         alert("html2canvas 라이브러리가 로드되지 않았습니다.");
       }
@@ -269,7 +279,7 @@ function recommendFood(genre) {
     "코미디": { ko: { name: "떡볶이 + 튀김", reason: "코미디 영화의 가볍고 즐거운 분위기에는 부담 없이 먹기 좋은 분식 조합이 잘 어울립니다." }, en: { name: "Tteokbokki + Fried Sides", reason: "The light and fun mood of comedy movies pairs perfectly with casual Korean street food." }, zh: { name: "辣炒年糕 + 炸物", reason: "喜剧片轻松愉快的氛围，与无负担、易入口的韩式街头小吃是绝配。" }, ja: { name: "トッポッキ + 揚げ物", reason: "コメディ映画の軽くて楽しい雰囲気には、気軽に食べられる粉食の組み合わせがよく合います。" } },
     "드라마": { ko: { name: "우동", reason: "드라마 영화의 잔잔한 감정선과 따뜻한 국물 음식이 잘 어울립니다." }, en: { name: "Udon Noodles", reason: "The calm emotional storyline of drama movies pairs beautifully with warm, soothing noodle soup." }, zh: { name: "乌冬面", reason: "剧情片细腻动人的情感路线，与温暖、治愈的汤面非常契合。" }, ja: { name: "うどん", reason: "ドラマ映画の穏やかな感情線と温かいスープ料理がよく合います。" } },
     "로맨스": { ko: { name: "파스타 + 샐러드", reason: "로맨스 영화의 부드러운 분위기에는 깔끔하고 분위기 있는 음식이 잘 어울립니다." }, en: { name: "Pasta + Salad", reason: "The sweet and gentle mood of romance movies matches well with elegant, clean dishes." }, zh: { name: "意面 + 沙拉", reason: "爱情片浪漫温柔的氛围，适合搭配精致、有情调的料理。" }, ja: { name: "パスタ + サラダ", reason: "ロマンス映画の柔らかい雰囲気には、すっきりとした雰囲気のある料理がよく合います。" } },
-    "액션": { ko: { name: "치킨 + 감자튀김", reason: "액션 영화의 빠르고 강한 분위기에는 든든하고 자극적인 음식이 잘 어울립니다." }, en: { name: "Chicken + French Fries", reason: "The fast and powerful vibe of action movies pairs great with satisfying and savory foods." }, zh: { name: "炸鸡 + 炸薯条", reason: "动作片节奏快、冲击力强，最适合搭配管饱且重口味的高热量美食。" }, ja: { name: "チキン + フライドポテト", reason: "アクション映画の速くて力強い雰囲気には、ボリュームたっぷりで刺激的な食べ物がよく合います。" } },
+    "액션": { ko: { name: "치킨 + 감자튀김", reason: "액션 영화의 빠르고 강한 분위기에는 든든하고 자극적인 음식이 잘 어울립니다." }, en: { name: "Chicken + French Fries", reason: "The fast and powerful vibe of action movies pairs great with satisfying and savory foods." }, zh: { name: "炸鸡 + 炸薯条", reason: "动作片节奏快、冲击力强，最适合搭配管饱且重口味的高热量美食。" }, ja: { name: "チキン + フライドポテト", reason: "アクション映画の速くて力強い雰囲気には、ボリュームたっぷりで刺激ঠিで刺激的な食べ物がよく合います。" } },
     "애니메이션": { ko: { name: "햄버거 세트", reason: "애니메이션은 편하게 보기 좋은 경우가 많아서 간단하고 대중적인 햄버거 세트가 잘 어울립니다." }, en: { name: "Burger Combo", reason: "Animations are usually easy to enjoy, making a simple and popular burger set an excellent choice." }, zh: { name: "汉堡套餐", reason: "看动画片通常非常放松，搭配简单且大众化的汉堡套餐是个极佳的选择。" }, ja: { name: "ハンバーガーセット", reason: "アニメはリラックスして見やすいことが多いので、シンプルでポピュラーなハンバーガーセットがよく合います。" } }
   };
   return foodRules[genre] || foodRules["전체"];
@@ -291,7 +301,56 @@ if (settingBtn && settingPopup) {
   document.addEventListener("click", () => { if (settingPopup) settingPopup.classList.add("hidden"); });
 }
 
+const historyBtn = document.getElementById("historyBtn");
+const historyModal = document.getElementById("historyModal");
+const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+const historyListContainer = document.getElementById("historyListContainer");
+
+function renderHistory() {
+  let history = JSON.parse(localStorage.getItem("matchHistory")) || [];
+  
+  if (history.length === 0) {
+    historyListContainer.innerHTML = `<div class="empty-history">${typeof t === 'function' ? t("emptyHistory") : "기록이 없습니다."}</div>`;
+    return;
+  }
+
+  historyListContainer.innerHTML = history.map(item => `
+    <div class="history-item">
+      <div class="history-item-emoji">${item.emoji}</div>
+      <div class="history-item-info">
+        <small>${item.date}</small>
+        <strong>🎬 ${item.movieTitle}</strong>
+        <p>${item.foodName}</p>
+      </div>
+    </div>
+  `).join("");
+}
+
+if (historyBtn && historyModal) {
+  historyBtn.addEventListener("click", () => {
+    renderHistory();
+    historyModal.classList.remove("hidden");
+    historyModal.style.display = "flex";
+  });
+}
+
+if (closeHistoryBtn) {
+  closeHistoryBtn.addEventListener("click", () => {
+    historyModal.classList.add("hidden");
+    historyModal.style.display = "none";
+  });
+}
+
+if (clearHistoryBtn) {
+  clearHistoryBtn.addEventListener("click", () => {
+    if(confirm((typeof getLang === 'function' && getLang() === "ko") ? "기록을 모두 지우시겠습니까?" : "Clear all history?")) {
+      localStorage.removeItem("matchHistory");
+      renderHistory();
+    }
+  });
+}
+
 applyMovieLanguage();
 loadMoviesByGenre(selectedGenre);
-
 

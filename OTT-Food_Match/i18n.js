@@ -5,6 +5,7 @@
 const i18nData = {
   ko: {
     settingBtn: "⚙ 설정", settingTitle: "설정", 
+    historyBtn: "📜 기록", historyModalTitle: "최근 매칭 기록", emptyHistory: "아직 매칭 기록이 없습니다.", clearHistoryBtn: "기록 모두 지우기", closeHistoryBtn: "닫기",
     langMenuBtn: "🌐 언어 설정", langModalTitle: "언어 설정", closeLangModal: "닫기",
     prevBtn: "이전 단계", nextBtn: "다음 단계", nextBtnResult: "추천 결과 보기 ✨",
     alert_primary: "기준을 선택해주세요.", alert_situation: "현재 상황을 선택해주세요.", alert_detail: "상세 항목을 선택해주세요.",
@@ -23,10 +24,12 @@ const i18nData = {
     loadingText: "영화 목록을 불러오는 중입니다...", movieDescHeader: "🎬 영화 설명", foodRecHeader: "🍽 추천 음식",
     releaseDate: "개봉일", rating: "평점", noReleaseInfo: "개봉일 정보 없음", noRatingInfo: "정보 없음",
     noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.",
-    noMoviesDesc: "다른 장르를 선택하거나 OTT를 바꿔서 다시 시도해보세요."
+    noMoviesDesc: "다른 장르를 선택하거나 검색을 다시 시도해보세요.",
+    modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식"
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
+    historyBtn: "📜 History", historyModalTitle: "Recent Matches", emptyHistory: "No match history yet.", clearHistoryBtn: "Clear History", closeHistoryBtn: "Close",
     langMenuBtn: "🌐 Language", langModalTitle: "Language Settings", closeLangModal: "Close",
     prevBtn: "Previous", nextBtn: "Next", nextBtnResult: "View Result ✨",
     alert_primary: "Please select a criteria.", alert_situation: "Please select your current situation.", alert_detail: "Please select a detailed item.",
@@ -41,14 +44,16 @@ const i18nData = {
     resultTitle: "✨ Custom Recommendation Results ✨", resContentTitle: "🎬 Recommended Content", resFoodTitle: "🍕 Recommended Food", resComboTitle: "💡 Best Match Combo",
     shareBtn: "Save Image 🔗", resetBtn: "Restart",
     genreTitle: "Genre Categories", tab_all: "All", tab_action: "Action", tab_comedy: "Comedy", tab_drama: "Drama", tab_romance: "Romance", tab_thriller: "Thriller", tab_animation: "Animation",
-    clickPosterInfo: "Click a poster to view details and food pairing.", backToMainBtn: "Go to Main",
+    clickPosterInfo: "Click a movie poster to view description and food pairing.", backToMainBtn: "Go to Main",
     loadingText: "Loading movies...", movieDescHeader: "🎬 Movie Details", foodRecHeader: "🍽 Food Pairing",
     releaseDate: "Release", rating: "Rating", noReleaseInfo: "No date info", noRatingInfo: "No info",
     noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.",
-    noMoviesDesc: "Try selecting another genre or changing the OTT platform."
+    noMoviesDesc: "Try selecting another genre or search again.",
+    modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing"
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
+    historyBtn: "📜 记录", historyModalTitle: "最近匹配记录", emptyHistory: "暂无匹配记录。", clearHistoryBtn: "清空记录", closeHistoryBtn: "关闭",
     langMenuBtn: "🌐 语言设置", langModalTitle: "语言设置", closeLangModal: "关闭",
     prevBtn: "上一步", nextBtn: "下一步", nextBtnResult: "查看推荐结果 ✨",
     alert_primary: "请选择基准。", alert_situation: "请选择当前的用餐场景。", alert_detail: "请选择详细项目。",
@@ -63,14 +68,16 @@ const i18nData = {
     resultTitle: "✨ 专属推荐结果 ✨", resContentTitle: "🎬 推荐内容", resFoodTitle: "🍕 推荐美食", resComboTitle: "💡 最佳绝配 Combo",
     shareBtn: "保存图片 🔗", resetBtn: "重新开始",
     genreTitle: "类型目录", tab_all: "全部", tab_action: "动作", tab_comedy: "喜剧", tab_drama: "剧情", tab_romance: "爱情", tab_thriller: "惊悚", tab_animation: "动画",
-    clickPosterInfo: "点击电影海报可查看详情与美食搭配。", backToMainBtn: "返回主页",
+    clickPosterInfo: "点击电影海报可查看说明与美食搭配。", backToMainBtn: "返回主页",
     loadingText: "正在加载电影列表...", movieDescHeader: "🎬 电影简介", foodRecHeader: "🍽 美食搭配",
     releaseDate: "上映日期", rating: "评分", noReleaseInfo: "暂无上映信息", noRatingInfo: "暂无评分",
     noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。",
-    noMoviesDesc: "尝试选择其他类型或更换 OTT 平台。"
+    noMoviesDesc: "尝试选择其他类型或重新搜索。",
+    modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
+    historyBtn: "📜 履歴", historyModalTitle: "最近のマッチング履歴", emptyHistory: "まだ履歴がありません。", clearHistoryBtn: "履歴をすべて消去", closeHistoryBtn: "閉じる",
     langMenuBtn: "🌐 言語設定", langModalTitle: "言語設定", closeLangModal: "閉じる",
     prevBtn: "前へ", nextBtn: "次へ", nextBtnResult: "おすすめ結果を見る ✨",
     alert_primary: "基準を選択してください。", alert_situation: "現在の状況を選択してください。", alert_detail: "詳細項目を選択してください。",
@@ -85,11 +92,12 @@ const i18nData = {
     resultTitle: "✨ おすすめの結果 ✨", resContentTitle: "🎬 おすすめコンテンツ", resFoodTitle: "🍕 おすすめの食べ物", resComboTitle: "💡 ベストマッチコンボ",
     shareBtn: "結果をシェアする 🔗", resetBtn: "最初からやり直す",
     genreTitle: "ジャンルカテゴリー", tab_all: "すべて", tab_action: "アクション", tab_comedy: "コメディ", tab_drama: "ドラマ", tab_romance: "ロマンス", tab_thriller: "スリラー", tab_animation: "アニメ",
-    clickPosterInfo: "ポスターをクリックすると、説明とおすすめの食べ物が表示されます。", backToMainBtn: "メインに戻る",
+    clickPosterInfo: "映画のポスターをクリックすると、説明とおすすめの食べ物が表示されます。", backToMainBtn: "メインに戻る",
     loadingText: "映画リストを読み込んでいます...", movieDescHeader: "🎬 映画の説明", foodRecHeader: "🍽 おすすめの食べ物",
     releaseDate: "公開日", rating: "評価", noReleaseInfo: "公開日情報なし", noRatingInfo: "情報なし",
     noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。",
-    noMoviesDesc: "別のジャンルを選択するか、OTTプラットフォームを変更してみてください。"
+    noMoviesDesc: "別のジャンルを選択するか、再度検索してみてください。",
+    modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物"
   }
 };
 

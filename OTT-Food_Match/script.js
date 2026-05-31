@@ -39,10 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
-      if (state.currentStep === 1 && !state.primary) return showCustomAlert(t("alert_primary"));
-      if (state.currentStep === 2 && !state.situation) return showCustomAlert(t("alert_situation"));
-      if (state.currentStep === 3 && !state.detail) return showCustomAlert(t("alert_detail"));
-      if (state.currentStep === 4 && !state.selectedOtt) return showCustomAlert(t("alert_ott"));
+      if (state.currentStep === 1 && !state.primary) return showCustomAlert(typeof t === 'function' ? t("alert_primary") : "기준을 선택해주세요.");
+      if (state.currentStep === 2 && !state.situation) return showCustomAlert(typeof t === 'function' ? t("alert_situation") : "상황을 선택해주세요.");
+      if (state.currentStep === 3 && !state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "상세 항목을 선택해주세요.");
+      if (state.currentStep === 4 && !state.selectedOtt) return showCustomAlert(typeof t === 'function' ? t("alert_ott") : "OTT를 선택해주세요.");
 
       const maxSteps = state.primary === "food" ? 4 : 3;
       if (state.currentStep < maxSteps) {
@@ -95,7 +95,28 @@ document.addEventListener("DOMContentLoaded", () => {
       if (navArea) navArea.classList.remove("hidden");
     }
 
-    if (nextBtn) nextBtn.textContent = (state.currentStep === maxSteps) ? t("nextBtnResult") : t("nextBtn");
+    if (nextBtn) nextBtn.textContent = (state.currentStep === maxSteps) ? (typeof t === 'function' ? t("nextBtnResult") : "추천 결과 보기") : (typeof t === 'function' ? t("nextBtn") : "다음 단계");
+  }
+
+  function saveToHistory(movieTitle, foodName) {
+    let history = JSON.parse(localStorage.getItem("matchHistory")) || [];
+    
+    let emoji = "🍽️";
+    if (foodName.includes("치킨") || foodName.includes("Chicken") || foodName.includes("炸鸡") || foodName.includes("チキン")) emoji = "🍗";
+    else if (foodName.includes("피자") || foodName.includes("Pizza") || foodName.includes("披萨") || foodName.includes("ピザ")) emoji = "🍕";
+    else if (foodName.includes("떡볶이") || foodName.includes("Tteokbokki") || foodName.includes("辣炒年糕") || foodName.includes("トッポッキ")) emoji = "🥘";
+    else if (foodName.includes("파스타") || foodName.includes("Pasta") || foodName.includes("意面") || foodName.includes("パスタ")) emoji = "🍝";
+    
+    const newRecord = {
+      date: new Date().toLocaleString(),
+      movieTitle: movieTitle,
+      foodName: foodName,
+      emoji: emoji
+    };
+    
+    history.unshift(newRecord);
+    if (history.length > 20) history.pop();
+    localStorage.setItem("matchHistory", JSON.stringify(history));
   }
 
   async function showResult() {
@@ -108,11 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      const lang = getLang();
+      const lang = typeof getLang === 'function' ? getLang() : (localStorage.getItem("lang") || "ko");
       
       const mapSituation = { "혼밥": "honbab", "야식": "yasik", "친구와 함께": "friends", "연인과 함께": "couple", "간단한 식사": "light", "든든한 식사": "heavy" };
       const mealKey = mapSituation[state.situation] || "honbab";
-      const mealInLang = t("meal_" + mealKey);
+      const mealInLang = typeof t === 'function' ? t("meal_" + mealKey) : state.situation;
       
       const rawOttName = state.primary === "ott" ? state.detail : state.selectedOtt;
       
@@ -122,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (lang === "zh" ? (ottMapZh[rawOttName] || rawOttName) : (ottMapJa[rawOttName] || rawOttName)));
 
       const foodMap = { "치킨/피자": "food_chicken_pizza", "분식(떡볶이 등)": "food_bunsik", "한식(국밥/찌개)": "food_korean", "양식(파스타 등)": "food_western" };
-      const translatedFood = state.primary === "food" ? t(foodMap[state.detail] || state.detail) : null;
+      const translatedFood = state.primary === "food" ? (typeof t === 'function' ? t(foodMap[state.detail] || state.detail) : state.detail) : null;
 
       let data = {};
       
@@ -160,12 +181,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (document.getElementById("foodResult")) document.getElementById("foodResult").innerHTML = `<div class="result-item"><strong>🍽️ ${data.foodName}</strong><p>${data.foodReason}</p></div>`;
       if (document.getElementById("bestMatchText")) document.getElementById("bestMatchText").textContent = data.bestMatchCombo;
 
+      saveToHistory(`[${ottName}] ${data.ottGenre}`, data.foodName);
+
       if (loadingSection) loadingSection.classList.add("hidden");
       if (resultSection) resultSection.classList.remove("hidden");
 
     } catch (error) {
       if (loadingSection) loadingSection.classList.add("hidden");
-      showCustomAlert(t("alert_error"));
+      showCustomAlert(typeof t === 'function' ? t("alert_error") : "오류가 발생했습니다.");
       setTimeout(() => location.reload(), 2000);
     }
   }
@@ -185,11 +208,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const canvas = await html2canvas(resultSection, { scale: 2, backgroundColor: document.body.classList.contains("dark-mode") ? "#222222" : "#ffffff", logging: false, useCORS: true });
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
-        link.download = getLang() === "ko" ? "맞춤_추천결과.png" : "Recommendation_Result.png";
+        link.download = (typeof getLang === 'function' && getLang() === "ko") ? "맞춤_추천결과.png" : "Recommendation_Result.png";
         link.click();
-        showCustomAlert(t("alert_copied"));
+        showCustomAlert(typeof t === 'function' ? t("alert_copied") : "저장되었습니다.");
       } catch (error) {
-        showCustomAlert(t("alert_error"));
+        showCustomAlert(typeof t === 'function' ? t("alert_error") : "오류가 발생했습니다.");
       } finally {
         if (actionArea) actionArea.style.display = "flex";
       }
@@ -232,6 +255,56 @@ document.addEventListener("DOMContentLoaded", () => {
     toastContainer.appendChild(toast);
     setTimeout(() => toast.classList.add("show"), 10);
     setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
+  }
+
+  const historyBtn = document.getElementById("historyBtn");
+  const historyModal = document.getElementById("historyModal");
+  const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+  const historyListContainer = document.getElementById("historyListContainer");
+
+  function renderHistory() {
+    let history = JSON.parse(localStorage.getItem("matchHistory")) || [];
+    
+    if (history.length === 0) {
+      historyListContainer.innerHTML = `<div class="empty-history">${typeof t === 'function' ? t("emptyHistory") : "기록이 없습니다."}</div>`;
+      return;
+    }
+
+    historyListContainer.innerHTML = history.map(item => `
+      <div class="history-item">
+        <div class="history-item-emoji">${item.emoji}</div>
+        <div class="history-item-info">
+          <small>${item.date}</small>
+          <strong>🎬 ${item.movieTitle}</strong>
+          <p>${item.foodName}</p>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  if (historyBtn && historyModal) {
+    historyBtn.addEventListener("click", () => {
+      renderHistory();
+      historyModal.classList.remove("hidden");
+      historyModal.style.display = "flex";
+    });
+  }
+
+  if (closeHistoryBtn) {
+    closeHistoryBtn.addEventListener("click", () => {
+      historyModal.classList.add("hidden");
+      historyModal.style.display = "none";
+    });
+  }
+
+  if (clearHistoryBtn) {
+    clearHistoryBtn.addEventListener("click", () => {
+      if(confirm((typeof getLang === 'function' && getLang() === "ko") ? "기록을 모두 지우시겠습니까?" : "Clear all history?")) {
+        localStorage.removeItem("matchHistory");
+        renderHistory();
+      }
+    });
   }
 });
 

@@ -856,3 +856,475 @@ body.dark-mode .option-btn.selected span {
   justify-content: center !important;
   gap: 12px;
 }
+
+/* ===============================
+   추천 상세 페이지
+================================ */
+
+.recommend-detail-card {
+  overflow: hidden;
+}
+
+.recommend-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.recommend-poster-box {
+  width: 100%;
+}
+
+.recommend-poster {
+  width: 100%;
+  border-radius: 18px;
+  display: block;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.recommend-content-box h2 {
+  text-align: left !important;
+  margin-bottom: 12px;
+}
+
+.recommend-content-box h3 {
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #ff7a59;
+}
+
+.recommend-content-box p {
+  color: #555;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  text-align: left !important;
+}
+
+.recommend-divider {
+  border: none;
+  border-top: 1px solid #eeeeee;
+  margin: 18px 0;
+}
+
+.reaction-area {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+body.dark-mode .recommend-content-box p {
+  color: #dddddd !important;
+}
+
+body.dark-mode .recommend-divider {
+  border-top-color: #333333;
+}
+
+@media (max-width: 700px) {
+  .recommend-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .recommend-poster {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+}
+
+/* ===============================
+   영화 정렬 / 더보기
+================================ */
+
+.movie-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sort-area {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sort-menu-btn {
+  border: none;
+  background: #ff7a59;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(255, 122, 89, 0.25);
+}
+
+.sort-menu {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  width: 120px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  z-index: 999;
+}
+
+.sort-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+.sort-option:hover {
+  background: #f5f5f5;
+}
+
+.load-more-area {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.load-more-area .primary-btn {
+  max-width: 220px;
+}
+
+body.dark-mode .sort-menu {
+  background: #222222;
+}
+
+body.dark-mode .sort-option {
+  color: #eeeeee;
+}
+
+body.dark-mode .sort-option:hover {
+  background: #333333;
+}
+
+@media (max-width: 600px) {
+  .movie-title-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sort-area {
+    align-self: center;
+  }
+
+  .sort-menu {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
+
+.primary-btn:disabled,
+.secondary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   메인 - 최근 저장한 조합
+================================ */
+
+.saved-combo-section {
+  margin-top: 18px;
+}
+
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.section-title-row h2 {
+  margin-bottom: 6px;
+  text-align: left !important;
+}
+
+.section-title-row p {
+  color: #666;
+  font-size: 0.95rem;
+  text-align: left !important;
+}
+
+.saved-combo-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.saved-combo-card {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 14px;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
+  padding: 14px;
+  align-items: start;
+}
+
+.saved-combo-poster-box {
+  width: 88px;
+}
+
+.saved-combo-poster {
+  width: 88px;
+  height: 128px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.saved-no-poster {
+  width: 88px;
+  height: 128px;
+  background: #eeeeee;
+  color: #777;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.saved-combo-content {
+  min-width: 0;
+}
+
+.saved-combo-movie-title {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #2d2d2d;
+  word-break: keep-all;
+}
+
+.saved-combo-content p {
+  color: #555;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+  text-align: left !important;
+}
+
+.saved-combo-content span {
+  font-weight: 700;
+  color: #ff7a59;
+  margin-right: 4px;
+}
+
+.saved-combo-date {
+  color: #888 !important;
+  font-size: 0.82rem !important;
+  margin-top: 6px;
+}
+
+.saved-combo-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.saved-view-btn,
+.saved-delete-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.saved-view-btn {
+  background: #ff7a59;
+  color: #ffffff;
+}
+
+.saved-delete-btn {
+  background: #eeeeee;
+  color: #333333;
+}
+
+.saved-empty-card {
+  background: #fff3ec;
+  border: 1px dashed #ffb59f;
+  border-radius: 18px;
+  padding: 24px;
+  text-align: center;
+}
+
+.saved-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.saved-empty-card h3 {
+  margin-bottom: 8px;
+  color: #2d2d2d;
+}
+
+.saved-empty-card p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ===============================
+   메인 - 추천 방식 소개
+================================ */
+
+.recommend-info-section {
+  margin-top: 18px;
+}
+
+.recommend-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.recommend-info-item {
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+}
+
+.recommend-info-item span {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.recommend-info-item strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #2d2d2d;
+}
+
+.recommend-info-item p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ===============================
+   메인 - 최근 저장 조합 미니 카드 최종 조정
+================================ */
+
+.saved-combo-list {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.saved-mini-card {
+  width: 150px;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 22px;
+  padding: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.saved-mini-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+.saved-mini-poster-box {
+  width: 100%;
+  height: 200px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #eeeeee;
+  margin-bottom: 10px;
+}
+
+.saved-mini-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.saved-mini-no-poster {
+  width: 100%;
+  height: 100%;
+  color: #777;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+}
+
+.saved-mini-food {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  text-align: center;
+  min-height: 28px;
+}
+
+.saved-mini-food span {
+  font-size: 1rem;
+}
+
+.saved-mini-food strong {
+  color: #2d2d2d;
+  font-size: 0.95rem;
+  word-break: keep-all;
+}
+
+/* 다크모드 */
+body.dark-mode .saved-mini-card {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+body.dark-mode .saved-mini-food strong {
+  color: #ffffff;
+}
+
+body.dark-mode .saved-mini-poster-box {
+  background: #333333;
+}
+
+@media (max-width: 600px) {
+  .saved-combo-list {
+    gap: 12px;
+  }
+
+  .saved-mini-card {
+    width: 130px;
+  }
+
+  .saved-mini-poster-box {
+    height: 176px;
+  }
+
+  .saved-mini-food strong {
+    font-size: 0.88rem;
+  }
+}
