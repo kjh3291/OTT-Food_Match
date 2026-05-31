@@ -1223,16 +1223,18 @@ body.dark-mode .sort-option:hover {
 }
 
 /* ===============================
-   메인 - 최근 저장 조합 미니 카드
+   메인 - 최근 저장 조합 미니 카드 최종 조정
 ================================ */
 
 .saved-combo-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 14px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .saved-mini-card {
+  width: 150px;
   background: #fafafa;
   border: 1px solid #eeeeee;
   border-radius: 22px;
@@ -1249,7 +1251,7 @@ body.dark-mode .sort-option:hover {
 
 .saved-mini-poster-box {
   width: 100%;
-  aspect-ratio: 2 / 3;
+  height: 200px;
   border-radius: 18px;
   overflow: hidden;
   background: #eeeeee;
@@ -1280,8 +1282,9 @@ body.dark-mode .sort-option:hover {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-align: center;
+  min-height: 28px;
 }
 
 .saved-mini-food span {
@@ -1290,7 +1293,7 @@ body.dark-mode .sort-option:hover {
 
 .saved-mini-food strong {
   color: #2d2d2d;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   word-break: keep-all;
 }
 
@@ -1306,4 +1309,22 @@ body.dark-mode .saved-mini-food strong {
 
 body.dark-mode .saved-mini-poster-box {
   background: #333333;
+}
+
+@media (max-width: 600px) {
+  .saved-combo-list {
+    gap: 12px;
+  }
+
+  .saved-mini-card {
+    width: 130px;
+  }
+
+  .saved-mini-poster-box {
+    height: 176px;
+  }
+
+  .saved-mini-food strong {
+    font-size: 0.88rem;
+  }
 }
