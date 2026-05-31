@@ -24,11 +24,20 @@ const i18nData = {
     clickPosterInfo: "영화 포스터를 클릭하면 설명과 추천 음식이 표시됩니다.", backToMainBtn: "메인으로 돌아가기",
     loadingText: "영화 목록을 불러오는 중입니다...", movieDescHeader: "🎬 영화 설명", foodRecHeader: "🍽 추천 음식",
     releaseDate: "개봉일", rating: "평점", noReleaseInfo: "개봉일 정보 없음", noRatingInfo: "정보 없음",
-    noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.",
-    noMoviesDesc: "다른 장르를 선택하거나 검색을 다시 시도해보세요.",
-    modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식",
-    // 💡 아래 2개가 새롭게 추가된 번역입니다.
-    modalShareBtn: "결과 공유하기 🔗", closeFinalResultModal: "닫기" 
+    noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.", noMoviesDesc: "다른 장르를 선택하거나 검색을 다시 시도해보세요.",
+    modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식", modalShareBtn: "결과 공유하기 🔗", closeFinalResultModal: "닫기",
+    
+    // 💡 새로 추가된 번역: 메인 페이지 '이렇게 추천해요'
+    recommendInfoTitle: "이렇게 추천해요",
+    infoLabel1: "영화 장르", infoDesc1: "선택한 영화의 분위기를 반영해요.",
+    infoLabel2: "식사 상황", infoDesc2: "혼밥, 야식, 친구와 함께 등 상황을 고려해요.",
+    infoLabel3: "음식 카테고리", infoDesc3: "장르와 상황에 어울리는 메뉴를 추천해요.",
+    
+    // 💡 새로 추가된 번역: recommend.html 관련
+    recommendPageTitle: "추천 상세", recommendPageInfo: "선택한 영화와 어울리는 음식을 확인해보세요.",
+    recommendLoadingText: "추천 정보를 불러오는 중입니다...", reactionTitle: "이 추천은 어땠나요?",
+    likeBtn: "👍 좋아요", dislikeBtn: "👎 싫어요", saveComboBtn: "💾 조합 저장", backToMovieBtn: "영화 목록으로 돌아가기",
+    errorLoadMovie: "영화 정보를 불러오지 못했습니다."
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
@@ -51,10 +60,18 @@ const i18nData = {
     clickPosterInfo: "Click a movie poster to view description and food pairing.", backToMainBtn: "Go to Main",
     loadingText: "Loading movies...", movieDescHeader: "🎬 Movie Details", foodRecHeader: "🍽 Food Pairing",
     releaseDate: "Release", rating: "Rating", noReleaseInfo: "No date info", noRatingInfo: "No info",
-    noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.",
-    noMoviesDesc: "Try selecting another genre or search again.",
-    modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing",
-    modalShareBtn: "Save Image 🔗", closeFinalResultModal: "Close"
+    noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.", noMoviesDesc: "Try selecting another genre or search again.",
+    modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing", modalShareBtn: "Save Image 🔗", closeFinalResultModal: "Close",
+    
+    // 💡 새로 추가된 번역
+    recommendInfoTitle: "How We Recommend",
+    infoLabel1: "Movie Genre", infoDesc1: "Reflects the mood of your selected movie.",
+    infoLabel2: "Meal Setting", infoDesc2: "Considers your situation like eating alone or with friends.",
+    infoLabel3: "Food Category", infoDesc3: "Suggests the best menu matching the genre and setting.",
+    recommendPageTitle: "Recommendation Details", recommendPageInfo: "Check out the food pairing for your selected movie.",
+    recommendLoadingText: "Loading recommendation info...", reactionTitle: "How was this recommendation?",
+    likeBtn: "👍 Like", dislikeBtn: "👎 Dislike", saveComboBtn: "💾 Save Combo", backToMovieBtn: "Back to Movies",
+    errorLoadMovie: "Failed to load movie information."
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
@@ -77,10 +94,18 @@ const i18nData = {
     clickPosterInfo: "点击电影海报可查看说明与美食搭配。", backToMainBtn: "返回主页",
     loadingText: "正在加载电影列表...", movieDescHeader: "🎬 电影简介", foodRecHeader: "🍽 美食搭配",
     releaseDate: "上映日期", rating: "评分", noReleaseInfo: "暂无上映信息", noRatingInfo: "暂无评分",
-    noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。",
-    noMoviesDesc: "尝试选择其他类型或重新搜索。",
-    modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配",
-    modalShareBtn: "保存图片 🔗", closeFinalResultModal: "关闭"
+    noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。", noMoviesDesc: "尝试选择其他类型或重新搜索。",
+    modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配", modalShareBtn: "保存图片 🔗", closeFinalResultModal: "关闭",
+    
+    // 💡 새로 추가된 번역
+    recommendInfoTitle: "推荐方式",
+    infoLabel1: "电影类型", infoDesc1: "反映所选电影的氛围。",
+    infoLabel2: "用餐场景", infoDesc2: "考虑一人食、夜宵、朋友聚会等场景。",
+    infoLabel3: "美食类别", infoDesc3: "推荐适合类型与场景的绝佳菜单。",
+    recommendPageTitle: "推荐详情", recommendPageInfo: "查看与所选电影搭配的美食。",
+    recommendLoadingText: "正在加载推荐信息...", reactionTitle: "这个推荐怎么样？",
+    likeBtn: "👍 喜欢", dislikeBtn: "👎 不喜欢", saveComboBtn: "💾 保存组合", backToMovieBtn: "返回电影列表",
+    errorLoadMovie: "无法加载电影信息。"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
@@ -103,10 +128,18 @@ const i18nData = {
     clickPosterInfo: "映画のポスターをクリックすると、説明とおすすめの食べ物が表示されます。", backToMainBtn: "メインに戻る",
     loadingText: "映画リストを読み込んでいます...", movieDescHeader: "🎬 映画の説明", foodRecHeader: "🍽 おすすめの食べ物",
     releaseDate: "公開日", rating: "評価", noReleaseInfo: "公開日情報なし", noRatingInfo: "情報なし",
-    noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。",
-    noMoviesDesc: "別のジャンルを選択するか、再度検索してみてください。",
-    modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物",
-    modalShareBtn: "結果をシェアする 🔗", closeFinalResultModal: "閉じる"
+    noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。", noMoviesDesc: "別のジャンルを選択するか、再度検索してみてください。",
+    modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物", modalShareBtn: "結果をシェアする 🔗", closeFinalResultModal: "閉じる",
+    
+    // 💡 새로 추가된 번역
+    recommendInfoTitle: "おすすめの理由",
+    infoLabel1: "映画のジャンル", infoDesc1: "選択した映画の雰囲気を反映します。",
+    infoLabel2: "食事の状況", infoDesc2: "一人ご飯、夜食、友達と一緒などの状況を考慮します。",
+    infoLabel3: "食べ物のカテゴリー", infoDesc3: "ジャンルと状況に合うメニューをおすすめします。",
+    recommendPageTitle: "おすすめの詳細", recommendPageInfo: "選択した映画に合う食べ物を確認してみてください。",
+    recommendLoadingText: "おすすめ情報を読み込んでいます...", reactionTitle: "このおすすめはどうでしたか？",
+    likeBtn: "👍 いいね", dislikeBtn: "👎 いまいち", saveComboBtn: "💾 コンボを保存", backToMovieBtn: "映画リストに戻る",
+    errorLoadMovie: "映画情報を読み込めませんでした。"
   }
 };
 
