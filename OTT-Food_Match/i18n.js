@@ -29,7 +29,16 @@ const i18nData = {
     loadingText: "영화 목록을 불러오는 중입니다...", movieDescHeader: "🎬 영화 설명", foodRecHeader: "🍽 추천 음식",
     releaseDate: "개봉일", rating: "평점", noReleaseInfo: "개봉일 정보 없음", noRatingInfo: "정보 없음",
     noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.",
-    noMoviesDesc: "다른 장르를 선택하거나 OTT를 바꿔서 다시 시도해보세요."
+    noMoviesDesc: "다른 장르를 선택하거나 OTT를 바꿔서 다시 시도해보세요.",
+
+    recommendPageTitle: "추천 상세",
+    recommendPageInfo: "선택한 영화와 어울리는 음식을 확인해보세요.",
+    reactionTitle: "이 추천은 어땠나요?",
+    likeBtn: "👍 좋아요",
+    dislikeBtn: "👎 싫어요",
+    saveComboBtn: "💾 조합 저장",
+    backToMovieBtn: "영화 목록으로 돌아가기",
+    
   },
   en: {
     // ⚙️ Common & Settings
@@ -57,7 +66,15 @@ const i18nData = {
     loadingText: "Loading movies...", movieDescHeader: "🎬 Movie Details", foodRecHeader: "🍽 Food Pairing",
     releaseDate: "Release", rating: "Rating", noReleaseInfo: "No date info", noRatingInfo: "No info",
     noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.",
-    noMoviesDesc: "Try selecting another genre or changing the OTT platform."
+    noMoviesDesc: "Try selecting another genre or changing the OTT platform.",
+
+    recommendPageTitle: "Recommendation Details",
+    recommendPageInfo: "Check out the food pairing that matches your selected movie.",
+    reactionTitle: "How was this recommendation?",
+    likeBtn: "👍 Like",
+    dislikeBtn: "👎 Dislike",
+    saveComboBtn: "💾 Save Combo",
+    backToMovieBtn: "Back to Movie List",
   }
 };
 
