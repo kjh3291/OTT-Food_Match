@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>추천 상세</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app recommend-app">
+    <header class="header">
+      <div class="setting-area">
+        <button id="settingBtn" class="setting-btn">⚙ 설정</button>
+        <div id="settingPopup" class="setting-popup hidden">
+          <h3 id="settingTitle">설정</h3>
+          <button id="darkModeToggle" class="setting-option-btn">🌙 다크 모드</button>
+          <button id="langMenuBtn" class="setting-option-btn">🌐 언어 설정</button>
+        </div>
+      </div>
+
+      <h1 id="recommendPageTitle">추천 상세</h1>
+      <p id="recommendPageInfo">선택한 영화와 어울리는 음식을 확인해보세요.</p>
+    </header>
+
+    <main>
+  <section class="card recommend-detail-card">
+    <div id="recommendDetailArea">
+      <p id="recommendLoadingText">추천 정보를 불러오는 중입니다...</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="reactionTitle">이 추천은 어땠나요?</h2>
+
+    <div class="reaction-area">
+      <button id="likeBtn" class="primary-btn">👍 좋아요</button>
+      <button id="dislikeBtn" class="secondary-btn">👎 싫어요</button>
+    </div>
+
+    <div class="action-area">
+      <button id="saveComboBtn" class="primary-btn">💾 조합 저장</button>
+    </div>
+  </section>
+
+  <div class="action-area">
+    <button id="backToMovieBtn" class="secondary-btn">영화 목록으로 돌아가기</button>
+    <button id="backToMainBtn" class="secondary-btn">메인으로 돌아가기</button>
+  </div>
+</main>
+  </div>
+
+  <div id="langModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="langModalTitle" style="margin-bottom: 10px;">언어 설정</h3>
+      <div class="lang-options">
+        <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
+        <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
+      </div>
+      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="i18n.js"></script>
+  <script src="food.js"></script>
+  <script src="food-algorithm.js"></script>
+  <script src="recommend.js"></script>
+</body>
+</html>
