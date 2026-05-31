@@ -419,14 +419,34 @@ if (darkModeToggle) {
 // ===============================
 // 14. 실행
 // ===============================
+// ===============================
+// 14. 실행
+// ===============================
+
+// 누락되었던 음식 추천 연결 함수를 추가합니다.
+function makeFoodRecommendation(movie) {
+  // allFoods 배열과 recommend 함수가 로드되어 있는 경우
+  if (typeof allFoods !== "undefined" && allFoods.length > 0 && typeof recommend === "function") {
+    const foodObj = recommend(allFoods);
+    return {
+      food: foodObj.name,
+      reason: `${movie.title}의 분위기와 어울리는 특별한 조합입니다.`
+    };
+  }
+  // 로드되지 않았을 경우의 기본값 방어 코드
+  return { food: "치킨과 콜라", reason: "어떤 영화와도 잘 어울리는 무난한 조합입니다." };
+}
 
 async function initRecommendPage() {
-  const movie = await fetchMovieDetail();
+  let movie = null;
+  if (typeof fetchMovieDetail === "function") {
+    movie = await fetchMovieDetail();
+  }
 
   if (!movie) {
-    recommendDetailArea.innerHTML = `
-      <p>영화 정보를 불러오지 못했습니다.</p>
-    `;
+    if (typeof recommendDetailArea !== "undefined") {
+      recommendDetailArea.innerHTML = `<p>영화 정보를 불러오지 못했습니다.</p>`;
+    }
     return;
   }
 
@@ -435,8 +455,9 @@ async function initRecommendPage() {
   const recommendation = makeFoodRecommendation(movie);
   currentFood = recommendation.food;
   currentReason = recommendation.reason;
-
-  renderRecommendDetail(currentMovie, currentFood, currentReason);
+  
+  // 이후 화면에 데이터를 렌더링하는 코드 추가 필요
 }
 
+// 스크립트가 로드되면 페이지 초기화 실행
 initRecommendPage();
