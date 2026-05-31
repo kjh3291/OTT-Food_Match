@@ -215,4 +215,92 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => toast.classList.add("show"), 10);
     setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
   }
+
+    // ===============================
+  // 최근 저장한 조합 메인 화면 표시
+  // ===============================
+
+  function renderSavedCombosOnMain() {
+    const savedComboList = document.getElementById("savedComboList");
+
+    if (!savedComboList) return;
+
+    const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+    const recentCombos = savedCombos.slice(-3).reverse();
+
+    if (recentCombos.length === 0) {
+      savedComboList.innerHTML = `
+        <div class="saved-empty-card">
+          <div class="saved-empty-icon">🍿</div>
+          <h3>아직 저장한 조합이 없어요</h3>
+          <p>영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.</p>
+        </div>
+      `;
+      return;
+    }
+
+    savedComboList.innerHTML = recentCombos
+  .map((combo) => {
+    const posterUrl = combo.posterPath
+      ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
+      : "";
+
+    return `
+      <div 
+        class="saved-mini-card"
+        data-movie-id="${combo.movieId}"
+        data-ott="${combo.ott}"
+        data-meal="${combo.meal}"
+        data-genre="${combo.genre}"
+      >
+        <div class="saved-mini-poster-box">
+          ${
+            posterUrl
+              ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-mini-poster">`
+              : `<div class="saved-mini-no-poster">포스터 없음</div>`
+          }
+        </div>
+
+        <div class="saved-mini-food">
+          <span>🍽</span>
+          <strong>${combo.foodName}</strong>
+        </div>
+      </div>
+    `;
+  })
+  .join("");
+
+addSavedMiniCardEvents();
+  }
+
+  function getOttDisplayName(ottKey) {
+    const ottNameMap = {
+      netflix: "넷플릭스",
+      disney: "디즈니+",
+      tving: "티빙",
+      wavve: "웨이브",
+    };
+
+    return ottNameMap[ottKey] || "OTT";
+  }
+
+  function addSavedMiniCardEvents() {
+  document.querySelectorAll(".saved-mini-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const movieId = card.dataset.movieId;
+      const ott = card.dataset.ott;
+      const meal = encodeURIComponent(card.dataset.meal);
+      const genre = encodeURIComponent(card.dataset.genre);
+
+      window.location.href =
+        `recommend.html?movieId=${movieId}` +
+        `&ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}`;
+    });
+  });
+}
+
+  renderSavedCombosOnMain();
+
 });
