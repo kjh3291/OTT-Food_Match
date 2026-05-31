@@ -16,6 +16,7 @@ const i18nData = {
     meal_honbab: "혼밥", meal_yasik: "야식", meal_friends: "친구와 함께", meal_couple: "연인과 함께", meal_light: "간단한 식사", meal_heavy: "든든한 식사",
     step3OttTitle: "3. 이용 중인 OTT 플랫폼을 알려주세요.", step3FoodTitle: "3. 어떤 종류의 음식이 끌리시나요?", step4OttTitle: "4. 이용 중인 OTT 플랫폼을 알려주세요.",
     food_chicken_pizza: "치킨/피자", food_bunsik: "분식(떡볶이 등)", food_korean: "한식(국밥/찌개)", food_western: "양식(파스타 등)",
+    ott_netflix: "넷플릭스", ott_disney: "디즈니+", ott_tving: "티빙", ott_wavve: "웨이브",
     loadingTitle: "맞춤 조합을 찾는 중입니다...", loadingDesc: "잠시만 기다려주세요 🍿",
     resultTitle: "✨ 맞춤 추천 결과 ✨", resContentTitle: "🎬 추천 콘텐츠", resFoodTitle: "🍕 추천 음식", resComboTitle: "💡 Best Match Combo",
     shareBtn: "결과 공유하기 🔗", resetBtn: "처음부터 다시하기",
@@ -25,7 +26,9 @@ const i18nData = {
     releaseDate: "개봉일", rating: "평점", noReleaseInfo: "개봉일 정보 없음", noRatingInfo: "정보 없음",
     noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.",
     noMoviesDesc: "다른 장르를 선택하거나 검색을 다시 시도해보세요.",
-    modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식"
+    modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식",
+    // 💡 아래 2개가 새롭게 추가된 번역입니다.
+    modalShareBtn: "결과 공유하기 🔗", closeFinalResultModal: "닫기" 
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
@@ -37,11 +40,12 @@ const i18nData = {
     mainTitle: "🍿 What to Watch, What to Eat", mainDesc: "OTT and food combination recommendation service",
     step1Title: "1. Which one would you like to choose first?", step1Opt1: "📺 Based on Content (OTT)", step1Opt2: "🍕 Based on Food Menu",
     step2Title: "2. What is your current meal situation?",
-    meal_honbab: "Eating Alone", meal_yasik: "Late Night Snack", meal_friends: "With Friends", meal_couple: "With Partner", meal_light: "Light Meal", meal_heavy: "Hearty Meal",
+    meal_honbab: "Eating Alone", meal_yasik: "Late Snack", meal_friends: "With Friends", meal_couple: "With Partner", meal_light: "Light Meal", meal_heavy: "Hearty Meal",
     step3OttTitle: "3. Please select your OTT platform.", step3FoodTitle: "3. What kind of food are you craving?", step4OttTitle: "4. Please select your OTT platform.",
     food_chicken_pizza: "Chicken/Pizza", food_bunsik: "Street Food", food_korean: "Korean Food", food_western: "Western Food",
+    ott_netflix: "Netflix", ott_disney: "Disney+", ott_tving: "TVING", ott_wavve: "wavve",
     loadingTitle: "Finding the perfect match...", loadingDesc: "Please wait a moment 🍿",
-    resultTitle: "✨ Custom Recommendation Results ✨", resContentTitle: "🎬 Recommended Content", resFoodTitle: "🍕 Recommended Food", resComboTitle: "💡 Best Match Combo",
+    resultTitle: "✨ Recommendation Results ✨", resContentTitle: "🎬 Recommended Content", resFoodTitle: "🍕 Recommended Food", resComboTitle: "💡 Best Match Combo",
     shareBtn: "Save Image 🔗", resetBtn: "Restart",
     genreTitle: "Genre Categories", tab_all: "All", tab_action: "Action", tab_comedy: "Comedy", tab_drama: "Drama", tab_romance: "Romance", tab_thriller: "Thriller", tab_animation: "Animation",
     clickPosterInfo: "Click a movie poster to view description and food pairing.", backToMainBtn: "Go to Main",
@@ -49,7 +53,8 @@ const i18nData = {
     releaseDate: "Release", rating: "Rating", noReleaseInfo: "No date info", noRatingInfo: "No info",
     noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.",
     noMoviesDesc: "Try selecting another genre or search again.",
-    modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing"
+    modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing",
+    modalShareBtn: "Save Image 🔗", closeFinalResultModal: "Close"
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
@@ -64,6 +69,7 @@ const i18nData = {
     meal_honbab: "一人食", meal_yasik: "夜宵", meal_friends: "朋友聚会", meal_couple: "恋人约会", meal_light: "简单便餐", meal_heavy: "丰盛正餐",
     step3OttTitle: "3. 请选择您正在使用的 OTT 平台。", step3FoodTitle: "3. 您现在想吃哪类食物？", step4OttTitle: "4. 请选择您正在使用的 OTT 平台。",
     food_chicken_pizza: "炸鸡/披萨", food_bunsik: "韩式小吃 (辣炒年糕等)", food_korean: "韩餐 (汤饭/汤锅)", food_western: "西餐 (意面等)",
+    ott_netflix: "网飞", ott_disney: "迪士尼+", ott_tving: "TVING", ott_wavve: "wavve",
     loadingTitle: "正在为您寻找完美搭配...", loadingDesc: "请稍等片刻 🍿",
     resultTitle: "✨ 专属推荐结果 ✨", resContentTitle: "🎬 推荐内容", resFoodTitle: "🍕 推荐美食", resComboTitle: "💡 最佳绝配 Combo",
     shareBtn: "保存图片 🔗", resetBtn: "重新开始",
@@ -73,7 +79,8 @@ const i18nData = {
     releaseDate: "上映日期", rating: "评分", noReleaseInfo: "暂无上映信息", noRatingInfo: "暂无评分",
     noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。",
     noMoviesDesc: "尝试选择其他类型或重新搜索。",
-    modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配"
+    modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配",
+    modalShareBtn: "保存图片 🔗", closeFinalResultModal: "关闭"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
@@ -88,6 +95,7 @@ const i18nData = {
     meal_honbab: "一人ご飯", meal_yasik: "夜食", meal_friends: "友達と一緒に", meal_couple: "恋人と一緒に", meal_light: "軽食", meal_heavy: "がっつり食事",
     step3OttTitle: "3. ご利用のOTTプラットフォームを教えてください。", step3FoodTitle: "3. どんな食べ物が食べたいですか？", step4OttTitle: "4. ご利用のOTTプラットフォームを教えてください。",
     food_chicken_pizza: "チキン/ピザ", food_bunsik: "粉食(トッポッキなど)", food_korean: "韓国料理", food_western: "洋食",
+    ott_netflix: "Netflix", ott_disney: "Disney+", ott_tving: "TVING", ott_wavve: "wavve",
     loadingTitle: "ぴったりな組み合わせを探しています...", loadingDesc: "少々お待ちください 🍿",
     resultTitle: "✨ おすすめの結果 ✨", resContentTitle: "🎬 おすすめコンテンツ", resFoodTitle: "🍕 おすすめの食べ物", resComboTitle: "💡 ベストマッチコンボ",
     shareBtn: "結果をシェアする 🔗", resetBtn: "最初からやり直す",
@@ -97,7 +105,8 @@ const i18nData = {
     releaseDate: "公開日", rating: "評価", noReleaseInfo: "公開日情報なし", noRatingInfo: "情報なし",
     noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。",
     noMoviesDesc: "別のジャンルを選択するか、再度検索してみてください。",
-    modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物"
+    modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物",
+    modalShareBtn: "結果をシェアする 🔗", closeFinalResultModal: "閉じる"
   }
 };
 
@@ -161,4 +170,3 @@ document.addEventListener("DOMContentLoaded", () => {
   
   applyLanguage();
 });
-
