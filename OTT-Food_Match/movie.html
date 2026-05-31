@@ -1,70 +1,91 @@
 <!doctype html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>영화 선택</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <div class="app movie-app">
     <header class="header movie-header">
-  <div class="setting-area">
-    <button id="settingBtn" class="setting-btn">
-      ⚙ 설정
-    </button>
-
-    <div id="settingPopup" class="setting-popup hidden">
-      <h3>설정</h3>
-
-      <button id="darkModeToggle" class="setting-option-btn">
-        🌙 다크 모드
-      </button>
-    </div>
-  </div>
-
-  <h1 id="moviePageTitle">OTT 영화</h1>
-  <p id="moviePageInfo">선택한 조건에 맞는 영화를 확인해보세요.</p>
-</header>
+      <div class="setting-area">
+        <button id="settingBtn" class="setting-btn">⚙ 설정</button>
+        <div id="settingPopup" class="setting-popup hidden">
+          <h3 id="settingTitle">설정</h3>
+          <button id="darkModeToggle" class="setting-option-btn">🌙 다크 모드</button>
+          <button id="langMenuBtn" class="setting-option-btn">🌐 언어 설정</button>
+        </div>
+      </div>
+      <h1 id="moviePageTitle">OTT 영화</h1>
+      <p id="moviePageInfo">선택한 조건에 맞는 영화를 확인해보세요.</p>
+    </header>
 
     <main>
       <section class="card movie-top-card">
-        <h2>장르 카테고리</h2>
-        
+        <h2 id="genreTitle">장르 카테고리</h2>
         <div class="genre-tab-group" id="genreTabGroup">
-          <button class="genre-tab selected" data-genre="전체">전체</button>
-          <button class="genre-tab" data-genre="액션">액션</button>
-          <button class="genre-tab" data-genre="코미디">코미디</button>
-          <button class="genre-tab" data-genre="드라마">드라마</button>
-          <button class="genre-tab" data-genre="로맨스">로맨스</button>
-          <button class="genre-tab" data-genre="스릴러">스릴러</button>
-          <button class="genre-tab" data-genre="애니메이션">애니메이션</button>
-</div>
+          <button class="genre-tab selected" data-genre="전체" id="tab_all">전체</button>
+          <button class="genre-tab" data-genre="액션" id="tab_action">액션</button>
+          <button class="genre-tab" data-genre="코미디" id="tab_comedy">코미디</button>
+          <button class="genre-tab" data-genre="드라마" id="tab_drama">드라마</button>
+          <button class="genre-tab" data-genre="로맨스" id="tab_romance">로맨스</button>
+          <button class="genre-tab" data-genre="스릴러" id="tab_thriller">스릴러</button>
+          <button class="genre-tab" data-genre="애니메이션" id="tab_animation">애니메이션</button>
+        </div>
       </section>
 
       <section class="card">
         <div class="movie-section-title">
-          <h2 id="selectedGenreTitle">전체 영화</h2>
-          <p>영화 포스터를 클릭하면 설명과 추천 음식이 표시됩니다.</p>
-        </div>
-        <div id="loadingText">
-          영화 목록을 불러오는 중입니다...
-        </div>
-        <div id="movieList" class="movie-grid"></div>
+  <div class="movie-title-row">
+    <div>
+      <h2 id="selectedGenreTitle">전체 영화</h2>
+      <p id="clickPosterInfo">영화 포스터를 클릭하면 추천 상세 페이지로 이동합니다.</p>
+    </div>
+
+    <div class="sort-area">
+      <button id="sortMenuBtn" class="sort-menu-btn">인기순 ▾</button>
+
+      <div id="sortMenu" class="sort-menu hidden">
+        <button class="sort-option" data-sort="popularity">인기순</button>
+        <button class="sort-option" data-sort="rating">평점순</button>
+        <button class="sort-option" data-sort="latest">최신순</button>
+        <button class="sort-option" data-sort="title">이름순</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loadingText">영화 목록을 불러오는 중입니다...</div>
+<div id="movieList" class="movie-grid"></div>
+
+<div class="load-more-area">
+  <button id="loadMoreBtn" class="primary-btn hidden">더보기</button>
+</div>
       </section>
 
       <div class="action-area">
-  <button id="backToMainBtn" class="secondary-btn" onclick="location.href='main.html'">
-    메인으로 돌아가기
-  </button>
-</div>
+        <button id="backToMainBtn" class="secondary-btn">메인으로 돌아가기</button>
+      </div>
     </main>
   </div>
 
-  <script src="config.js"></script>
+  <div id="langModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="langModalTitle" style="margin-bottom: 10px;">언어 설정</h3>
+      <div class="lang-options">
+        <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
+        <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
+      </div>
+      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
+    </div>
+  </div>
+
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="config.js"></script> 
+  <script src="i18n.js"></script>
+  <script src="food.js"></script>
+  <script src="food-algorithm.js"></script>
   <script src="movie.js"></script>
 </body>
-
 </html>
