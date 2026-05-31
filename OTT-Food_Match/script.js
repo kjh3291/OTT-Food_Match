@@ -1,3 +1,134 @@
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. 상태 관리 객체
+  const state = { currentStep: 1, primary: "", situation: "", detail: "", selectedOtt: "" };
+
+  const steps = { 
+    1: document.getElementById("step1"), 
+    2: document.getElementById("step2"), 
+    "3-ott": document.getElementById("step3-ott"), 
+    "3-food": document.getElementById("step3-food"), 
+    4: document.getElementById("step4-ott") 
+  };
+
+  const navArea = document.getElementById("navArea");
+  const prevBtn = document.getElementById("prevBtn"); 
+  const nextBtn = document.getElementById("nextBtn");
+  const progressBar = document.getElementById("progressBar");
+  const progressFill = document.getElementById("progressFill");
+
+  // 버튼 이벤트 등록
+  document.querySelectorAll(".option-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.key;
+      const value = button.dataset.value;
+
+      if (button.classList.contains("selected")) {
+        button.classList.remove("selected");
+        if (key) state[key] = "";
+        if (state.currentStep === 1 && navArea) navArea.classList.add("hidden");
+        return;
+      }
+
+      const parent = button.closest(".option-group, .ott-logo-grid");
+      if (parent) parent.querySelectorAll(".option-btn").forEach(btn => btn.classList.remove("selected"));
+
+      button.classList.add("selected");
+      if (key) state[key] = value;
+
+      if (state.currentStep === 1 && navArea) navArea.classList.remove("hidden");
+    });
+  });
+
+  function updateProgress(step) {
+    if (progressBar && progressFill) {
+      progressBar.style.display = "block";
+      const totalSteps = state.primary === "ott" ? 3 : 4;
+      const percentage = (step / totalSteps) * 100;
+      progressFill.style.width = `${percentage}%`;
+    }
+  }
+
+  // 다음 단계 버튼
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (state.currentStep === 1) {
+        if (!state.primary) return showCustomAlert(typeof t === 'function' ? t("alert_primary") : "기준을 선택해주세요.");
+        steps[1].classList.add("hidden");
+        steps[1].classList.remove("active");
+        steps[2].classList.remove("hidden");
+        steps[2].classList.add("active");
+        state.currentStep = 2;
+        if (prevBtn) prevBtn.style.display = "block";
+        updateProgress(2);
+      } else if (state.currentStep === 2) {
+        if (!state.situation) return showCustomAlert(typeof t === 'function' ? t("alert_situation") : "상황을 선택해주세요.");
+        steps[2].classList.add("hidden");
+        steps[2].classList.remove("active");
+        if (state.primary === "ott") {
+          steps["3-ott"].classList.remove("hidden");
+          steps["3-ott"].classList.add("active");
+          state.currentStep = "3-ott";
+        } else {
+          steps["3-food"].classList.remove("hidden");
+          steps["3-food"].classList.add("active");
+          state.currentStep = "3-food";
+        }
+        updateProgress(3);
+      } else if (state.currentStep === "3-ott") {
+        if (!state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "OTT를 선택해주세요.");
+        showResult();
+      } else if (state.currentStep === "3-food") {
+        if (!state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "음식을 선택해주세요.");
+        steps["3-food"].classList.add("hidden");
+        steps["3-food"].classList.remove("active");
+        steps[4].classList.remove("hidden");
+        steps[4].classList.add("active");
+        state.currentStep = 4;
+        updateProgress(4);
+      } else if (state.currentStep === 4) {
+        if (!state.selectedOtt) return showCustomAlert(typeof t === 'function' ? t("alert_ott") : "OTT를 선택해주세요.");
+        showResult();
+      }
+    });
+  }
+
+  // 이전 단계 버튼
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (state.currentStep === 2) {
+        steps[2].classList.add("hidden");
+        steps[2].classList.remove("active");
+        steps[1].classList.remove("hidden");
+        steps[1].classList.add("active");
+        state.currentStep = 1;
+        prevBtn.style.display = "none";
+        updateProgress(1);
+      } else if (state.currentStep === "3-ott") {
+        steps["3-ott"].classList.add("hidden");
+        steps["3-ott"].classList.remove("active");
+        steps[2].classList.remove("hidden");
+        steps[2].classList.add("active");
+        state.currentStep = 2;
+        updateProgress(2);
+      } else if (state.currentStep === "3-food") {
+        steps["3-food"].classList.add("hidden");
+        steps["3-food"].classList.remove("active");
+        steps[2].classList.remove("hidden");
+        steps[2].classList.add("active");
+        state.currentStep = 2;
+        updateProgress(2);
+      } else if (state.currentStep === 4) {
+        steps[4].classList.add("hidden");
+        steps[4].classList.remove("active");
+        steps["3-food"].classList.remove("hidden");
+        steps["3-food"].classList.add("active");
+        state.currentStep = "3-food";
+        updateProgress(3);
+      }
+    });
+  }
+
+  // 💡 다국어 지원 결과 도출 함수
   async function showResult() {
     const wizardForm = document.getElementById("wizardForm");
     if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
@@ -26,7 +157,6 @@
 
       let data = {};
       
-      // 💡 4개 국어(한국어, 영어, 중국어, 일본어) 지원
       if (lang === "ko") {
         data.ottTitle = `${ottName} 추천 콘텐츠`;
         data.ottGenre = `${state.situation}에 어울리는 추천 장르`;
@@ -71,8 +201,79 @@
     } catch (error) {
       if (loadingSection) loadingSection.classList.add("hidden");
       showCustomAlert(typeof t === 'function' ? t("alert_error") : "오류가 발생했습니다.");
-      setTimeout(() => location.reload(), 2000);
     }
   }
 
-  
+  const resetBtn = document.getElementById("resetBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => location.reload());
+  }
+
+  function showCustomAlert(message) {
+    let toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) {
+      toastContainer = document.createElement("div");
+      toastContainer.id = "toast-container";
+      document.body.appendChild(toastContainer);
+    }
+    const toast = document.createElement("div");
+    toast.className = "custom-toast";
+    toast.innerHTML = `<span>⚠️</span> ${message}`;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.classList.add("show"), 10);
+    setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
+  }
+
+  // 모달 및 다크모드 제어
+  const settingBtn = document.getElementById("settingBtn");
+  const settingPopup = document.getElementById("settingPopup");
+  if (settingBtn && settingPopup) {
+    settingBtn.addEventListener("click", (e) => { e.stopPropagation(); settingPopup.classList.toggle("hidden"); });
+    document.addEventListener("click", () => settingPopup.classList.add("hidden"));
+    settingPopup.addEventListener("click", (e) => e.stopPropagation());
+  }
+
+  const darkModeToggle = document.getElementById("darkModeToggle");
+  if (localStorage.getItem("theme") === "dark") {
+     document.body.classList.add("dark-mode");
+  }
+
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+      document.dispatchEvent(new Event("languageChanged")); 
+    });
+  }
+
+  function saveToHistory(movieTitle, foodName) {
+    let history = JSON.parse(localStorage.getItem("matchHistory")) || [];
+    const date = new Date().toLocaleDateString();
+    const emoji = ["🍕", "🍔", "🍗", "🍣", "🍜", "🍰"][Math.floor(Math.random() * 6)];
+    history.unshift({ date, movieTitle, foodName, emoji });
+    if (history.length > 10) history = history.slice(0, 10);
+    localStorage.setItem("matchHistory", JSON.stringify(history));
+  }
+
+  function getOttDisplayName(ottKey) {
+    const ottNameMap = {
+      netflix: "넷플릭스",
+      disney: "디즈니+",
+      tving: "티빙",
+      wavve: "웨이브",
+    };
+    return ottNameMap[ottKey] || "OTT";
+  }
+
+  function addSavedMiniCardEvents() {
+    document.querySelectorAll(".saved-mini-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const movieId = card.dataset.movieId;
+        const ott = card.dataset.ott;
+        const meal = encodeURIComponent(card.dataset.meal);
+        const genre = encodeURIComponent(card.dataset.genre);
+        window.location.href = `recommend.html?movieId=${movieId}&ott=${ott}&meal=${meal}&genre=${genre}`;
+      });
+    });
+  }
+}); 
