@@ -53,9 +53,10 @@ function searchPlaces(pos) {
     });
 }
 
-// 💡 [새로 추가된 부분] 키워드로 특정 식당 검색하기
+// [새로 추가된 부분] 키워드로 특정 식당 검색하기
 const searchBtn = document.getElementById('searchBtn');
 const keywordInput = document.getElementById('keyword');
+const cancelBtn = document.getElementById('cancelBtn'); // 취소 버튼 요소 가져오기
 
 if (searchBtn && keywordInput) {
     // 검색 버튼 클릭 시
@@ -63,6 +64,20 @@ if (searchBtn && keywordInput) {
     // 엔터키 입력 시
     keywordInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') searchByKeyword();
+    });
+}
+
+// 취소 버튼 클릭 이벤트 추가
+if (cancelBtn) {
+    cancelBtn.addEventListener('click', function () {
+        // 1. 검색어 초기화
+        keywordInput.value = '';
+
+        // 2. 검색 모드 해제
+        isSearchMode = false;
+
+        // 3. 현재 지도 중심 위치로 다시 주변 식당 검색
+        searchPlaces(map.getCenter());
     });
 }
 
