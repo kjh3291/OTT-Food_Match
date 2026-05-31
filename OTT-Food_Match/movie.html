@@ -37,11 +37,31 @@
 
       <section class="card">
         <div class="movie-section-title">
-          <h2 id="selectedGenreTitle">전체 영화</h2>
-          <p id="clickPosterInfo">영화 포스터를 클릭하면 설명과 추천 음식이 표시됩니다.</p>
-        </div>
-        <div id="loadingText">영화 목록을 불러오는 중입니다...</div>
-        <div id="movieList" class="movie-grid"></div>
+  <div class="movie-title-row">
+    <div>
+      <h2 id="selectedGenreTitle">전체 영화</h2>
+      <p id="clickPosterInfo">영화 포스터를 클릭하면 추천 상세 페이지로 이동합니다.</p>
+    </div>
+
+    <div class="sort-area">
+      <button id="sortMenuBtn" class="sort-menu-btn">인기순 ▾</button>
+
+      <div id="sortMenu" class="sort-menu hidden">
+        <button class="sort-option" data-sort="popularity">인기순</button>
+        <button class="sort-option" data-sort="rating">평점순</button>
+        <button class="sort-option" data-sort="latest">최신순</button>
+        <button class="sort-option" data-sort="title">이름순</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="loadingText">영화 목록을 불러오는 중입니다...</div>
+<div id="movieList" class="movie-grid"></div>
+
+<div class="load-more-area">
+  <button id="loadMoreBtn" class="primary-btn hidden">더보기</button>
+</div>
       </section>
 
       <div class="action-area">
