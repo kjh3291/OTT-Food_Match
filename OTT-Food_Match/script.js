@@ -75,9 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         updateProgress(3);
       } else if (state.currentStep === "3-ott") {
-        if (!state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "OTT를 선택해주세요.");
-        showResult();
-      } else if (state.currentStep === "3-food") {
+  if (!state.detail) {
+    return showCustomAlert(typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요.");
+  }
+  goToMoviePage(state.detail, state.situation);
+} 
+      else if (state.currentStep === "3-food") {
         if (!state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "음식을 선택해주세요.");
         steps["3-food"].classList.add("hidden");
         steps["3-food"].classList.remove("active");
@@ -86,9 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
         state.currentStep = 4;
         updateProgress(4);
       } else if (state.currentStep === 4) {
-        if (!state.selectedOtt) return showCustomAlert(typeof t === 'function' ? t("alert_ott") : "OTT를 선택해주세요.");
-        showResult();
-      }
+  if (!state.selectedOtt) {
+    return showCustomAlert(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
+  }
+
+  goToMoviePage(state.selectedOtt, state.situation, state.detail);
+}
     });
   }
 
@@ -223,6 +229,33 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => toast.classList.add("show"), 10);
     setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
   }
+
+  function goToMoviePage(ottName, mealName, foodName = "") {
+  const ottUrlMap = {
+    "넷플릭스": "netflix",
+    "디즈니+": "disney",
+    "티빙": "tving",
+    "웨이브": "wavve",
+  };
+
+  const ottParam = ottUrlMap[ottName];
+
+  if (!ottParam) {
+    showCustomAlert(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
+    return;
+  }
+
+  const mealParam = encodeURIComponent(mealName || "");
+  const foodParam = encodeURIComponent(foodName || "");
+
+  let url = `movie.html?ott=${ottParam}&meal=${mealParam}`;
+
+  if (foodName) {
+    url += `&food=${foodParam}`;
+  }
+
+  window.location.href = url;
+}
 
 
   const editSavedComboBtn = document.getElementById("editSavedComboBtn");
