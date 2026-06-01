@@ -110,6 +110,9 @@ function searchByKeyword() {
             // 지도의 중심을 가장 가까운 식당으로 '부드럽게(panTo)' 이동시킵니다.
             map.panTo(moveLatLon);
 
+            // 💡 [새로 추가된 부분] 이동한 후, 가장 가까운 식당(첫 번째 마커)의 정보창을 자동으로 띄웁니다!
+            openInfoWindow(nearestPlace, markers[0]);
+
         } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
             alert('검색 결과가 존재하지 않습니다.');
         } else if (status === kakao.maps.services.Status.ERROR) {
@@ -120,6 +123,49 @@ function searchByKeyword() {
         location: map.getCenter(), // 💡 현재 화면의 중심점을 기준으로
         sort: kakao.maps.services.SortBy.DISTANCE // 💡 거리가 가장 가까운 순서대로 정렬해서 가져옵니다!
     });
+}
+
+// 💡 [새로 추가된 함수] 마커에 해당하는 식당의 정보창(말풍선)을 열어주는 역할만 전담합니다.
+function openInfoWindow(place, marker) {
+    const restaurantName = place.place_name;
+    const fallbackMenus = getDynamicMenus(place.category_name);
+
+    let menuHtml = `<strong> 추천 메뉴</strong><ul style="padding-left: 15px;">`;
+
+    fallbackMenus.forEach(menu => {
+        menuHtml += `
+           <li style="margin-bottom: 5px;">
+             ${menu.name} - ${menu.price.toLocaleString()}원
+           </li>`;
+    });
+    menuHtml += `</ul>`;
+
+    const content = `
+      <div style="padding:15px; font-size:14px; width:280px; max-height: 250px; overflow-y: auto;">
+        <h4 style="margin-top:0; margin-bottom:5px;">${restaurantName}</h4>
+        <p style="color: gray; font-size: 12px; margin-top:0;">${place.category_name}</p>
+        <hr>
+        ${menuHtml}
+      </div>
+    `;
+
+    infowindow.setContent(content);
+    infowindow.open(map, marker);
+}
+
+// 검색된 음식점 마커 표시 (클릭 이벤트 수정)
+function displayPlaceMarker(place) {
+    const marker = new kakao.maps.Marker({
+        map: map,
+        position: new kakao.maps.LatLng(place.y, place.x)
+    });
+
+    kakao.maps.event.addListener(marker, 'click', function () {
+        // 💡 분리해둔 함수를 호출하기만 하면 코드가 훨씬 깔끔해집니다.
+        openInfoWindow(place, marker);
+    });
+
+    markers.push(marker);
 }
 
 // 검색된 음식점 마커 표시 및 클릭 시 가상 메뉴 띄우기 (기존 유지)
