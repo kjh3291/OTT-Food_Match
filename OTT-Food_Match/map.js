@@ -28,7 +28,6 @@ if (navigator.geolocation) {
 function updateMyLocation(locPosition) {
     if (myLocationMarker) myLocationMarker.setMap(null);
 
-    // 원하시는 크기로 조절 가능합니다 (현재 10px)
     const content = '<div style="width: 10px; height: 10px; background-color: #007bff; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>';
 
     myLocationMarker = new kakao.maps.CustomOverlay({
@@ -56,13 +55,25 @@ kakao.maps.event.addListener(map, 'click', function () {
 
 // 4. 주변 검색 및 마커 관리
 function searchPlaces(pos) {
+    const options = { location: pos, radius: 1000, sort: kakao.maps.services.SortBy.DISTANCE };
+
+    // 음식점(FD6) 검색
     ps.categorySearch('FD6', function (data, status) {
         if (status === kakao.maps.services.Status.OK) {
             for (let i = 0; i < data.length; i++) {
                 displayPlaceMarker(data[i]);
             }
         }
-    }, { location: pos, radius: 1000, sort: kakao.maps.services.SortBy.DISTANCE });
+    }, options);
+
+    // 카페(CE7) 검색
+    ps.categorySearch('CE7', function (data, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            for (let i = 0; i < data.length; i++) {
+                displayPlaceMarker(data[i]);
+            }
+        }
+    }, options);
 }
 
 function displayPlaceMarker(place) {
@@ -95,20 +106,37 @@ function searchByKeyword() {
     if (!keyword.trim()) return alert('검색어를 입력해주세요!');
 
     isSearchMode = true;
+
+    // 카테고리 제한 없이 모두 검색
     ps.keywordSearch(keyword, (data, status) => {
         if (status === kakao.maps.services.Status.OK) {
-            removeMarkers();
-            for (let i = 0; i < data.length; i++) displayPlaceMarker(data[i]);
 
-            map.panTo(new kakao.maps.LatLng(data[0].y, data[0].x));
-            setTimeout(() => openInfoWindow(data[0], markers[0]), 300);
+            // 검색한 데이터 중 음식점 및 카페만 필터링
+            const filteredData = data.filter(place => place.category_group_code === 'FD6' || place.category_group_code === 'CE7');
+
+            if (filteredData.length === 0) {
+                alert('검색된 결과 중 음식점이나 카페가 없습니다.');
+                return;
+            }
+
+            removeMarkers();
+
+            // 필터링된 결과만 마커로 찍습니다.
+            for (let i = 0; i < filteredData.length; i++) {
+                displayPlaceMarker(filteredData[i]);
+            }
+
+            // 필터링된 첫 번째(가장 가까운) 식당/카페로 이동하고 정보창을 엽니다.
+            map.panTo(new kakao.maps.LatLng(filteredData[0].y, filteredData[0].x));
+            setTimeout(() => openInfoWindow(filteredData[0], markers[0]), 300);
+
         } else {
             alert('검색 결과가 없습니다.');
         }
-    }, { category_group_code: 'FD6', location: map.getCenter(), sort: kakao.maps.services.SortBy.DISTANCE });
+    }, { location: map.getCenter(), sort: kakao.maps.services.SortBy.DISTANCE }); // 카테고리 옵션 제거
 }
 
-// 6. 정보창 열기 💡 (카테고리가 보이도록 스타일 복구)
+// 6. 정보창 열기
 function openInfoWindow(place, marker) {
     const menus = getDynamicMenus(place.category_name);
 
@@ -138,7 +166,7 @@ function getDynamicMenus(category) {
     if (category.includes('중식') || category.includes('중화요리')) {
         return [{ name: "짜장면", price: 6500 }, { name: "짬뽕", price: 7500 }, { name: "탕수육", price: 17000 }];
     }
-    if (category.includes('커피') || category.includes('카페')) {
+    if (category.includes('커피') || category.includes('카페')) { // 💡 카페 메뉴 로직은 기존에 작성해두신 코드가 훌륭하게 작동합니다.
         return [{ name: "아메리카노", price: 4000 }, { name: "카페라떼", price: 4500 }, { name: "치즈케이크", price: 5500 }];
     }
     return [{ name: "추천 대표 메뉴", price: 9000 }, { name: "인기 사이드 메뉴", price: 5000 }, { name: "공기밥", price: 1000 }];
