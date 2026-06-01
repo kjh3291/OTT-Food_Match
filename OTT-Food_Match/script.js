@@ -216,9 +216,43 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
   }
 
+
+  const editSavedComboBtn = document.getElementById("editSavedComboBtn");
+  const savedManageModal = document.getElementById("savedManageModal");
+  const closeSavedManageModal = document.getElementById("closeSavedManageModal");
+  const savedManageDoneBtn = document.getElementById("savedManageDoneBtn");
+  const savedManageList = document.getElementById("savedManageList");
+
+
     // ===============================
   // 최근 저장한 조합 메인 화면 표시
   // ===============================
+
+    if (editSavedComboBtn) {
+    editSavedComboBtn.addEventListener("click", () => {
+      openSavedManageModal();
+    });
+  }
+
+  if (closeSavedManageModal) {
+    closeSavedManageModal.addEventListener("click", () => {
+      closeSavedManageModalFn();
+    });
+  }
+
+  if (savedManageDoneBtn) {
+    savedManageDoneBtn.addEventListener("click", () => {
+      closeSavedManageModalFn();
+    });
+  }
+
+  if (savedManageModal) {
+    savedManageModal.addEventListener("click", (event) => {
+      if (event.target === savedManageModal) {
+        closeSavedManageModalFn();
+      }
+    });
+  }
 
   function renderSavedCombosOnMain() {
     const savedComboList = document.getElementById("savedComboList");
@@ -271,6 +305,94 @@ document.addEventListener("DOMContentLoaded", () => {
   .join("");
 
 addSavedMiniCardEvents();
+  }
+
+    function openSavedManageModal() {
+    if (!savedManageModal) return;
+
+    renderSavedManageList();
+    savedManageModal.classList.add("show");
+  }
+
+  function closeSavedManageModalFn() {
+    if (!savedManageModal) return;
+
+    savedManageModal.classList.remove("show");
+  }
+
+    function renderSavedManageList() {
+    if (!savedManageList) return;
+
+    const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+
+    if (savedCombos.length === 0) {
+      savedManageList.innerHTML = `
+        <div class="saved-manage-empty">
+          <p>저장된 조합이 없습니다.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const recentCombos = [...savedCombos].reverse();
+
+    savedManageList.innerHTML = recentCombos
+      .map((combo) => {
+        const posterUrl = combo.posterPath
+          ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
+          : "";
+
+        return `
+          <div class="saved-manage-item">
+            <div class="saved-manage-poster-box">
+              ${
+                posterUrl
+                  ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-manage-poster">`
+                  : `<div class="saved-manage-no-poster">포스터 없음</div>`
+              }
+            </div>
+
+            <div class="saved-manage-info">
+              <strong>${combo.movieTitle}</strong>
+              <p>🍽 ${combo.foodName}</p>
+            </div>
+
+            <button 
+              class="saved-remove-btn"
+              data-movie-id="${combo.movieId}"
+              data-food-name="${combo.foodName}"
+            >
+              저장 취소
+            </button>
+          </div>
+        `;
+      })
+      .join("");
+
+    addSavedRemoveEvents();
+  }
+
+
+    function addSavedRemoveEvents() {
+    document.querySelectorAll(".saved-remove-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const movieId = Number(button.dataset.movieId);
+        const foodName = button.dataset.foodName;
+
+        const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+
+        const filteredCombos = savedCombos.filter((combo) => {
+          return !(combo.movieId === movieId && combo.foodName === foodName);
+        });
+
+        localStorage.setItem("savedCombos", JSON.stringify(filteredCombos));
+
+        showCustomAlert("저장한 조합이 삭제되었습니다.");
+
+        renderSavedCombosOnMain();
+        renderSavedManageList();
+      });
+    });
   }
 
   function getOttDisplayName(ottKey) {
