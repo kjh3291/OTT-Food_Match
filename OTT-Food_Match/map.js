@@ -195,3 +195,44 @@ function getDynamicMenus(categoryName) {
         ];
     }
 }
+
+// 💡 [새로 추가된 부분] 내 위치 버튼 클릭 이벤트
+const myLocationBtn = document.getElementById('myLocationBtn');
+
+if (myLocationBtn) {
+    myLocationBtn.addEventListener('click', function () {
+        // 위치 정보를 지원하는 브라우저인지 확인
+        if (navigator.geolocation) {
+
+            // 버튼을 누르는 순간의 최신 위치를 다시 가져옵니다.
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const locPosition = new kakao.maps.LatLng(lat, lng);
+
+                // 1. 지도 중심을 내 위치로 '부드럽게' 이동
+                map.panTo(locPosition);
+
+                // 2. 검색 모드를 해제하여 지도 이동 시 주변 탐색이 가능하게 복구
+                isSearchMode = false;
+                if (document.getElementById('keyword')) {
+                    document.getElementById('keyword').value = ''; // 검색어 창 비우기
+                }
+
+                // 3. 최신 위치를 localStorage에 갱신해서 저장 (이전 설정과 연동)
+                localStorage.setItem("myLocation", JSON.stringify({ lat: lat, lng: lng }));
+
+                // 4. 내 위치 주변 식당 다시 검색
+                removeMarkers();
+                searchPlaces(locPosition);
+
+            }, function (error) {
+                alert("현재 위치 정보를 가져올 수 없습니다.");
+                console.error(error);
+            });
+
+        } else {
+            alert("이 브라우저에서는 위치 정보를 지원하지 않습니다.");
+        }
+    });
+}
