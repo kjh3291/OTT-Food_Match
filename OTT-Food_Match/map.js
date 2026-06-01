@@ -6,7 +6,8 @@ const mapOption = {
 
 const map = new kakao.maps.Map(mapContainer, mapOption);
 const ps = new kakao.maps.services.Places(map);
-const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+
+const infowindow = new kakao.maps.InfoWindow({ zIndex: 3 });
 
 let markers = [];
 let myLocationMarker = null; // 내 위치 표시용 커스텀 오버레이
@@ -26,12 +27,15 @@ if (navigator.geolocation) {
 function updateMyLocation(locPosition) {
     if (myLocationMarker) myLocationMarker.setMap(null);
 
+    // 원하시는 크기로 조절 가능합니다 (현재 20px)
     const content = '<div style="width: 10px; height: 10px; background-color: #007bff; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>';
 
     myLocationMarker = new kakao.maps.CustomOverlay({
         position: locPosition,
         content: content,
-        zIndex: 2
+        zIndex: 2,
+        xAnchor: 0.5,
+        yAnchor: 0.5
     });
     myLocationMarker.setMap(map);
 }
