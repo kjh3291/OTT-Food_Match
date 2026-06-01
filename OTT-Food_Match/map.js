@@ -21,7 +21,7 @@ if (navigator.geolocation) {
     });
 }
 
-// 💡 수정됨: 지도가 움직임이 멈췄을 때 발생하는 이벤트
+// 지도가 움직임이 멈췄을 때 발생하는 이벤트
 kakao.maps.event.addListener(map, 'idle', function () {
     // 검색 모드가 아닐 때(그냥 지도를 드래그할 때)만 주변 식당을 자동으로 불러옵니다.
     if (!isSearchMode) {
@@ -35,7 +35,7 @@ kakao.maps.event.addListener(map, 'click', function () {
     infowindow.close();
 });
 
-// 주변 음식점 검색 함수 (기존 유지)
+// 주변 음식점 검색 함수
 function searchPlaces(pos) {
     ps.categorySearch('FD6', function (data, status, pagination) {
         if (status === kakao.maps.services.Status.OK) {
@@ -53,10 +53,10 @@ function searchPlaces(pos) {
     });
 }
 
-// [새로 추가된 부분] 키워드로 특정 식당 검색하기
+// 키워드로 특정 식당 검색하기 위한 요소 가져오기
 const searchBtn = document.getElementById('searchBtn');
 const keywordInput = document.getElementById('keyword');
-const cancelBtn = document.getElementById('cancelBtn'); // 취소 버튼 요소 가져오기
+const cancelBtn = document.getElementById('cancelBtn');
 
 if (searchBtn && keywordInput) {
     // 검색 버튼 클릭 시
@@ -103,15 +103,17 @@ function searchByKeyword() {
                 displayPlaceMarker(data[i]);
             }
 
-            // 💡 [핵심] 검색 결과 중 가장 첫 번째(가장 가까운) 식당의 좌표 계산
+            // 검색 결과 중 가장 첫 번째(가장 가까운) 식당의 좌표 계산
             const nearestPlace = data[0];
             const moveLatLon = new kakao.maps.LatLng(nearestPlace.y, nearestPlace.x);
 
             // 지도의 중심을 가장 가까운 식당으로 '부드럽게(panTo)' 이동시킵니다.
             map.panTo(moveLatLon);
 
-            // 💡 [새로 추가된 부분] 이동한 후, 가장 가까운 식당(첫 번째 마커)의 정보창을 자동으로 띄웁니다!
-            openInfoWindow(nearestPlace, markers[0]);
+            // 💡 [핵심] panTo 애니메이션이 정보창에 의해 끊기지 않도록 0.3초(300ms) 뒤에 정보창을 엽니다.
+            setTimeout(() => {
+                openInfoWindow(nearestPlace, markers[0]);
+            }, 300);
 
         } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
             alert('검색 결과가 존재하지 않습니다.');
@@ -120,12 +122,12 @@ function searchByKeyword() {
         }
     }, {
         category_group_code: 'FD6',
-        location: map.getCenter(), // 💡 현재 화면의 중심점을 기준으로
-        sort: kakao.maps.services.SortBy.DISTANCE // 💡 거리가 가장 가까운 순서대로 정렬해서 가져옵니다!
+        location: map.getCenter(), // 현재 화면의 중심점을 기준으로
+        sort: kakao.maps.services.SortBy.DISTANCE // 거리가 가장 가까운 순서대로 정렬
     });
 }
 
-// 💡 [새로 추가된 함수] 마커에 해당하는 식당의 정보창(말풍선)을 열어주는 역할만 전담합니다.
+// 마커에 해당하는 식당의 정보창(말풍선)을 열어주는 역할 전담 함수
 function openInfoWindow(place, marker) {
     const restaurantName = place.place_name;
     const fallbackMenus = getDynamicMenus(place.category_name);
@@ -153,7 +155,7 @@ function openInfoWindow(place, marker) {
     infowindow.open(map, marker);
 }
 
-// 검색된 음식점 마커 표시 (클릭 이벤트 수정)
+// 검색된 음식점 마커 표시 및 클릭 이벤트
 function displayPlaceMarker(place) {
     const marker = new kakao.maps.Marker({
         map: map,
@@ -161,51 +163,13 @@ function displayPlaceMarker(place) {
     });
 
     kakao.maps.event.addListener(marker, 'click', function () {
-        // 💡 분리해둔 함수를 호출하기만 하면 코드가 훨씬 깔끔해집니다.
         openInfoWindow(place, marker);
     });
 
     markers.push(marker);
 }
 
-// 검색된 음식점 마커 표시 및 클릭 시 가상 메뉴 띄우기 (기존 유지)
-function displayPlaceMarker(place) {
-    const marker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(place.y, place.x)
-    });
-
-    kakao.maps.event.addListener(marker, 'click', function () {
-        const restaurantName = place.place_name;
-        const fallbackMenus = getDynamicMenus(place.category_name);
-
-        let menuHtml = `<strong> 추천 메뉴</strong><ul style="padding-left: 15px;">`;
-
-        fallbackMenus.forEach(menu => {
-            menuHtml += `
-           <li style="margin-bottom: 5px;">
-             ${menu.name} - ${menu.price.toLocaleString()}원
-           </li>`;
-        });
-        menuHtml += `</ul>`;
-
-        const content = `
-          <div style="padding:15px; font-size:14px; width:280px; max-height: 250px; overflow-y: auto;">
-            <h4 style="margin-top:0; margin-bottom:5px;">${restaurantName}</h4>
-            <p style="color: gray; font-size: 12px; margin-top:0;">${place.category_name}</p>
-            <hr>
-            ${menuHtml}
-          </div>
-        `;
-
-        infowindow.setContent(content);
-        infowindow.open(map, marker);
-    });
-
-    markers.push(marker);
-}
-
-// 지도 위에 표시되고 있는 마커들을 모두 제거하는 함수 (기존 유지)
+// 지도 위에 표시되고 있는 마커들을 모두 제거하는 함수
 function removeMarkers() {
     for (let i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
@@ -213,7 +177,7 @@ function removeMarkers() {
     markers = [];
 }
 
-// 카테고리별 동적(가상) 메뉴 반환 함수 (기존 유지)
+// 카테고리별 동적(가상) 메뉴 반환 함수
 function getDynamicMenus(categoryName) {
     if (categoryName.includes('치킨') || categoryName.includes('통닭')) {
         return [
@@ -242,7 +206,7 @@ function getDynamicMenus(categoryName) {
     }
 }
 
-// 💡 [새로 추가된 부분] 내 위치 버튼 클릭 이벤트
+// 내 위치 버튼 클릭 이벤트
 const myLocationBtn = document.getElementById('myLocationBtn');
 
 if (myLocationBtn) {
