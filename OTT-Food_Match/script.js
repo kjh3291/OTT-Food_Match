@@ -263,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeSavedManageModal = document.getElementById("closeSavedManageModal");
   const savedManageDoneBtn = document.getElementById("savedManageDoneBtn");
   const savedManageList = document.getElementById("savedManageList");
-
+  const savedMoreBtn = document.getElementById("savedMoreBtn");
 
     // ===============================
   // 최근 저장한 조합 메인 화면 표시
@@ -272,6 +272,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editSavedComboBtn) {
     editSavedComboBtn.addEventListener("click", () => {
       openSavedManageModal();
+    });
+  }
+
+    if (savedMoreBtn) {
+    savedMoreBtn.addEventListener("click", () => {
+    openSavedManageModal();
     });
   }
 
@@ -301,18 +307,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!savedComboList) return;
 
     const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
-    const recentCombos = savedCombos.slice(-3).reverse();
+    const recentCombos = savedCombos.slice(-4).reverse();
 
-    if (recentCombos.length === 0) {
-      savedComboList.innerHTML = `
-        <div class="saved-empty-card">
-          <div class="saved-empty-icon">🍿</div>
-          <h3>아직 저장한 조합이 없어요</h3>
-          <p>영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.</p>
-        </div>
-      `;
-      return;
-    }
+    if (savedMoreBtn) {
+  if (savedCombos.length > 4) {
+    savedMoreBtn.classList.remove("hidden");
+    savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
+  } else {
+    savedMoreBtn.classList.add("hidden");
+  }
+}
+
+if (recentCombos.length === 0) {
+  if (savedMoreBtn) {
+    savedMoreBtn.classList.add("hidden");
+  }
+
+  savedComboList.innerHTML = `
+    <div class="saved-empty-card">
+      <div class="saved-empty-icon">🍿</div>
+      <h3>아직 저장한 조합이 없어요</h3>
+      <p>영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.</p>
+    </div>
+  `;
+
+  return;
+}
 
     savedComboList.innerHTML = recentCombos
   .map((combo) => {
@@ -457,4 +477,6 @@ addSavedMiniCardEvents();
       });
     });
   }
+
+  renderSavedCombosOnMain();
 }); 
