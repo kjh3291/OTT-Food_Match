@@ -22,6 +22,18 @@
     </header>
 
     <main>
+      <section class="card" style="margin-bottom: 16px;">
+        <h2 id="step2Title">2. 현재 식사 상황은 어떠신가요?</h2>
+        <div class="option-group" id="mealOptions">
+          <button class="option-btn meal-btn" data-value="혼밥" id="meal_honbab">혼밥</button>
+          <button class="option-btn meal-btn" data-value="야식" id="meal_yasik">야식</button>
+          <button class="option-btn meal-btn" data-value="친구와 함께" id="meal_friends">친구와 함께</button>
+          <button class="option-btn meal-btn" data-value="연인과 함께" id="meal_couple">연인과 함께</button>
+          <button class="option-btn meal-btn" data-value="간단한 식사" id="meal_light">간단한 식사</button>
+          <button class="option-btn meal-btn" data-value="든든한 식사" id="meal_heavy">든든한 식사</button>
+        </div>
+      </section>
+
       <section class="card movie-top-card">
         <h2 id="genreTitle">장르 카테고리</h2>
         <div class="genre-tab-group" id="genreTabGroup">
@@ -76,16 +88,43 @@
       <div class="lang-options">
         <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
         <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
+        <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
+        <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
       </div>
       <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
     </div>
   </div>
 
+  <div id="finalResultModal" class="modal-overlay hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content result-modal-content" style="max-width: 400px; width: 90%; background: #fff; padding: 20px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+      <div id="resultCaptureArea" style="padding: 10px; border-radius: 12px; text-align: center;">
+        <h2 id="modalResultTitle" style="color: #ff7a59; margin-bottom: 20px;">✨ 맞춤 추천 결과 ✨</h2>
+        
+        <div style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 12px;">
+          <h3 id="modalMovieHeader" style="margin-bottom: 12px; color: #ff7a59;">🎬 선택한 영화</h3>
+          <img id="modalMoviePoster" src="" alt="Poster" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px;">
+          <strong id="modalMovieTitle" style="display: block; margin-top: 8px; font-size: 1.1rem;"></strong>
+        </div>
+        
+        <div style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee;">
+          <h3 id="modalFoodHeader" style="margin-bottom: 12px; color: #ff7a59;">🍽 추천 음식</h3>
+          <div id="modalFoodEmoji" style="font-size: 3.5rem; margin: 10px 0;">🍕</div>
+          <strong id="modalFoodName" style="font-size: 1.2rem; display: block; margin-bottom: 8px;"></strong>
+          <p id="modalFoodReason" style="font-size: 0.9rem; color: #666;"></p>
+        </div>
+      </div>
+
+      <div class="action-area" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;" data-html2canvas-ignore>
+        <button id="modalShareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
+        <button id="closeFinalResultModal" class="secondary-btn" style="width: 100%;">닫기</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script src="config.js"></script> 
+  <script src="config.js"></script>
   <script src="i18n.js"></script>
-  <script src="food.js"></script>
-  <script src="food-algorithm.js"></script>
   <script src="movie.js"></script>
 </body>
 </html>
+
