@@ -122,17 +122,19 @@
             <button id="shareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
             <button id="resetBtn" class="secondary-btn" style="width: 100%;">처음부터 다시하기</button>
           </div>
-        </section>
+              </section>
                 <section class="card saved-combo-section" id="savedComboSection">
-          <div class="section-title-row">
-            <div>
-              <h2 id="savedComboTitle">최근 저장한 조합</h2>
-              <p id="savedComboDesc">마음에 들었던 영화와 음식 조합을 다시 확인해보세요.</p>
-            </div>
-          </div>
+                  <div class="section-title-row">
+                    <div>
+                    <h2 id="savedComboTitle">최근 저장한 조합</h2>
+                    <p id="savedComboDesc">마음에 든 조합을 다시 확인해보세요.</p>
+                  </div>
 
-          <div id="savedComboList" class="saved-combo-list"></div>
-        </section>
+                  <button id="editSavedComboBtn" class="saved-edit-btn">수정</button>
+                </div>
+
+                <div id="savedComboList" class="saved-combo-list"></div>
+              </section>
 
         <section class="card recommend-info-section" id="recommendInfoSection">
           <h2 id="recommendInfoTitle">이렇게 추천해요</h2>
@@ -170,6 +172,24 @@
         <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
       </div>
     </div>
+
+    <div id="savedManageModal" class="modal-overlay">
+  <div class="modal-content saved-manage-modal">
+    <div class="saved-manage-header">
+      <h3 id="savedManageTitle">저장한 조합 관리</h3>
+      <button id="closeSavedManageModal" class="modal-close-btn">×</button>
+    </div>
+
+    <p class="saved-manage-desc">저장 취소할 조합을 선택하세요.</p>
+
+    <div id="savedManageList" class="saved-manage-list"></div>
+
+    <button id="savedManageDoneBtn" class="secondary-btn saved-manage-done-btn">
+      닫기
+    </button>
+  </div>
+</div>
+
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="i18n.js"></script>
