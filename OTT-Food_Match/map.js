@@ -188,3 +188,10 @@ if (myLocationBtn) {
         });
     });
 }
+
+// 브라우저 창 크기가 변할 때 카카오맵의 레이아웃을 다시 계산해서 꽉 채우는 안전장치
+window.addEventListener('resize', function () {
+    if (map) {
+        map.relayout();
+    }
+});
