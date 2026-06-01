@@ -157,7 +157,9 @@ function renderMovies(movies) {
     return;
   }
 
-  movieList.innerHTML = movies.slice(0, 12).map((movie, index) => {
+  const visibleMovies = movies.slice(0, 12);
+
+  movieList.innerHTML = visibleMovies.map((movie, index) => {
     const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w300${movie.posterPath}` : "";
     const titleText = movie.title !== "No Title" ? movie.title : (typeof t === 'function' ? t("noTitle") : "제목 없음");
     const releaseText = movie.releaseDate ? movie.releaseDate : (typeof t === 'function' ? t("noReleaseInfo") : "정보 없음");
@@ -177,11 +179,20 @@ function renderMovies(movies) {
   }).join("");
 
   document.querySelectorAll(".movie-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      const idx = Number(card.dataset.index);
-      showFinalResultModal(currentMovies[idx]);
-    });
+  card.addEventListener("click", () => {
+    const idx = Number(card.dataset.index);
+    const selectedMovie = visibleMovies[idx];
+
+    const mealParam = encodeURIComponent(selectedMeal);
+    const genreParam = encodeURIComponent(selectedGenre);
+
+    window.location.href =
+      `recommend.html?movieId=${selectedMovie.id}` +
+      `&ott=${ottKey}` +
+      `&meal=${mealParam}` +
+      `&genre=${genreParam}`;
   });
+});
 }
 
 function saveToHistory(movieTitle, foodName, emoji) {
