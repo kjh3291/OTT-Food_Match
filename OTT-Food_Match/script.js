@@ -264,6 +264,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedManageDoneBtn = document.getElementById("savedManageDoneBtn");
   const savedManageList = document.getElementById("savedManageList");
   const savedMoreBtn = document.getElementById("savedMoreBtn");
+  const savedViewModal = document.getElementById("savedViewModal");
+const closeSavedViewModal = document.getElementById("closeSavedViewModal");
+const savedViewDoneBtn = document.getElementById("savedViewDoneBtn");
+const savedViewList = document.getElementById("savedViewList");
 
     // ===============================
   // 최근 저장한 조합 메인 화면 표시
@@ -277,9 +281,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (savedMoreBtn) {
     savedMoreBtn.addEventListener("click", () => {
-    openSavedManageModal();
-    });
-  }
+    openSavedViewModal();
+  });
+}
 
   if (closeSavedManageModal) {
     closeSavedManageModal.addEventListener("click", () => {
@@ -300,6 +304,26 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  if (closeSavedViewModal) {
+  closeSavedViewModal.addEventListener("click", () => {
+    closeSavedViewModalFn();
+  });
+}
+
+if (savedViewDoneBtn) {
+  savedViewDoneBtn.addEventListener("click", () => {
+    closeSavedViewModalFn();
+  });
+}
+
+if (savedViewModal) {
+  savedViewModal.addEventListener("click", (event) => {
+    if (event.target === savedViewModal) {
+      closeSavedViewModalFn();
+    }
+  });
+}
 
   function renderSavedCombosOnMain() {
     const savedComboList = document.getElementById("savedComboList");
@@ -375,6 +399,19 @@ addSavedMiniCardEvents();
     savedManageModal.classList.add("show");
   }
 
+  function openSavedViewModal() {
+  if (!savedViewModal) return;
+
+  renderSavedViewList();
+  savedViewModal.classList.add("show");
+}
+
+function closeSavedViewModalFn() {
+  if (!savedViewModal) return;
+
+  savedViewModal.classList.remove("show");
+}
+
   function closeSavedManageModalFn() {
     if (!savedManageModal) return;
 
@@ -433,6 +470,74 @@ addSavedMiniCardEvents();
     addSavedRemoveEvents();
   }
 
+  function renderSavedViewList() {
+  if (!savedViewList) return;
+
+  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+
+  if (savedCombos.length === 0) {
+    savedViewList.innerHTML = `
+      <div class="saved-manage-empty">
+        <p>저장된 조합이 없습니다.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const allCombos = [...savedCombos].reverse();
+
+  savedViewList.innerHTML = allCombos
+    .map((combo) => {
+      const posterUrl = combo.posterPath
+        ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
+        : "";
+
+      return `
+        <div 
+          class="saved-view-item"
+          data-movie-id="${combo.movieId}"
+          data-ott="${combo.ott}"
+          data-meal="${combo.meal}"
+          data-genre="${combo.genre}"
+        >
+          <div class="saved-view-poster-box">
+            ${
+              posterUrl
+                ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-view-poster">`
+                : `<div class="saved-manage-no-poster">포스터 없음</div>`
+            }
+          </div>
+
+          <div class="saved-view-info">
+            <strong>${combo.movieTitle}</strong>
+            <p>🍽 ${combo.foodName}</p>
+          </div>
+
+          <span class="saved-view-arrow">›</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  addSavedViewItemEvents();
+}
+
+function addSavedViewItemEvents() {
+  document.querySelectorAll(".saved-view-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const movieId = item.dataset.movieId;
+      const ott = item.dataset.ott;
+      const meal = encodeURIComponent(item.dataset.meal);
+      const genre = encodeURIComponent(item.dataset.genre);
+
+      window.location.href =
+        `recommend.html?movieId=${movieId}` +
+        `&ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}`;
+    });
+  });
+}
 
     function addSavedRemoveEvents() {
     document.querySelectorAll(".saved-remove-btn").forEach((button) => {

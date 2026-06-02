@@ -1564,3 +1564,107 @@ body.dark-mode .saved-manage-empty {
     height: 68px;
   }
 }
+
+/* ===============================
+   저장 조합 전체 보기 팝업
+================================ */
+
+.saved-view-modal {
+  max-width: 520px;
+  width: 92%;
+  text-align: left;
+}
+
+.saved-view-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.saved-view-item {
+  display: grid;
+  grid-template-columns: 58px 1fr 24px;
+  gap: 12px;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 16px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.saved-view-item:hover {
+  background: #fff3ec;
+  transform: translateY(-1px);
+}
+
+.saved-view-poster-box {
+  width: 58px;
+  height: 82px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #eeeeee;
+}
+
+.saved-view-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.saved-view-info {
+  min-width: 0;
+}
+
+.saved-view-info strong {
+  display: block;
+  font-size: 0.98rem;
+  color: #2d2d2d;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saved-view-info p {
+  color: #666666;
+  font-size: 0.88rem;
+  margin: 0;
+  text-align: left !important;
+}
+
+.saved-view-arrow {
+  color: #999999;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+body.dark-mode .saved-view-item {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+body.dark-mode .saved-view-item:hover {
+  background: rgba(255, 122, 89, 0.12);
+}
+
+body.dark-mode .saved-view-info strong {
+  color: #ffffff;
+}
+
+body.dark-mode .saved-view-info p {
+  color: #dddddd !important;
+}
+
+body.dark-mode .saved-view-poster-box {
+  background: #333333;
+}
+
+body.dark-mode .saved-view-arrow {
+  color: #dddddd;
+}
