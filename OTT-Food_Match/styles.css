@@ -1669,3 +1669,17 @@ body.dark-mode .saved-view-arrow {
   color: #dddddd;
 }
 
+/* 1. 영역 제목 및 설명 텍스트 중앙 정렬 */
+.section-title-row {
+  justify-content: center !important;
+}
+
+.section-title-row h2,
+.section-title-row p {
+  text-align: center !important;
+}
+
+/* 2. 저장된 조합 카드 리스트 중앙 정렬 */
+.saved-combo-list {
+  justify-content: center !important;
+}
