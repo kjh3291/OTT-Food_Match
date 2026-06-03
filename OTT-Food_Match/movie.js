@@ -1,4 +1,5 @@
 // ===============================
+<<<<<<< HEAD
 // 1. 기본 설정 및 데이터 매핑
 // ===============================
 const ottNameMap = { netflix: "넷플릭스", disney: "디즈니+", tving: "티빙", wavve: "웨이브" };
@@ -12,10 +13,45 @@ const genreIdMap = { "액션": 28, "코미디": 35, "드라마": 18, "로맨스"
 const mealMapEn = { "혼밥": "Eating Alone", "야식": "Late Night Snack", "친구와 함께": "With Friends", "연인과 함께": "With Partner", "간단한 식사": "Light Meal", "든든한 식사": "Hearty Meal" };
 const mealMapZh = { "혼밥": "一人食", "야식": "夜宵", "친구와 함께": "朋友聚会", "연인과 함께": "恋人约会", "간단한 식사": "简单便餐", "든든한 식사": "丰盛正餐" };
 const mealMapJa = { "혼밥": "一人ご飯", "야식": "夜食", "친구와 함께": "友達と一緒に", "연인과 함께": "恋人と一緒に", "간단한 식사": "軽食", "든든한 식사": "がっつり食事" };
+=======
+// 1. 기본 설정
+// ===============================
+
+const ottNameMap = {
+  netflix: "넷플릭스",
+  disney: "디즈니+",
+  tving: "티빙",
+  wavve: "웨이브",
+};
+
+// TMDB Watch Provider ID
+const ottProviderMap = {
+  netflix: 8,
+  disney: 337,
+  wavve: 356,
+  tving: 97,
+};
+
+const genreIdMap = {
+  "액션": 28,
+  "코미디": 35,
+  "드라마": 18,
+  "로맨스": 10749,
+  "스릴러": 53,
+  "애니메이션": 16,
+};
+
+const mealData = convertFoods(meals, "식사");
+const dessertData = convertFoods(desserts, "디저트");
+const fastfoodData = convertFoods(fastfoods, "패스트푸드");
+
+const allFoods = [...mealData, ...dessertData, ...fastfoodData];
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
 
 let selectedGenre = "전체";
 let currentMovies = [];
 
+<<<<<<< HEAD
 let currentSort = "popularity";
 let visibleMovieCount = 20;
 const MOVIES_PER_LOAD = 20;
@@ -23,6 +59,23 @@ const MOVIES_PER_LOAD = 20;
 const urlParams = new URLSearchParams(window.location.search);
 const ottKey = urlParams.get("ott");
 let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
+=======
+// ===============================
+// 2. URL 값 가져오기
+// ===============================
+
+const urlParams = new URLSearchParams(window.location.search);
+const ottKey = urlParams.get("ott");
+
+const selectedMeal = urlParams.get("meal")
+  ? decodeURIComponent(urlParams.get("meal"))
+  : "";
+
+
+// ===============================
+// 3. HTML 요소 가져오기
+// ===============================
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
 
 const moviePageTitle = document.getElementById("moviePageTitle");
 const moviePageInfo = document.getElementById("moviePageInfo");
@@ -32,6 +85,7 @@ const loadingText = document.getElementById("loadingText");
 const movieList = document.getElementById("movieList");
 const backToMainBtn = document.getElementById("backToMainBtn");
 
+<<<<<<< HEAD
 const sortMenuBtn = document.getElementById("sortMenuBtn");
 const sortMenu = document.getElementById("sortMenu");
 const sortOptions = document.querySelectorAll(".sort-option");
@@ -98,10 +152,49 @@ genreTabs.forEach((tab) => {
     genreTabs.forEach((btn) => btn.classList.remove("selected"));
     tab.classList.add("selected");
     applyMovieLanguage();
+=======
+
+// ===============================
+// 4. 초기 화면 설정
+// ===============================
+
+const ottName = ottNameMap[ottKey] || "OTT";
+
+if (!ottKey) {
+  alert("OTT 정보가 없습니다. 메인 화면에서 OTT를 다시 선택해주세요.");
+  window.location.href = "main.html";
+}
+
+moviePageTitle.textContent = `${ottName} 영화`;
+moviePageInfo.textContent = `식사 상황: ${selectedMeal} / 상단 장르 버튼을 선택하면 해당 장르의 영화만 표시됩니다.`;
+
+
+// ===============================
+// 5. 장르 버튼 클릭 기능
+// ===============================
+
+genreTabs.forEach((tab) => {
+  tab.addEventListener("click", async () => {
+    const genre = tab.dataset.genre;
+
+    if (!genre) {
+      alert("장르 정보가 없습니다. movie.html의 data-genre 값을 확인해주세요.");
+      return;
+    }
+
+    selectedGenre = genre.trim();
+
+    genreTabs.forEach((btn) => btn.classList.remove("selected"));
+    tab.classList.add("selected");
+
+    selectedGenreTitle.textContent = `${selectedGenre} 영화`;
+
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
     await loadMoviesByGenre(selectedGenre);
   });
 });
 
+<<<<<<< HEAD
 async function loadMoviesByGenre(genre) {
   if (loadingText) {
     loadingText.classList.remove("hidden");
@@ -120,10 +213,34 @@ async function loadMoviesByGenre(genre) {
   renderMovies(currentMovies);
 }
 
+=======
+
+// ===============================
+// 6. 장르별 영화 불러오기
+// ===============================
+
+async function loadMoviesByGenre(genre) {
+  loadingText.classList.remove("hidden");
+  loadingText.textContent = "영화 목록을 불러오는 중입니다...";
+  movieList.innerHTML = "";
+
+  const movies = await fetchMoviesFromTMDB(genre);
+  currentMovies = movies;
+
+  renderMovies(currentMovies);
+}
+
+
+// ===============================
+// 7. TMDB 영화 목록 가져오기
+// ===============================
+
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
 async function fetchMoviesFromTMDB(genre) {
   const apiKey = window.CONFIG?.TMDB_API_KEY;
   const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
 
+<<<<<<< HEAD
   if (!apiKey) return [];
 
   const providerId = ottProviderMap[ottKey];
@@ -213,10 +330,74 @@ async function fetchMoviesFromTMDB(genre) {
     return removeDuplicateMovies(allResults);
   } catch (error) {
     console.error("TMDB API 요청 중 오류 발생:", error);
+=======
+  if (!apiKey) {
+    alert("TMDB API Key가 없습니다. config.js를 확인해주세요.");
+    return [];
+  }
+
+  const providerId = ottProviderMap[ottKey];
+
+  if (!providerId) {
+    alert("선택한 OTT의 Provider ID가 없습니다.");
+    return [];
+  }
+
+  const genreId = genreIdMap[genre];
+
+  if (genre !== "전체" && !genreId) {
+    alert("지원하지 않는 장르입니다.");
+    return [];
+  }
+
+  let url =
+    `${baseUrl}/discover/movie` +
+    `?api_key=${apiKey}` +
+    `&language=ko-KR` +
+    `&region=KR` +
+    `&watch_region=KR` +
+    `&with_watch_providers=${providerId}` +
+    `&with_watch_monetization_types=flatrate` +
+    `&sort_by=popularity.desc` +
+    `&include_adult=false` +
+    `&page=1`;
+
+  if (genre !== "전체") {
+    url += `&with_genres=${genreId}`;
+  }
+
+  console.log("요청 URL:", url);
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error("TMDB 영화 목록 요청 실패:", response.status);
+      alert("영화 목록을 불러오지 못했습니다.");
+      return [];
+    }
+
+    const data = await response.json();
+    console.log("TMDB 영화 목록 결과:", data);
+
+    return data.results.map((movie) => ({
+      id: movie.id,
+      title: movie.title || movie.name || "제목 없음",
+      overview: movie.overview || "줄거리 정보가 없습니다.",
+      posterPath: movie.poster_path,
+      releaseDate: movie.release_date || "개봉일 정보 없음",
+      rating: movie.vote_average,
+      genre: genre,
+    }));
+  } catch (error) {
+    console.error("TMDB API 요청 중 오류 발생:", error);
+    alert("API 요청 중 오류가 발생했습니다.");
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
     return [];
   }
 }
 
+<<<<<<< HEAD
 function removeDuplicateMovies(movies) {
   const movieMap = new Map();
 
@@ -257,10 +438,20 @@ function sortMovies(movies) {
 
 function renderMovies(movies) {
   if (loadingText) loadingText.classList.add("hidden");
+=======
+
+// ===============================
+// 8. 영화 목록 출력
+// ===============================
+
+function renderMovies(movies) {
+  loadingText.classList.add("hidden");
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
 
   if (!movies || movies.length === 0) {
     movieList.innerHTML = `
       <div class="result-card">
+<<<<<<< HEAD
         <p><strong>${typeof t === "function" ? t("noMoviesTitle") : "조건에 맞는 영화가 없습니다."}</strong></p>
         <p style="color:#666; margin-top:8px;">
           ${typeof t === "function" ? t("noMoviesDesc") : "다른 장르를 선택하거나 다시 시도해보세요."}
@@ -509,10 +700,231 @@ if (sortMenuBtn && sortMenu) {
   });
 
   sortMenu.addEventListener("click", (event) => {
+=======
+        <p>선택한 조건에 맞는 영화가 없습니다.</p>
+        <p style="color:#666; margin-top:8px;">
+          다른 장르를 선택하거나 OTT를 바꿔서 다시 시도해보세요.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  movieList.innerHTML = movies
+    .slice(0, 12)
+    .map((movie, index) => {
+      const posterUrl = movie.posterPath
+        ? `https://image.tmdb.org/t/p/w300${movie.posterPath}`
+        : "";
+
+      return `
+        <div class="movie-card" data-index="${index}">
+          <div class="movie-poster-area">
+            ${
+              posterUrl
+                ? `<img src="${posterUrl}" alt="${movie.title} 포스터" class="movie-poster">`
+                : `<div class="no-poster">포스터 없음</div>`
+            }
+          </div>
+
+          <div class="movie-info">
+            <strong>${movie.title}</strong>
+            <p>개봉일: ${movie.releaseDate}</p>
+            <p>평점: ${movie.rating ? movie.rating.toFixed(1) : "정보 없음"}</p>
+          </div>
+
+          <div class="movie-detail-panel hidden" id="movieDetailPanel-${index}"></div>
+        </div>
+      `;
+    })
+    .join("");
+
+  const movieCards = document.querySelectorAll(".movie-card");
+
+  movieCards.forEach((card) => {
+    const posterArea = card.querySelector(".movie-poster-area");
+
+    posterArea.addEventListener("click", () => {
+      const selectedIndex = Number(card.dataset.index);
+      const selectedMovie = movies[selectedIndex];
+
+      closeAllDetailPanels();
+      openMovieDetailPanel(selectedMovie, selectedIndex);
+    });
+  });
+}
+
+
+// ===============================
+// 9. 모든 영화 설명 패널 닫기
+// ===============================
+
+function closeAllDetailPanels() {
+  const panels = document.querySelectorAll(".movie-detail-panel");
+
+  panels.forEach((panel) => {
+    panel.classList.add("hidden");
+    panel.innerHTML = "";
+  });
+}
+
+
+// ===============================
+// 10. 영화 설명 + 음식 추천 패널 열기
+// ===============================
+
+function openMovieDetailPanel(movie, index) {
+  const panel = document.getElementById(`movieDetailPanel-${index}`);
+  const categories = getCategoriesFromGenre(movie.genre);
+  const filteredFoods = getFoodsByCategories(categories);
+  const food = recommend(filteredFoods, null);
+
+  panel.innerHTML = `
+    <div class="selected-movie-box">
+      <h3>🎬 영화 설명</h3>
+      <p><strong>${movie.title}</strong></p>
+      <p>${movie.overview}</p>
+    </div>
+
+    <div class="food-result-box">
+      <h3>🍽 추천 음식</h3>
+      <p><strong>${food.name}</strong></p>
+    </div>
+  `;
+
+  panel.classList.remove("hidden");
+}
+
+
+// ===============================
+// 11. 음식 추천 규칙
+// ===============================
+
+// ----------------------
+// 장르 → 카테고리
+// ----------------------
+
+function getCategoriesFromGenre(genre) {
+  switch (genre) {
+    case "액션":
+      return ["패스트푸드", "식사"];
+    case "코미디":
+      return ["식사"];
+    case "드라마":
+      return ["디저트"];
+    case "로맨스":
+      return ["디저트"];
+    case "스릴러":
+      return ["패스트푸드"];
+    case "애니메이션":
+      return ["패스트푸드", "디저트"];
+    default:
+      return ["식사"];
+  }
+}
+
+function getFoodsByCategories(categories) {
+  return allFoods.filter(food =>
+    categories.includes(food.category)
+  );
+}
+
+/*function recommendFood(movie) {
+  let foodRecommendation = {
+    name: "치킨 + 콜라",
+    reason: "OTT를 보면서 먹기 편하고 대부분의 영화와 무난하게 어울리는 조합입니다.",
+  };
+
+  if (selectedGenre === "스릴러") {
+    foodRecommendation = {
+      name: "피자 + 콜라",
+      reason: "스릴러 영화는 긴장감이 강하기 때문에 화면에 집중하면서 간단히 집어 먹을 수 있는 피자가 잘 어울립니다.",
+    };
+  }
+
+  if (selectedGenre === "코미디") {
+    foodRecommendation = {
+      name: "떡볶이 + 튀김",
+      reason: "코미디 영화의 가볍고 즐거운 분위기에는 부담 없이 먹기 좋은 분식 조합이 잘 어울립니다.",
+    };
+  }
+
+  if (selectedGenre === "드라마") {
+    foodRecommendation = {
+      name: "우동",
+      reason: "드라마 영화의 잔잔한 감정선과 따뜻한 국물 음식이 잘 어울립니다.",
+    };
+  }
+
+  if (selectedGenre === "로맨스") {
+    foodRecommendation = {
+      name: "파스타 + 샐러드",
+      reason: "로맨스 영화의 부드러운 분위기에는 깔끔하고 분위기 있는 음식이 잘 어울립니다.",
+    };
+  }
+
+  if (selectedGenre === "액션") {
+    foodRecommendation = {
+      name: "치킨 + 감자튀김",
+      reason: "액션 영화의 빠르고 강한 분위기에는 든든하고 자극적인 음식이 잘 어울립니다.",
+    };
+  }
+
+  if (selectedGenre === "애니메이션") {
+    foodRecommendation = {
+      name: "햄버거 세트",
+      reason: "애니메이션은 편하게 보기 좋은 경우가 많아서 간단하고 대중적인 햄버거 세트가 잘 어울립니다.",
+    };
+  }
+  return foodRecommendation;
+}
+*/
+
+// ===============================
+// 12. 뒤로가기 버튼
+// ===============================
+
+if (backToMainBtn) {
+  backToMainBtn.addEventListener("click", () => {
+    window.location.href = "main.html";
+  });
+}
+
+
+// ===============================
+// 13. 실행
+// ===============================
+
+async function initMoviePage() {
+  selectedGenreTitle.textContent = `${selectedGenre} 영화`;
+  await loadMoviesByGenre(selectedGenre);
+}
+
+initMoviePage();
+
+// ===============================
+// 14. 설정 팝업 + 다크 모드
+// ===============================
+
+const settingBtn = document.getElementById("settingBtn");
+const settingPopup = document.getElementById("settingPopup");
+const darkModeToggle = document.getElementById("darkModeToggle");
+const body = document.body;
+
+// 설정 버튼을 누르면 작은 설정 팝업을 열고 닫는다.
+if (settingBtn && settingPopup) {
+  settingBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    settingPopup.classList.toggle("hidden");
+  });
+
+  settingPopup.addEventListener("click", (event) => {
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
     event.stopPropagation();
   });
 
   document.addEventListener("click", () => {
+<<<<<<< HEAD
     sortMenu.classList.add("hidden");
   });
 }
@@ -535,3 +947,32 @@ sortOptions.forEach((option) => {
 applyMovieLanguage();
 loadMoviesByGenre(selectedGenre);
 
+=======
+    settingPopup.classList.add("hidden");
+  });
+}
+
+// 기존에 저장된 다크 모드 설정이 있으면 영화 페이지에도 그대로 적용한다.
+if (localStorage.getItem("theme") === "dark") {
+  body.classList.add("dark-mode");
+
+  if (darkModeToggle) {
+    darkModeToggle.textContent = "☀️ 라이트 모드";
+  }
+}
+
+// 다크 모드 버튼을 누르면 body에 dark-mode 클래스를 추가하거나 제거한다.
+if (darkModeToggle) {
+  darkModeToggle.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
+
+    if (body.classList.contains("dark-mode")) {
+      localStorage.setItem("theme", "dark");
+      darkModeToggle.textContent = "☀️ 라이트 모드";
+    } else {
+      localStorage.setItem("theme", "light");
+      darkModeToggle.textContent = "🌙 다크 모드";
+    }
+  });
+}
+>>>>>>> 947027bbcaf37ea36084f7400f82deb428e5e6b1
