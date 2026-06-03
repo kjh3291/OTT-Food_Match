@@ -232,3 +232,17 @@ document.addEventListener("DOMContentLoaded", () => {
   applyLanguage();
 });
 
+// 동적으로 렌더링되는 "더보기" 버튼 언어 변경 감지용 패치
+document.addEventListener("languageChanged", () => {
+  const savedMoreBtn = document.getElementById("savedMoreBtn");
+  if (savedMoreBtn && !savedMoreBtn.classList.contains("hidden")) {
+    const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+    if (savedCombos.length > 4) {
+       const lang = getLang();
+       if (lang === "ko") savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
+       else if (lang === "en") savedMoreBtn.textContent = `View More Combos (${savedCombos.length})`;
+       else if (lang === "zh") savedMoreBtn.textContent = `查看更多组合 (${savedCombos.length})`;
+       else if (lang === "ja") savedMoreBtn.textContent = `もっと見る (${savedCombos.length})`;
+    }
+  }
+});
