@@ -936,19 +936,6 @@ body.dark-mode .recommend-divider {
    영화 정렬 / 더보기
 ================================ */
 
-.movie-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.sort-area {
-  position: relative;
-  flex: 0 0 auto;
-}
-
 .sort-menu-btn {
   border: none;
   background: #ff7a59;
@@ -1011,23 +998,6 @@ body.dark-mode .sort-option:hover {
   background: #333333;
 }
 
-@media (max-width: 600px) {
-  .movie-title-row {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .sort-area {
-    align-self: center;
-  }
-
-  .sort-menu {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-  }
-}
-
 .primary-btn:disabled,
 .secondary-btn:disabled {
   opacity: 0.55;
@@ -1040,43 +1010,6 @@ body.dark-mode .sort-option:hover {
 
 .saved-combo-section {
   margin-top: 18px;
-}
-
-.section-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.section-title-row h2 {
-  margin-bottom: 6px;
-  text-align: left !important;
-}
-
-.section-title-row p {
-  color: #666;
-  font-size: 0.95rem;
-  text-align: left !important;
-}
-
-.saved-combo-list {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.saved-mini-card {
-  width: 150px;
-  background: #fafafa;
-  border: 1px solid #eeeeee;
-  border-radius: 22px;
-  padding: 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
 .saved-combo-poster-box {
@@ -1161,14 +1094,6 @@ body.dark-mode .sort-option:hover {
   color: #333333;
 }
 
-.saved-empty-card {
-  background: #fff3ec;
-  border: 1px dashed #ffb59f;
-  border-radius: 18px;
-  padding: 24px;
-  text-align: center;
-}
-
 .saved-empty-icon {
   font-size: 2rem;
   margin-bottom: 8px;
@@ -1177,11 +1102,6 @@ body.dark-mode .sort-option:hover {
 .saved-empty-card h3 {
   margin-bottom: 8px;
   color: #2d2d2d;
-}
-
-.saved-empty-card p {
-  color: #666;
-  font-size: 0.95rem;
 }
 
 /* ===============================
@@ -1226,24 +1146,6 @@ body.dark-mode .sort-option:hover {
 /* ===============================
    메인 - 최근 저장 조합 미니 카드 최종 조정
 ================================ */
-
-.saved-combo-list {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.saved-mini-card {
-  width: 150px;
-  background: #fafafa;
-  border: 1px solid #eeeeee;
-  border-radius: 22px;
-  padding: 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-}
 
 .saved-mini-card:hover {
   transform: translateY(-4px);
@@ -1299,15 +1201,6 @@ body.dark-mode .sort-option:hover {
 }
 
 /* 다크모드 */
-body.dark-mode .saved-mini-card {
-  background: #2a2a2a;
-  border-color: #333333;
-}
-
-body.dark-mode .saved-mini-food strong {
-  color: #ffffff;
-}
-
 body.dark-mode .saved-mini-poster-box {
   background: #333333;
 }
@@ -1531,22 +1424,8 @@ body.dark-mode .saved-manage-empty p {
   color: #dddddd !important;
 }
 
-body.dark-mode .saved-manage-item {
-  background: #2a2a2a;
-  border-color: #333333;
-}
-
-body.dark-mode .saved-manage-info strong {
-  color: #ffffff;
-}
-
 body.dark-mode .saved-manage-poster-box {
   background: #333333;
-}
-
-body.dark-mode .saved-manage-empty {
-  background: rgba(255, 122, 89, 0.12);
-  border-color: #ff7a59;
 }
 
 @media (max-width: 600px) {
@@ -1644,17 +1523,8 @@ body.dark-mode .saved-manage-empty {
   text-align: center;
 }
 
-body.dark-mode .saved-view-item {
-  background: #2a2a2a;
-  border-color: #333333;
-}
-
 body.dark-mode .saved-view-item:hover {
   background: rgba(255, 122, 89, 0.12);
-}
-
-body.dark-mode .saved-view-info strong {
-  color: #ffffff;
 }
 
 body.dark-mode .saved-view-info p {
@@ -1669,9 +1539,16 @@ body.dark-mode .saved-view-arrow {
   color: #dddddd;
 }
 
-/* 1. 영역 제목 및 설명 텍스트 중앙 정렬 */
+/* =========================================
+   ✨ '최근 저장한 조합' 영역 중앙 정렬 패치 (수정 버튼 복구용 배열)
+========================================= */
+
 .section-title-row {
+  display: flex !important;
+  flex-direction: column !important;
   justify-content: center !important;
+  align-items: center !important;
+  gap: 14px;
 }
 
 .section-title-row h2,
@@ -1679,12 +1556,14 @@ body.dark-mode .saved-view-arrow {
   text-align: center !important;
 }
 
-/* 2. 저장된 조합 카드 리스트 중앙 정렬 */
 .saved-combo-list {
   justify-content: center !important;
 }
 
-/* 1. 언어 설정 등 모달 내부 요소 */
+/* =========================================
+   🌙 다크 모드 세부 요소 추가 보완 패치
+========================================= */
+
 body.dark-mode .modal-content {
   background: #222222;
   color: #eeeeee;
@@ -1704,7 +1583,6 @@ body.dark-mode .lang-select-btn.active-lang {
   border-color: #ff7a59;
 }
 
-/* 2. 메인 화면 - 저장된 조합 미니 카드 */
 body.dark-mode .saved-mini-card {
   background: #2a2a2a;
   border-color: #333333;
@@ -1721,7 +1599,6 @@ body.dark-mode .saved-manage-no-poster {
   color: #aaaaaa;
 }
 
-/* 3. 모달 - 저장된 조합 관리/전체보기 리스트 아이템 */
 body.dark-mode .saved-manage-item,
 body.dark-mode .saved-view-item {
   background: #2a2a2a;
@@ -1743,7 +1620,6 @@ body.dark-mode .saved-view-arrow {
   color: #888888;
 }
 
-/* 4. 빈 상태 (Empty State) 안내 박스 */
 body.dark-mode .saved-empty-card,
 body.dark-mode .saved-manage-empty {
   background: rgba(255, 122, 89, 0.1);
@@ -1754,7 +1630,6 @@ body.dark-mode .saved-empty-card p {
   color: #cccccc;
 }
 
-/* 5. 영화 목록 화면 (movie.html) 카드 및 탭 */
 body.dark-mode .movie-card {
   background: #2a2a2a;
   border-color: #333333;
@@ -1779,7 +1654,6 @@ body.dark-mode .genre-tab.selected {
   border-color: #ff7a59;
 }
 
-/* 6. HTML 내부에 고정된 밝은 배경색 강제 변환 */
 body.dark-mode div[style*="background: #fcfcfc"],
 body.dark-mode div[style*="background: #ffffff"] {
   background: #2a2a2a !important;
@@ -1787,7 +1661,10 @@ body.dark-mode div[style*="background: #ffffff"] {
   color: #eeeeee !important;
 }
 
-/* 1. 타이틀 영역을 완전히 중앙으로 배치하기 위해 relative 및 center 속성 적용 */
+/* =========================================
+   ✨ 영화 목록 헤더(타이틀 중앙, 정렬 버튼 우측 상단) 패치
+========================================= */
+
 .movie-title-row {
   display: flex;
   justify-content: center !important;
@@ -1796,7 +1673,6 @@ body.dark-mode div[style*="background: #ffffff"] {
   width: 100%;
 }
 
-/* 2. '인기순' 등 정렬 버튼 영역을 우측 상단으로 띄움 (절대 위치) */
 .sort-area {
   position: absolute !important;
   top: 0;
@@ -1804,7 +1680,6 @@ body.dark-mode div[style*="background: #ffffff"] {
   margin: 0;
 }
 
-/* 3. 모바일 화면(좁은 화면)에서는 버튼이 글씨와 겹치지 않도록 절대 위치를 해제하고 아래로 나란히 배치 */
 @media (max-width: 600px) {
   .movie-title-row {
     flex-direction: column;

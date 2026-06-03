@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. 상태 관리 객체
   const state = { currentStep: 1, primary: "", situation: "", detail: "", selectedOtt: "" };
 
   const steps = { 
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const progressBar = document.getElementById("progressBar");
   const progressFill = document.getElementById("progressFill");
 
-  // 버튼 이벤트 등록
   document.querySelectorAll(".option-btn").forEach((button) => {
     button.addEventListener("click", () => {
       const key = button.dataset.key;
@@ -48,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 다음 단계 버튼
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
       if (state.currentStep === 1) {
@@ -92,13 +89,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!state.selectedOtt) {
           return showCustomAlert(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
         }
-
         goToMoviePage(state.selectedOtt, state.situation, state.detail);
       }
     });
   }
 
-  // 이전 단계 버튼
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
       if (state.currentStep === 2) {
@@ -134,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 💡 다국어 지원 결과 도출 함수
   async function showResult() {
     const wizardForm = document.getElementById("wizardForm");
     if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
@@ -156,9 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const ottMapEn = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
       const ottMapZh = { "넷플릭스": "网飞", "디즈니+": "迪士尼+", "티빙": "TVING", "웨이브": "wavve" };
       const ottMapJa = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
-      const ottMapEs = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
       
-      const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (lang === "zh" ? (ottMapZh[rawOttName] || rawOttName) : (lang === "es" ? (ottMapEs[rawOttName] || rawOttName) : (ottMapJa[rawOttName] || rawOttName))));
+      const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (lang === "zh" ? (ottMapZh[rawOttName] || rawOttName) : (ottMapJa[rawOttName] || rawOttName)));
 
       const foodMap = { "치킨/피자": "food_chicken_pizza", "분식(떡볶이 등)": "food_bunsik", "한식(국밥/찌개)": "food_korean", "양식(파스타 등)": "food_western" };
       const translatedFood = state.primary === "food" ? (typeof t === 'function' ? t(foodMap[state.detail] || state.detail) : state.detail) : null;
@@ -186,13 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
         data.foodReason = `${mealInLang} の状況に完璧に合う組み合わせです。`;
         data.bestMatchCombo = `現在の状況（${mealInLang}）を考慮して、最適な組み合わせをおすすめします！`;
         data.genreLabel = "ジャンル/特徴";
-      } else if (lang === "es") {
-        data.ottTitle = `Recomendado en ${ottName}`;
-        data.ottGenre = `Géneros para ${mealInLang}`;
-        data.foodName = translatedFood || "Pizza o Pollo";
-        data.foodReason = `Combinación perfecta para ${mealInLang}.`;
-        data.bestMatchCombo = `Considerando tu situación (${mealInLang}), ¡recomendamos esta combinación!`;
-        data.genreLabel = "Género/Info";
       } else {
         data.ottTitle = `Recommended on ${ottName}`;
         data.ottGenre = `Genres for ${mealInLang}`;
@@ -277,10 +263,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedViewDoneBtn = document.getElementById("savedViewDoneBtn");
   const savedViewList = document.getElementById("savedViewList");
 
-  // ===============================
-  // 최근 저장한 조합 메인 화면 표시
-  // ===============================
-
   if (editSavedComboBtn) {
     editSavedComboBtn.addEventListener("click", () => {
       openSavedManageModal();
@@ -344,7 +326,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (savedMoreBtn) {
       if (savedCombos.length > 4) {
         savedMoreBtn.classList.remove("hidden");
-        savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
+        const lang = typeof getLang === 'function' ? getLang() : "ko";
+        savedMoreBtn.textContent = lang === "ko" ? `저장 조합 더보기 (${savedCombos.length})` : (lang === "en" ? `View More Combos (${savedCombos.length})` : (lang === "zh" ? `查看更多组合 (${savedCombos.length})` : `もっと見る (${savedCombos.length})`));
       } else {
         savedMoreBtn.classList.add("hidden");
       }
@@ -358,8 +341,8 @@ document.addEventListener("DOMContentLoaded", () => {
       savedComboList.innerHTML = `
         <div class="saved-empty-card">
           <div class="saved-empty-icon">🍿</div>
-          <h3>아직 저장한 조합이 없어요</h3>
-          <p>영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.</p>
+          <h3>${typeof t === 'function' ? t('savedEmptyTitle') : '아직 저장한 조합이 없어요'}</h3>
+          <p>${typeof t === 'function' ? t('savedEmptyDesc') : '영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.'}</p>
         </div>
       `;
 
@@ -384,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ${
                 posterUrl
                   ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-mini-poster">`
-                  : `<div class="saved-mini-no-poster">포스터 없음</div>`
+                  : `<div class="saved-mini-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
               }
             </div>
 
@@ -402,27 +385,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openSavedManageModal() {
     if (!savedManageModal) return;
-
     renderSavedManageList();
     savedManageModal.classList.add("show");
   }
 
   function openSavedViewModal() {
     if (!savedViewModal) return;
-
     renderSavedViewList();
     savedViewModal.classList.add("show");
   }
 
   function closeSavedViewModalFn() {
     if (!savedViewModal) return;
-
     savedViewModal.classList.remove("show");
   }
 
   function closeSavedManageModalFn() {
     if (!savedManageModal) return;
-
     savedManageModal.classList.remove("show");
   }
 
@@ -434,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (savedCombos.length === 0) {
       savedManageList.innerHTML = `
         <div class="saved-manage-empty">
-          <p>저장된 조합이 없습니다.</p>
+          <p>${typeof t === 'function' ? t('noSavedCombo') : '저장된 조합이 없습니다.'}</p>
         </div>
       `;
       return;
@@ -454,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ${
                 posterUrl
                   ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-manage-poster">`
-                  : `<div class="saved-manage-no-poster">포스터 없음</div>`
+                  : `<div class="saved-manage-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
               }
             </div>
 
@@ -468,7 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
               data-movie-id="${combo.movieId}"
               data-food-name="${combo.foodName}"
             >
-              저장 취소
+              ${typeof t === 'function' ? t('cancelSave') : '저장 취소'}
             </button>
           </div>
         `;
@@ -486,7 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (savedCombos.length === 0) {
       savedViewList.innerHTML = `
         <div class="saved-manage-empty">
-          <p>저장된 조합이 없습니다.</p>
+          <p>${typeof t === 'function' ? t('noSavedCombo') : '저장된 조합이 없습니다.'}</p>
         </div>
       `;
       return;
@@ -512,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ${
                 posterUrl
                   ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-view-poster">`
-                  : `<div class="saved-manage-no-poster">포스터 없음</div>`
+                  : `<div class="saved-manage-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
               }
             </div>
 
@@ -561,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         localStorage.setItem("savedCombos", JSON.stringify(filteredCombos));
 
-        showCustomAlert("저장한 조합이 삭제되었습니다.");
+        showCustomAlert(typeof t === 'function' ? t('comboDeleted') : "저장한 조합이 삭제되었습니다.");
 
         renderSavedCombosOnMain();
         renderSavedManageList();
@@ -591,6 +570,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  document.addEventListener("languageChanged", () => {
+    renderSavedCombosOnMain();
+    renderSavedManageList();
+    renderSavedViewList();
+  });
+
   renderSavedCombosOnMain();
 
   const settingBtn = document.getElementById("settingBtn");
@@ -598,37 +583,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const darkModeToggle = document.getElementById("darkModeToggle");
 
   if (settingBtn && settingPopup) {
-    // 설정 버튼 클릭 시 팝업 열기/닫기
     settingBtn.addEventListener("click", (event) => {
       event.stopPropagation();
       settingPopup.classList.toggle("hidden");
     });
 
-    // 팝업 내부 클릭 시 닫히지 않도록 방지
     settingPopup.addEventListener("click", (event) => {
       event.stopPropagation();
     });
 
-    // 화면의 다른 곳을 클릭하면 팝업 닫기
     document.addEventListener("click", () => {
       settingPopup.classList.add("hidden");
     });
   }
 
-  // (다크모드 버튼이 작동하도록 이벤트 추가)
   if (darkModeToggle) {
-    // 초기 로드 시 저장된 테마 적용
     if (localStorage.getItem("theme") === "dark") {
       document.body.classList.add("dark-mode");
     }
 
-    // 다크모드 버튼 클릭 시 테마 전환
     darkModeToggle.addEventListener("click", () => {
       document.body.classList.toggle("dark-mode");
       localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
-      document.dispatchEvent(new Event("languageChanged")); // i18n.js 텍스트 변경 트리거
+      document.dispatchEvent(new Event("languageChanged"));
     });
   }
-
-}); 
+});
 

@@ -1,3 +1,6 @@
+// ==========================================
+// 🌐 통합 다국어(i18n) 및 모달 관리 모듈
+// ==========================================
 
 const i18nData = {
   ko: {
@@ -139,41 +142,6 @@ const i18nData = {
     savedComboTitle: "最近保存したコンボ", savedComboDesc: "お気に入りのコンボをもう一度確認してみてください。", editSavedComboBtn: "編集",
     savedManageTitle: "保存したコンボの管理", savedViewTitle: "保存したコンボをすべて見る", savedManageDoneBtn: "閉じる", savedViewDoneBtn: "閉じる",
     savedEmptyTitle: "まだ保存したコンボがありません", savedEmptyDesc: "映画の詳細ページでお気に入りのコンボを保存すると、ここに表示されます。", noPoster: "ポスターなし", cancelSave: "保存取消", noSavedCombo: "保存されたコンボはありません。", comboDeleted: "保存したコンボが削除されました。"
-  },
-  es: {
-    settingBtn: "⚙ Configuración", settingTitle: "Configuración", 
-    historyBtn: "📜 Historial", historyModalTitle: "Historial Reciente", emptyHistory: "Aún no hay historial.", clearHistoryBtn: "Borrar Historial", closeHistoryBtn: "Cerrar",
-    langMenuBtn: "🌐 Idioma", langModalTitle: "Configuración de Idioma", closeLangModal: "Cerrar",
-    prevBtn: "Anterior", nextBtn: "Siguiente", nextBtnResult: "Ver Resultado ✨",
-    alert_primary: "Por favor, seleccione un criterio.", alert_situation: "Por favor, seleccione su situación actual.", alert_detail: "Por favor, seleccione un elemento detallado.",
-    alert_ott: "Por favor, seleccione un OTT válido.", alert_error: "Ocurrió un error al cargar los resultados.", alert_copied: "¡Resultado guardado como imagen!",
-    mainTitle: "🍿 Qué ver, Qué comer", mainDesc: "Servicio de recomendación de combinaciones de OTT y comida",
-    step1Title: "1. ¿Qué le gustaría elegir primero?", step1Opt1: "📺 Basado en Contenido (OTT)", step1Opt2: "🍕 Basado en Comida",
-    step2Title: "2. ¿Cuál es su situación actual de comida?",
-    meal_honbab: "Comiendo Solo", meal_yasik: "Snack Nocturno", meal_friends: "Con Amigos", meal_couple: "Con Pareja", meal_light: "Comida Ligera", meal_heavy: "Comida Pesada",
-    step3OttTitle: "3. Seleccione su plataforma OTT.", step3FoodTitle: "3. ¿Qué tipo de comida se le antoja?", step4OttTitle: "4. Seleccione su plataforma OTT.",
-    food_chicken_pizza: "Pollo/Pizza", food_bunsik: "Comida Callejera", food_korean: "Comida Coreana", food_western: "Comida Occidental",
-    ott_netflix: "Netflix", ott_disney: "Disney+", ott_tving: "TVING", ott_wavve: "wavve",
-    loadingTitle: "Buscando la combinación perfecta...", loadingDesc: "Por favor espere un momento 🍿",
-    resultTitle: "✨ Resultados de Recomendación ✨", resContentTitle: "🎬 Contenido Recomendado", resFoodTitle: "🍕 Comida Recomendada", resComboTitle: "💡 Mejor Combinación",
-    shareBtn: "Guardar Imagen 🔗", resetBtn: "Reiniciar",
-    genreTitle: "Categorías de Género", tab_all: "Todo", tab_action: "Acción", tab_comedy: "Comedia", tab_drama: "Drama", tab_romance: "Romance", tab_thriller: "Suspense", tab_animation: "Animación",
-    clickPosterInfo: "Haga clic en el póster para ver la descripción y la recomendación de comida.", backToMainBtn: "Ir al Menú Principal",
-    loadingText: "Cargando películas...", movieDescHeader: "🎬 Detalles de la Película", foodRecHeader: "🍽 Recomendación",
-    releaseDate: "Estreno", rating: "Calificación", noReleaseInfo: "Sin fecha", noRatingInfo: "Sin info",
-    noOverview: "No hay descripción disponible.", noTitle: "Sin Título", noMoviesTitle: "No se encontraron películas.", noMoviesDesc: "Intente seleccionar otro género o busque nuevamente.",
-    modalResultTitle: "✨ Resultado de Recomendación ✨", modalMovieHeader: "🎬 Película Seleccionada", modalFoodHeader: "🍽 Comida Recomendada", modalShareBtn: "Guardar Imagen 🔗", closeFinalResultModal: "Cerrar",
-    recommendInfoTitle: "Cómo Recomendamos",
-    infoLabel1: "Género de Película", infoDesc1: "Refleja el ambiente de la película seleccionada.",
-    infoLabel2: "Situación de Comida", infoDesc2: "Considera su situación, como comer solo o con amigos.",
-    infoLabel3: "Categoría de Comida", infoDesc3: "Sugiere el mejor menú para el género y la situación.",
-    recommendPageTitle: "Detalles de Recomendación", recommendPageInfo: "Revise la comida recomendada para su película.",
-    recommendLoadingText: "Cargando información...", reactionTitle: "¿Qué tal esta recomendación?",
-    likeBtn: "👍 Me gusta", dislikeBtn: "👎 No me gusta", saveComboBtn: "💾 Guardar Combinación", backToMovieBtn: "Volver a Películas",
-    errorLoadMovie: "Error al cargar la información de la película.",
-    savedComboTitle: "Combinaciones Guardadas", savedComboDesc: "Revise sus combinaciones favoritas.", editSavedComboBtn: "Editar",
-    savedManageTitle: "Gestionar Combinaciones", savedViewTitle: "Ver Todas las Combinaciones", savedManageDoneBtn: "Cerrar", savedViewDoneBtn: "Cerrar",
-    savedEmptyTitle: "Aún no hay combinaciones guardadas", savedEmptyDesc: "Guarde sus combinaciones favoritas en la página de detalles de la película y aparecerán aquí.", noPoster: "Sin póster", cancelSave: "Deshacer", noSavedCombo: "No hay combinaciones guardadas.", comboDeleted: "La combinación guardada ha sido eliminada."
   }
 };
 
@@ -193,9 +161,9 @@ function applyLanguage() {
   const darkModeToggle = document.getElementById("darkModeToggle");
   if (darkModeToggle) {
     if (document.body.classList.contains("dark-mode")) {
-      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : (lang === "es" ? "☀️ Modo Claro" : "☀️ ライトモード")));
+      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : "☀️ ライトモード"));
     } else {
-      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : (lang === "es" ? "🌙 Modo Oscuro" : "🌙 ダークモード")));
+      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : "🌙 ダークモード"));
     }
   }
 }
@@ -235,8 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lang", selectedLang);
       applyLanguage();
       langModal.classList.remove("show");
-      
-      // 언어 변경 시 다른 동적 요소들도 즉시 번역되도록 이벤트 발송 
       document.dispatchEvent(new Event("languageChanged"));
     });
   });
@@ -244,7 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
   applyLanguage();
 });
 
-// 동적으로 렌더링되는 "더보기" 버튼 언어 변경 감지용 패치
 document.addEventListener("languageChanged", () => {
   const savedMoreBtn = document.getElementById("savedMoreBtn");
   if (savedMoreBtn && !savedMoreBtn.classList.contains("hidden")) {
@@ -254,7 +219,6 @@ document.addEventListener("languageChanged", () => {
        if (lang === "ko") savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
        else if (lang === "en") savedMoreBtn.textContent = `View More Combos (${savedCombos.length})`;
        else if (lang === "zh") savedMoreBtn.textContent = `查看更多组合 (${savedCombos.length})`;
-       else if (lang === "es") savedMoreBtn.textContent = `Ver más combinaciones (${savedCombos.length})`;
        else if (lang === "ja") savedMoreBtn.textContent = `もっと見る (${savedCombos.length})`;
     }
   }
