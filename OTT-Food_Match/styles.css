@@ -1787,14 +1787,38 @@ body.dark-mode div[style*="background: #ffffff"] {
   color: #eeeeee !important;
 }
 
+/* 1. 타이틀 영역을 완전히 중앙으로 배치하기 위해 relative 및 center 속성 적용 */
 .movie-title-row {
-  flex-direction: column !important;
-  align-items: center !important;
+  display: flex;
   justify-content: center !important;
-  gap: 14px;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
 }
 
-.movie-title-row > div:first-child h2,
-.movie-title-row > div:first-child p {
-  text-align: center !important;
+/* 2. '인기순' 등 정렬 버튼 영역을 우측 상단으로 띄움 (절대 위치) */
+.sort-area {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+
+/* 3. 모바일 화면(좁은 화면)에서는 버튼이 글씨와 겹치지 않도록 절대 위치를 해제하고 아래로 나란히 배치 */
+@media (max-width: 600px) {
+  .movie-title-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sort-area {
+    position: relative !important;
+    margin-top: 14px;
+  }
+  
+  .sort-menu {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
 }
