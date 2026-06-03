@@ -49,14 +49,29 @@
       </section>
 
       <section class="card step-section hidden" id="step3-ott">
-        <h2 id="step3OttTitle">3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
-        <div class="ott-logo-grid">
-          <button id="ott_netflix" class="option-btn" data-key="detail" data-value="넷플릭스">넷플릭스</button>
-          <button id="ott_disney" class="option-btn" data-key="detail" data-value="디즈니+">디즈니+</button>
-          <button id="ott_tving" class="option-btn" data-key="detail" data-value="티빙">티빙</button>
-          <button id="ott_wavve" class="option-btn" data-key="detail" data-value="웨이브">웨이브</button>
-        </div>
-      </section>
+  <h2 id="step3OttTitle">3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
+  <div class="ott-logo-grid">
+    <button class="option-btn ott-logo-card" data-key="detail" data-value="넷플릭스">
+      <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
+      <span id="ott_netflix">Netflix</span>
+    </button>
+
+    <button class="option-btn ott-logo-card" data-key="detail" data-value="디즈니+">
+      <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
+      <span id="ott_disney">Disney+</span>
+    </button>
+
+    <button class="option-btn ott-logo-card" data-key="detail" data-value="티빙">
+      <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
+      <span id="ott_tving">TVING</span>
+    </button>
+
+    <button class="option-btn ott-logo-card" data-key="detail" data-value="웨이브">
+      <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
+      <span id="ott_wavve">wavve</span>
+    </button>
+  </div>
+</section>
 
       <section class="card step-section hidden" id="step3-food">
         <h2 id="step3FoodTitle">3. 어떤 종류의 음식이 끌리시나요?</h2>
@@ -69,14 +84,29 @@
       </section>
 
       <section class="card step-section hidden" id="step4-ott">
-        <h2 id="step4OttTitle">4. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
-        <div class="ott-logo-grid">
-          <button class="option-btn" data-key="selectedOtt" data-value="넷플릭스">넷플릭스</button>
-          <button class="option-btn" data-key="selectedOtt" data-value="디즈니+">디즈니+</button>
-          <button class="option-btn" data-key="selectedOtt" data-value="티빙">티빙</button>
-          <button class="option-btn" data-key="selectedOtt" data-value="웨이브">웨이브</button>
-        </div>
-      </section>
+  <h2 id="step4OttTitle">4. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
+  <div class="ott-logo-grid">
+    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="넷플릭스">
+      <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
+      <span>Netflix</span>
+    </button>
+
+    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="디즈니+">
+      <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
+      <span>Disney+</span>
+    </button>
+
+    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="티빙">
+      <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
+      <span>TVING</span>
+    </button>
+
+    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="웨이브">
+      <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
+      <span>wavve</span>
+    </button>
+  </div>
+</section>
 
       <div class="action-area hidden" id="navArea">
         <button id="prevBtn" class="secondary-btn">이전 단계</button>
@@ -89,71 +119,130 @@
         <p id="loadingDesc" style="color: #666; font-size: 0.9rem;">잠시만 기다려주세요 🍿</p>
       </section>
 
-      <section id="resultSection" class="result-section hidden">
-        <h2 id="resultTitle">✨ 맞춤 추천 결과 ✨</h2>
-        <div class="result-card">
-          <h3 id="resContentTitle">🎬 추천 콘텐츠</h3>
-          <div id="contentResult"></div>
-        </div>
-        <div class="result-card">
-          <h3 id="resFoodTitle">🍕 추천 음식</h3>
-          <div id="foodResult"></div>
-        </div>
-        <div class="result-card best-match">
-          <h3 id="resComboTitle">💡 Best Match Combo</h3>
-          <p id="bestMatchText"></p>
-        </div>
-        <div class="action-area" style="flex-direction: column; gap: 8px; margin-top: 16px;">
-          <button id="shareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
-          <button id="resetBtn" class="secondary-btn" style="width: 100%;">처음부터 다시하기</button>
-        </div>
-      </section>
-    </main>
+        <section id="resultSection" class="result-section hidden">
+          <h2 id="resultTitle">✨ 맞춤 추천 결과 ✨</h2>
+          <div class="result-card">
+            <h3 id="resContentTitle">🎬 추천 콘텐츠</h3>
+            <div id="contentResult"></div>
+          </div>
+          <div class="result-card">
+            <h3 id="resFoodTitle">🍕 추천 음식</h3>
+            <div id="foodResult"></div>
+          </div>
+          <div class="result-card best-match">
+            <h3 id="resComboTitle">💡 Best Match Combo</h3>
+            <p id="bestMatchText"></p>
+          </div>
+          <div class="action-area" style="flex-direction: column; gap: 8px; margin-top: 16px;">
+            <button id="shareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
+            <button id="resetBtn" class="secondary-btn" style="width: 100%;">처음부터 다시하기</button>
+          </div>
+          </section>
+<section class="card saved-combo-section" id="savedComboSection">
+  <div class="section-title-row">
+    <div>
+      <h2 id="savedComboTitle">최근 저장한 조합</h2>
+      <p id="savedComboDesc">마음에 든 조합을 다시 확인해보세요.</p>
+    </div>
 
-    <section id="recommendInfoSection" style="margin-top: 40px;">
-      <h2 id="recommendInfoTitle">이렇게 추천해요</h2>
-      <div class="recommend-info-grid">
-        <div class="recommend-info-item">
-          <span>🎬</span>
-          <strong id="infoLabel1">영화 장르</strong>
-          <p id="infoDesc1">선택한 영화의 분위기를 반영해요.</p>
-        </div>
-        <div class="recommend-info-item">
-          <span>🍽</span>
-          <strong id="infoLabel2">식사 상황</strong>
-          <p id="infoDesc2">혼밥, 야식, 친구와 함께 등 상황을 고려해요.</p>
-        </div>
-        <div class="recommend-info-item">
-          <span>💡</span>
-          <strong id="infoLabel3">음식 카테고리</strong>
-          <p id="infoDesc3">장르와 상황에 어울리는 메뉴를 추천해요.</p>
-        </div>
-      </div>
-    </section>
+    <button id="editSavedComboBtn" class="saved-edit-btn">수정</button>
   </div>
+
+  <div id="savedComboList" class="saved-combo-list"></div>
+
+  <div class="saved-more-area">
+    <button id="savedMoreBtn" class="secondary-btn saved-more-btn hidden">
+      저장 조합 더보기
+    </button>
+  </div>
+</section>
+
+        <section class="card recommend-info-section" id="recommendInfoSection">
+          <h2 id="recommendInfoTitle">이렇게 추천해요</h2>
+
+          <div class="recommend-info-grid">
+            <div class="recommend-info-item">
+              <span>🎬</span>
+              <strong>영화 장르</strong>
+              <p>선택한 영화의 분위기를 반영해요.</p>
+            </div>
+
+            <div class="recommend-info-item">
+              <span>🍽</span>
+              <strong>식사 상황</strong>
+              <p>혼밥, 야식, 친구와 함께 등 상황을 고려해요.</p>
+            </div>
+
+            <div class="recommend-info-item">
+              <span>💡</span>
+              <strong>음식 카테고리</strong>
+              <p>장르와 상황에 어울리는 메뉴를 추천해요.</p>
+            </div>
+          </div>
+        </section>
+            </main>
+    </div>
 
   <div id="langModal" class="modal-overlay">
     <div class="modal-content">
       <h3 id="langModalTitle" style="margin-bottom: 10px;">언어 설정</h3>
+
       <div class="lang-options">
         <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
         <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
         <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
         <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
       </div>
-      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%;">닫기</button>
+
+      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">
+        닫기
+      </button>
     </div>
   </div>
 
   <div id="historyModal" class="modal-overlay hidden">
     <div class="modal-content history-modal-content">
       <h3 id="historyModalTitle">최근 매칭 기록</h3>
-      <div id="historyListContainer" class="history-list-container">
-        </div>
-      <div class="action-area" style="margin-top: 16px; gap: 8px;">
-        <button id="clearHistoryBtn" class="secondary-btn" style="flex: 1;">기록 모두 지우기</button>
-        <button id="closeHistoryBtn" class="primary-btn" style="flex: 1;">닫기</button>
+
+      <div id="historyListContainer" class="history-list-container"></div>
+
+      <button id="closeHistoryBtn" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <div id="savedManageModal" class="modal-overlay">
+    <div class="modal-content saved-manage-modal">
+      <div class="saved-manage-header">
+        <h3 id="savedManageTitle">저장한 조합 관리</h3>
+        <button id="closeSavedManageModal" class="modal-close-btn">×</button>
       </div>
+
+      <p class="saved-manage-desc">저장 취소할 조합을 선택하세요.</p>
+
+      <div id="savedManageList" class="saved-manage-list"></div>
+
+      <button id="savedManageDoneBtn" class="secondary-btn saved-manage-done-btn">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <div id="savedViewModal" class="modal-overlay">
+    <div class="modal-content saved-view-modal">
+      <div class="saved-manage-header">
+        <h3 id="savedViewTitle">저장한 조합 전체보기</h3>
+        <button id="closeSavedViewModal" class="modal-close-btn">×</button>
+      </div>
+
+      <p class="saved-manage-desc">이전에 저장한 조합을 눌러 다시 확인해보세요.</p>
+
+      <div id="savedViewList" class="saved-view-list"></div>
+
+      <button id="savedViewDoneBtn" class="secondary-btn saved-manage-done-btn">
+        닫기
+      </button>
     </div>
   </div>
 

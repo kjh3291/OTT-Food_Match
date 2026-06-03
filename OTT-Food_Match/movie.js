@@ -16,6 +16,10 @@ const mealMapJa = { "혼밥": "一人ご飯", "야식": "夜食", "친구와 함
 let selectedGenre = "전체";
 let currentMovies = [];
 
+let currentSort = "popularity";
+let visibleMovieCount = 20;
+const MOVIES_PER_LOAD = 20;
+
 const urlParams = new URLSearchParams(window.location.search);
 const ottKey = urlParams.get("ott");
 let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
@@ -27,6 +31,11 @@ const selectedGenreTitle = document.getElementById("selectedGenreTitle");
 const loadingText = document.getElementById("loadingText");
 const movieList = document.getElementById("movieList");
 const backToMainBtn = document.getElementById("backToMainBtn");
+
+const sortMenuBtn = document.getElementById("sortMenuBtn");
+const sortMenu = document.getElementById("sortMenu");
+const sortOptions = document.querySelectorAll(".sort-option");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
 
 if (!ottKey) {
   const lang = localStorage.getItem("lang") || "ko";
@@ -40,7 +49,6 @@ if (!ottKey) {
 
 function applyMovieLanguage() {
   const lang = localStorage.getItem("lang") || "ko";
-  if (typeof applyLanguage === "function") applyLanguage();
 
   let ottDisplay = ottNameMap[ottKey];
   let mealDisplay = selectedMeal;
@@ -84,19 +92,6 @@ function getGenreKey(genre) {
   return map[genre] || "all";
 }
 
-const mealButtons = document.querySelectorAll(".meal-btn");
-mealButtons.forEach(btn => {
-  if (btn.dataset.value === selectedMeal) {
-    btn.classList.add("selected");
-  }
-  btn.addEventListener("click", () => {
-    mealButtons.forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
-    selectedMeal = btn.dataset.value;
-    applyMovieLanguage();
-  });
-});
-
 genreTabs.forEach((tab) => {
   tab.addEventListener("click", async () => {
     selectedGenre = tab.dataset.genre.trim();
@@ -110,9 +105,17 @@ genreTabs.forEach((tab) => {
 async function loadMoviesByGenre(genre) {
   if (loadingText) {
     loadingText.classList.remove("hidden");
-    loadingText.textContent = typeof t === 'function' ? t("loadingText") : "영화 목록을 불러오는 중입니다...";
+    loadingText.textContent = typeof t === "function" ? t("loadingText") : "영화 목록을 불러오는 중입니다...";
   }
+
   movieList.innerHTML = "";
+
+  if (loadMoreBtn) {
+    loadMoreBtn.classList.add("hidden");
+  }
+
+  visibleMovieCount = MOVIES_PER_LOAD;
+
   currentMovies = await fetchMoviesFromTMDB(genre);
   renderMovies(currentMovies);
 }
@@ -120,68 +123,209 @@ async function loadMoviesByGenre(genre) {
 async function fetchMoviesFromTMDB(genre) {
   const apiKey = window.CONFIG?.TMDB_API_KEY;
   const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
+
   if (!apiKey) return [];
+
   const providerId = ottProviderMap[ottKey];
   if (!providerId) return [];
+
   const genreId = genreIdMap[genre];
 
   const lang = localStorage.getItem("lang") || "ko";
-  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
+  const tmdbLangMap = {
+    ko: "ko-KR",
+    en: "en-US",
+    zh: "zh-CN",
+    ja: "ja-JP",
+  };
   const tmdbLang = tmdbLangMap[lang] || "ko-KR";
 
-  let url = `${baseUrl}/discover/movie?api_key=${apiKey}&language=${tmdbLang}&region=KR&watch_region=KR&with_watch_providers=${providerId}&with_watch_monetization_types=flatrate&sort_by=popularity.desc&include_adult=false&page=1`;
-  if (genre !== "전체") url += `&with_genres=${genreId}`;
+  const maxPagesToFetch = 8;
+  const allResults = [];
+
+  function buildMovieUrl(page) {
+    let url =
+      `${baseUrl}/discover/movie` +
+      `?api_key=${apiKey}` +
+      `&language=${tmdbLang}` +
+      `&region=KR` +
+      `&watch_region=KR` +
+      `&with_watch_providers=${providerId}` +
+      `&sort_by=popularity.desc` +
+      `&include_adult=false` +
+      `&page=${page}`;
+
+    if (genre !== "전체" && genreId) {
+      url += `&with_genres=${genreId}`;
+    }
+
+    return url;
+  }
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) return [];
-    const data = await response.json();
-    return data.results.map((movie) => ({
+    const firstResponse = await fetch(buildMovieUrl(1));
+
+    if (!firstResponse.ok) {
+      console.error("TMDB 첫 페이지 요청 실패:", firstResponse.status);
+      return [];
+    }
+
+    const firstData = await firstResponse.json();
+    const totalPages = Math.min(firstData.total_pages || 1, maxPagesToFetch);
+
+    const firstMovies = firstData.results.map((movie) => ({
       id: movie.id,
       title: movie.title || movie.name || "No Title",
       overview: movie.overview || "",
       posterPath: movie.poster_path,
       releaseDate: movie.release_date || "",
-      rating: movie.vote_average,
+      rating: movie.vote_average || 0,
+      popularity: movie.popularity || 0,
+      genre: genre,
     }));
+
+    allResults.push(...firstMovies);
+
+    for (let page = 2; page <= totalPages; page++) {
+      const response = await fetch(buildMovieUrl(page));
+
+      if (!response.ok) {
+        console.error(`${page}페이지 요청 실패:`, response.status);
+        continue;
+      }
+
+      const data = await response.json();
+
+      const movies = data.results.map((movie) => ({
+        id: movie.id,
+        title: movie.title || movie.name || "No Title",
+        overview: movie.overview || "",
+        posterPath: movie.poster_path,
+        releaseDate: movie.release_date || "",
+        rating: movie.vote_average || 0,
+        popularity: movie.popularity || 0,
+        genre: genre,
+      }));
+
+      allResults.push(...movies);
+    }
+
+    return removeDuplicateMovies(allResults);
   } catch (error) {
+    console.error("TMDB API 요청 중 오류 발생:", error);
     return [];
   }
+}
+
+function removeDuplicateMovies(movies) {
+  const movieMap = new Map();
+
+  movies.forEach((movie) => {
+    if (!movieMap.has(movie.id)) {
+      movieMap.set(movie.id, movie);
+    }
+  });
+
+  return Array.from(movieMap.values());
+}
+
+function sortMovies(movies) {
+  const sortedMovies = [...movies];
+
+  if (currentSort === "popularity") {
+    sortedMovies.sort((a, b) => b.popularity - a.popularity);
+  }
+
+  if (currentSort === "rating") {
+    sortedMovies.sort((a, b) => b.rating - a.rating);
+  }
+
+  if (currentSort === "latest") {
+    sortedMovies.sort((a, b) => {
+      const dateA = a.releaseDate || "0000-00-00";
+      const dateB = b.releaseDate || "0000-00-00";
+      return new Date(dateB) - new Date(dateA);
+    });
+  }
+
+  if (currentSort === "title") {
+    sortedMovies.sort((a, b) => a.title.localeCompare(b.title, "ko"));
+  }
+
+  return sortedMovies;
 }
 
 function renderMovies(movies) {
   if (loadingText) loadingText.classList.add("hidden");
 
   if (!movies || movies.length === 0) {
-    movieList.innerHTML = `<div class="result-card"><p><strong>${typeof t === 'function' ? t("noMoviesTitle") : "조건에 맞는 영화가 없습니다."}</strong></p></div>`;
+    movieList.innerHTML = `
+      <div class="result-card">
+        <p><strong>${typeof t === "function" ? t("noMoviesTitle") : "조건에 맞는 영화가 없습니다."}</strong></p>
+        <p style="color:#666; margin-top:8px;">
+          ${typeof t === "function" ? t("noMoviesDesc") : "다른 장르를 선택하거나 다시 시도해보세요."}
+        </p>
+      </div>
+    `;
+
+    if (loadMoreBtn) {
+      loadMoreBtn.classList.add("hidden");
+    }
+
     return;
   }
 
-  movieList.innerHTML = movies.slice(0, 12).map((movie, index) => {
+  const sortedMovies = sortMovies(movies);
+  const visibleMovies = sortedMovies.slice(0, visibleMovieCount);
+
+  movieList.innerHTML = visibleMovies.map((movie, index) => {
     const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w300${movie.posterPath}` : "";
-    const titleText = movie.title !== "No Title" ? movie.title : (typeof t === 'function' ? t("noTitle") : "제목 없음");
-    const releaseText = movie.releaseDate ? movie.releaseDate : (typeof t === 'function' ? t("noReleaseInfo") : "정보 없음");
-    const ratingText = movie.rating ? movie.rating.toFixed(1) : (typeof t === 'function' ? t("noRatingInfo") : "정보 없음");
+    const titleText = movie.title !== "No Title" ? movie.title : (typeof t === "function" ? t("noTitle") : "제목 없음");
+    const releaseText = movie.releaseDate ? movie.releaseDate : (typeof t === "function" ? t("noReleaseInfo") : "정보 없음");
+    const ratingText = movie.rating ? movie.rating.toFixed(1) : (typeof t === "function" ? t("noRatingInfo") : "정보 없음");
 
     return `
       <div class="movie-card" data-index="${index}" style="cursor: pointer;">
         <div class="movie-poster-area">
           ${posterUrl ? `<img src="${posterUrl}" alt="Poster" class="movie-poster">` : `<div class="no-poster">No Image</div>`}
         </div>
+
         <div class="movie-info">
           <strong>${titleText}</strong>
-          <p>${typeof t === 'function' ? t("releaseDate") : "개봉일"}: ${releaseText}</p>
-          <p>${typeof t === 'function' ? t("rating") : "평점"}: ${ratingText}</p>
+          <p>${typeof t === "function" ? t("releaseDate") : "개봉일"}: ${releaseText}</p>
+          <p>${typeof t === "function" ? t("rating") : "평점"}: ${ratingText}</p>
         </div>
-      </div>`;
+      </div>
+    `;
   }).join("");
 
   document.querySelectorAll(".movie-card").forEach((card) => {
     card.addEventListener("click", () => {
       const idx = Number(card.dataset.index);
-      showFinalResultModal(currentMovies[idx]);
+      const selectedMovie = visibleMovies[idx];
+
+      const mealParam = encodeURIComponent(selectedMeal);
+      const genreParam = encodeURIComponent(selectedGenre);
+
+      window.location.href =
+        `recommend.html?movieId=${selectedMovie.id}` +
+        `&ott=${ottKey}` +
+        `&meal=${mealParam}` +
+        `&genre=${genreParam}`;
     });
   });
+
+  if (loadMoreBtn) {
+    if (visibleMovieCount < sortedMovies.length) {
+      loadMoreBtn.classList.remove("hidden");
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.textContent = `더보기 (${visibleMovies.length}/${sortedMovies.length})`;
+    } else {
+      loadMoreBtn.classList.remove("hidden");
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.textContent = `모든 영화를 확인했습니다 (${sortedMovies.length}개)`;
+    }
+  }
 }
 
 function saveToHistory(movieTitle, foodName, emoji) {
@@ -289,9 +433,9 @@ if (backToMainBtn) {
   backToMainBtn.addEventListener("click", () => { window.location.href = "main.html"; });
 }
 
-document.addEventListener("languageChanged", async () => {
+document.addEventListener("languageChanged", () => {
   applyMovieLanguage();
-  await loadMoviesByGenre(selectedGenre); 
+  renderMovies(currentMovies);
 });
 
 const settingBtn = document.getElementById("settingBtn");
@@ -351,6 +495,42 @@ if (clearHistoryBtn) {
   });
 }
 
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener("click", () => {
+    visibleMovieCount += MOVIES_PER_LOAD;
+    renderMovies(currentMovies);
+  });
+}
+
+if (sortMenuBtn && sortMenu) {
+  sortMenuBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    sortMenu.classList.toggle("hidden");
+  });
+
+  sortMenu.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  document.addEventListener("click", () => {
+    sortMenu.classList.add("hidden");
+  });
+}
+
+sortOptions.forEach((option) => {
+  option.addEventListener("click", () => {
+    currentSort = option.dataset.sort;
+
+    if (currentSort === "popularity") sortMenuBtn.textContent = "인기순 ▾";
+    if (currentSort === "rating") sortMenuBtn.textContent = "평점순 ▾";
+    if (currentSort === "latest") sortMenuBtn.textContent = "최신순 ▾";
+    if (currentSort === "title") sortMenuBtn.textContent = "이름순 ▾";
+
+    sortMenu.classList.add("hidden");
+    visibleMovieCount = MOVIES_PER_LOAD;
+    renderMovies(currentMovies);
+  });
+});
+
 applyMovieLanguage();
 loadMoviesByGenre(selectedGenre);
-

@@ -57,3 +57,4 @@ export function dislike(food) {
   food.weight = Math.max(0.1, food.weight - 0.2);
 }
 */
+
