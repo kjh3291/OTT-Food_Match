@@ -34,8 +34,6 @@ const i18nData = {
     recommendLoadingText: "추천 정보를 불러오는 중입니다...", reactionTitle: "이 추천은 어땠나요?",
     likeBtn: "👍 좋아요", dislikeBtn: "👎 싫어요", saveComboBtn: "💾 조합 저장", backToMovieBtn: "영화 목록으로 돌아가기",
     errorLoadMovie: "영화 정보를 불러오지 못했습니다.",
-    
-    // 추가된 부분: 저장된 조합 및 모달창
     savedComboTitle: "최근 저장한 조합",
     savedComboDesc: "마음에 든 조합을 다시 확인해보세요.",
     editSavedComboBtn: "수정",
@@ -75,8 +73,6 @@ const i18nData = {
     recommendLoadingText: "Loading recommendation info...", reactionTitle: "How was this recommendation?",
     likeBtn: "👍 Like", dislikeBtn: "👎 Dislike", saveComboBtn: "💾 Save Combo", backToMovieBtn: "Back to Movies",
     errorLoadMovie: "Failed to load movie information.",
-    
-    // 추가된 부분: 저장된 조합 및 모달창
     savedComboTitle: "Recently Saved Combos",
     savedComboDesc: "Check out your favorite combos again.",
     editSavedComboBtn: "Edit",
@@ -116,8 +112,6 @@ const i18nData = {
     recommendLoadingText: "正在加载推荐信息...", reactionTitle: "这个推荐怎么样？",
     likeBtn: "👍 喜欢", dislikeBtn: "👎 不喜欢", saveComboBtn: "💾 保存组合", backToMovieBtn: "返回电影列表",
     errorLoadMovie: "无法加载电影信息。",
-    
-    // 추가된 부분: 저장된 조합 및 모달창
     savedComboTitle: "最近保存的组合",
     savedComboDesc: "再次查看您喜欢的组合。",
     editSavedComboBtn: "编辑",
@@ -157,8 +151,6 @@ const i18nData = {
     recommendLoadingText: "おすすめ情報を読み込んでいます...", reactionTitle: "このおすすめはどうでしたか？",
     likeBtn: "👍 いいね", dislikeBtn: "👎 いまいち", saveComboBtn: "💾 コンボを保存", backToMovieBtn: "映画リストに戻る",
     errorLoadMovie: "映画情報を読み込めませんでした。",
-    
-    // 추가된 부분: 저장된 조합 및 모달창
     savedComboTitle: "最近保存したコンボ",
     savedComboDesc: "お気に入りのコンボをもう一度確認してみてください。",
     editSavedComboBtn: "編集",
@@ -166,8 +158,8 @@ const i18nData = {
     savedViewTitle: "保存したコンボをすべて見る",
     savedManageDoneBtn: "閉じる",
     savedViewDoneBtn: "閉じる"
-  }
-  , es: {
+  },
+  es: {
     settingBtn: "⚙ Configuración", settingTitle: "Configuración", 
     historyBtn: "📜 Historial", historyModalTitle: "Historial Reciente", emptyHistory: "Aún no hay historial.", clearHistoryBtn: "Borrar Historial", closeHistoryBtn: "Cerrar",
     langMenuBtn: "🌐 Idioma", langModalTitle: "Configuración de Idioma", closeLangModal: "Cerrar",
@@ -205,22 +197,24 @@ const i18nData = {
     savedViewTitle: "Ver Todas las Combinaciones",
     savedManageDoneBtn: "Cerrar",
     savedViewDoneBtn: "Cerrar"
-  };
-}
-
-
+  }
+};
 
 function getLang() { return localStorage.getItem("lang") || "ko"; }
 function t(key) { return i18nData[getLang()][key] || key; }
 
 function applyLanguage() {
   const lang = getLang();
+  
+  if (!i18nData[lang]) return;
+
   Object.keys(i18nData[lang]).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = i18nData[lang][id];
   });
 
-  // i18n.js 파일 내의 applyLanguage 함수 내부의 다크모드 텍스트 변경 로직을 이걸로 교체하세요:
+  // 다크모드 버튼 요소 선택 및 텍스트 업데이트 (오류 수정 부분)
+  const darkModeToggle = document.getElementById("darkModeToggle");
   if (darkModeToggle) {
     if (document.body.classList.contains("dark-mode")) {
       darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : (lang === "es" ? "☀️ Modo Claro" : "☀️ ライトモード")));
@@ -228,8 +222,7 @@ function applyLanguage() {
       darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : (lang === "es" ? "🌙 Modo Oscuro" : "🌙 ダークモード")));
     }
   }
-
-// i18n.js 파일 맨 밑 더보기 버튼 이벤트 리스너에 es 조건을 추가하세요:
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const langMenuBtn = document.getElementById("langMenuBtn");
@@ -253,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (closeLangModal) {
     closeLangModal.addEventListener("click", () => langModal.classList.remove("show"));
   }
+  
   if (langModal) {
     langModal.addEventListener("click", (e) => {
       if (e.target === langModal) langModal.classList.remove("show");
@@ -281,9 +275,11 @@ document.addEventListener("languageChanged", () => {
        if (lang === "ko") savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
        else if (lang === "en") savedMoreBtn.textContent = `View More Combos (${savedCombos.length})`;
        else if (lang === "zh") savedMoreBtn.textContent = `查看更多组合 (${savedCombos.length})`;
-       else if (lang === "es") savedMoreBtn.textContent = `Ver más combinaciones (${savedCombos.length})`; // 스페인어 추가
+       else if (lang === "es") savedMoreBtn.textContent = `Ver más combinaciones (${savedCombos.length})`;
        else if (lang === "ja") savedMoreBtn.textContent = `もっと見る (${savedCombos.length})`;
     }
   }
 });
+
+
 
