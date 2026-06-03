@@ -1683,3 +1683,106 @@ body.dark-mode .saved-view-arrow {
 .saved-combo-list {
   justify-content: center !important;
 }
+
+/* 1. 언어 설정 등 모달 내부 요소 */
+body.dark-mode .modal-content {
+  background: #222222;
+  color: #eeeeee;
+  border: 1px solid #333333;
+}
+body.dark-mode .lang-select-btn {
+  background: #2a2a2a;
+  color: #eeeeee;
+  border-color: #444444;
+}
+body.dark-mode .lang-select-btn:hover {
+  background: #333333;
+}
+body.dark-mode .lang-select-btn.active-lang {
+  background: #ff7a59;
+  color: #ffffff;
+  border-color: #ff7a59;
+}
+
+/* 2. 메인 화면 - 저장된 조합 미니 카드 */
+body.dark-mode .saved-mini-card {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+body.dark-mode .saved-mini-card:hover {
+  background: #333333;
+}
+body.dark-mode .saved-mini-food strong {
+  color: #eeeeee;
+}
+body.dark-mode .saved-mini-no-poster,
+body.dark-mode .saved-manage-no-poster {
+  background: #444444;
+  color: #aaaaaa;
+}
+
+/* 3. 모달 - 저장된 조합 관리/전체보기 리스트 아이템 */
+body.dark-mode .saved-manage-item,
+body.dark-mode .saved-view-item {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+body.dark-mode .saved-manage-item:hover,
+body.dark-mode .saved-view-item:hover {
+  background: #333333;
+}
+body.dark-mode .saved-manage-info strong,
+body.dark-mode .saved-view-info strong {
+  color: #eeeeee;
+}
+body.dark-mode .saved-manage-info p,
+body.dark-mode .saved-view-info p {
+  color: #bbbbbb;
+}
+body.dark-mode .saved-view-arrow {
+  color: #888888;
+}
+
+/* 4. 빈 상태 (Empty State) 안내 박스 */
+body.dark-mode .saved-empty-card,
+body.dark-mode .saved-manage-empty {
+  background: rgba(255, 122, 89, 0.1);
+  border-color: #ff7a59;
+  color: #eeeeee;
+}
+body.dark-mode .saved-empty-card p {
+  color: #cccccc;
+}
+
+/* 5. 영화 목록 화면 (movie.html) 카드 및 탭 */
+body.dark-mode .movie-card {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+body.dark-mode .movie-card:hover {
+  background: #333333;
+}
+body.dark-mode .movie-info strong {
+  color: #eeeeee;
+}
+body.dark-mode .genre-tab {
+  background: #2a2a2a;
+  color: #cccccc;
+  border-color: #444444;
+}
+body.dark-mode .genre-tab:hover {
+  background: #333333;
+}
+body.dark-mode .genre-tab.selected {
+  background: #ff7a59;
+  color: #ffffff;
+  border-color: #ff7a59;
+}
+
+/* 6. HTML 내부에 고정된 밝은 배경색 강제 변환 */
+body.dark-mode div[style*="background: #fcfcfc"],
+body.dark-mode div[style*="background: #ffffff"] {
+  background: #2a2a2a !important;
+  border-color: #333333 !important;
+  color: #eeeeee !important;
+}
