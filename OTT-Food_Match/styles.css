@@ -1786,3 +1786,15 @@ body.dark-mode div[style*="background: #ffffff"] {
   border-color: #333333 !important;
   color: #eeeeee !important;
 }
+
+.movie-title-row {
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px;
+}
+
+.movie-title-row > div:first-child h2,
+.movie-title-row > div:first-child p {
+  text-align: center !important;
+}
