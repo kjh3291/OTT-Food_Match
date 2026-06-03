@@ -167,7 +167,46 @@ const i18nData = {
     savedManageDoneBtn: "閉じる",
     savedViewDoneBtn: "閉じる"
   }
-};
+  , es: {
+    settingBtn: "⚙ Configuración", settingTitle: "Configuración", 
+    historyBtn: "📜 Historial", historyModalTitle: "Historial Reciente", emptyHistory: "Aún no hay historial.", clearHistoryBtn: "Borrar Historial", closeHistoryBtn: "Cerrar",
+    langMenuBtn: "🌐 Idioma", langModalTitle: "Configuración de Idioma", closeLangModal: "Cerrar",
+    prevBtn: "Anterior", nextBtn: "Siguiente", nextBtnResult: "Ver Resultado ✨",
+    alert_primary: "Por favor, seleccione un criterio.", alert_situation: "Por favor, seleccione su situación actual.", alert_detail: "Por favor, seleccione un elemento detallado.",
+    alert_ott: "Por favor, seleccione un OTT válido.", alert_error: "Ocurrió un error al cargar los resultados.", alert_copied: "¡Resultado guardado como imagen!",
+    mainTitle: "🍿 Qué ver, Qué comer", mainDesc: "Servicio de recomendación de combinaciones de OTT y comida",
+    step1Title: "1. ¿Qué le gustaría elegir primero?", step1Opt1: "📺 Basado en Contenido (OTT)", step1Opt2: "🍕 Basado en Comida",
+    step2Title: "2. ¿Cuál es su situación actual de comida?",
+    meal_honbab: "Comiendo Solo", meal_yasik: "Snack Nocturno", meal_friends: "Con Amigos", meal_couple: "Con Pareja", meal_light: "Comida Ligera", meal_heavy: "Comida Pesada",
+    step3OttTitle: "3. Seleccione su plataforma OTT.", step3FoodTitle: "3. ¿Qué tipo de comida se le antoja?", step4OttTitle: "4. Seleccione su plataforma OTT.",
+    food_chicken_pizza: "Pollo/Pizza", food_bunsik: "Comida Callejera", food_korean: "Comida Coreana", food_western: "Comida Occidental",
+    ott_netflix: "Netflix", ott_disney: "Disney+", ott_tving: "TVING", ott_wavve: "wavve",
+    loadingTitle: "Buscando la combinación perfecta...", loadingDesc: "Por favor espere un momento 🍿",
+    resultTitle: "✨ Resultados de Recomendación ✨", resContentTitle: "🎬 Contenido Recomendado", resFoodTitle: "🍕 Comida Recomendada", resComboTitle: "💡 Mejor Combinación",
+    shareBtn: "Guardar Imagen 🔗", resetBtn: "Reiniciar",
+    genreTitle: "Categorías de Género", tab_all: "Todo", tab_action: "Acción", tab_comedy: "Comedia", tab_drama: "Drama", tab_romance: "Romance", tab_thriller: "Suspense", tab_animation: "Animación",
+    clickPosterInfo: "Haga clic en el póster para ver la descripción y la recomendación de comida.", backToMainBtn: "Ir al Menú Principal",
+    loadingText: "Cargando películas...", movieDescHeader: "🎬 Detalles de la Película", foodRecHeader: "🍽 Recomendación",
+    releaseDate: "Estreno", rating: "Calificación", noReleaseInfo: "Sin fecha", noRatingInfo: "Sin info",
+    noOverview: "No hay descripción disponible.", noTitle: "Sin Título", noMoviesTitle: "No se encontraron películas.", noMoviesDesc: "Intente seleccionar otro género o busque nuevamente.",
+    modalResultTitle: "✨ Resultado de Recomendación ✨", modalMovieHeader: "🎬 Película Seleccionada", modalFoodHeader: "🍽 Comida Recomendada", modalShareBtn: "Guardar Imagen 🔗", closeFinalResultModal: "Cerrar",
+    recommendInfoTitle: "Cómo Recomendamos",
+    infoLabel1: "Género de Película", infoDesc1: "Refleja el ambiente de la película seleccionada.",
+    infoLabel2: "Situación de Comida", infoDesc2: "Considera su situación, como comer solo o con amigos.",
+    infoLabel3: "Categoría de Comida", infoDesc3: "Sugiere el mejor menú para el género y la situación.",
+    recommendPageTitle: "Detalles de Recomendación", recommendPageInfo: "Revise la comida recomendada para su película.",
+    recommendLoadingText: "Cargando información...", reactionTitle: "¿Qué tal esta recomendación?",
+    likeBtn: "👍 Me gusta", dislikeBtn: "👎 No me gusta", saveComboBtn: "💾 Guardar Combinación", backToMovieBtn: "Volver a Películas",
+    errorLoadMovie: "Error al cargar la información de la película.",
+    savedComboTitle: "Combinaciones Guardadas",
+    savedComboDesc: "Revise sus combinaciones favoritas.",
+    editSavedComboBtn: "Editar",
+    savedManageTitle: "Gestionar Combinaciones",
+    savedViewTitle: "Ver Todas las Combinaciones",
+    savedManageDoneBtn: "Cerrar",
+    savedViewDoneBtn: "Cerrar"
+  };
+}
 
 
 
