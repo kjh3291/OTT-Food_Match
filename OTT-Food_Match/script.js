@@ -584,5 +584,45 @@ function addSavedViewItemEvents() {
   }
 
   renderSavedCombosOnMain();
+
+    // ===============================
+  // 설정 팝업 및 다크모드 동작
+  // ===============================
+  const settingBtn = document.getElementById("settingBtn");
+  const settingPopup = document.getElementById("settingPopup");
+  const darkModeToggle = document.getElementById("darkModeToggle");
+
+  if (settingBtn && settingPopup) {
+    // 설정 버튼 클릭 시 팝업 열기/닫기
+    settingBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      settingPopup.classList.toggle("hidden");
+    });
+
+    // 팝업 내부 클릭 시 닫히지 않도록 방지
+    settingPopup.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    // 화면의 다른 곳을 클릭하면 팝업 닫기
+    document.addEventListener("click", () => {
+      settingPopup.classList.add("hidden");
+    });
+  }
+
+  // (메인 화면에서 다크모드 버튼이 작동하도록 이벤트 추가)
+  if (darkModeToggle) {
+    // 초기 로드 시 저장된 테마 적용
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+
+    // 다크모드 버튼 클릭 시 테마 전환
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+      document.dispatchEvent(new Event("languageChanged")); // i18n.js 텍스트 변경 트리거
+    });
+  }
 }); 
 
