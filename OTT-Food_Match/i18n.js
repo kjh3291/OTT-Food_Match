@@ -220,16 +220,16 @@ function applyLanguage() {
     if (el) el.textContent = i18nData[lang][id];
   });
 
-  const darkModeToggle = document.getElementById("darkModeToggle");
+  // i18n.js 파일 내의 applyLanguage 함수 내부의 다크모드 텍스트 변경 로직을 이걸로 교체하세요:
   if (darkModeToggle) {
     if (document.body.classList.contains("dark-mode")) {
-      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : "☀️ ライトモード"));
+      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : (lang === "es" ? "☀️ Modo Claro" : "☀️ ライトモード")));
     } else {
-      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : "🌙 ダークモード"));
+      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : (lang === "es" ? "🌙 Modo Oscuro" : "🌙 ダークモード")));
     }
   }
-  document.dispatchEvent(new Event("languageChanged"));
-}
+
+// i18n.js 파일 맨 밑 더보기 버튼 이벤트 리스너에 es 조건을 추가하세요:
 
 document.addEventListener("DOMContentLoaded", () => {
   const langMenuBtn = document.getElementById("langMenuBtn");
@@ -281,7 +281,9 @@ document.addEventListener("languageChanged", () => {
        if (lang === "ko") savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
        else if (lang === "en") savedMoreBtn.textContent = `View More Combos (${savedCombos.length})`;
        else if (lang === "zh") savedMoreBtn.textContent = `查看更多组合 (${savedCombos.length})`;
+       else if (lang === "es") savedMoreBtn.textContent = `Ver más combinaciones (${savedCombos.length})`; // 스페인어 추가
        else if (lang === "ja") savedMoreBtn.textContent = `もっと見る (${savedCombos.length})`;
     }
   }
 });
+
