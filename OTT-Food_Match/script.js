@@ -376,10 +376,13 @@ if (recentCombos.length === 0) {
     return `
       <div 
         class="saved-mini-card"
-        data-movie-id="${combo.movieId}"
-        data-ott="${combo.ott}"
-        data-meal="${combo.meal}"
-        data-genre="${combo.genre}"
+data-movie-id="${combo.movieId}"
+data-ott="${combo.ott}"
+data-meal="${combo.meal}"
+data-genre="${combo.genre}"
+data-food-name="${combo.foodName || ""}"
+data-food-category="${combo.foodCategory || "기타"}"
+data-reason="${combo.reason || ""}"
       >
         <div class="saved-mini-poster-box">
           ${
@@ -504,10 +507,13 @@ function closeSavedViewModalFn() {
       return `
         <div 
           class="saved-view-item"
-          data-movie-id="${combo.movieId}"
-          data-ott="${combo.ott}"
-          data-meal="${combo.meal}"
-          data-genre="${combo.genre}"
+data-movie-id="${combo.movieId}"
+data-ott="${combo.ott}"
+data-meal="${combo.meal}"
+data-genre="${combo.genre}"
+data-food-name="${combo.foodName || ""}"
+data-food-category="${combo.foodCategory || "기타"}"
+data-reason="${combo.reason || ""}"
         >
           <div class="saved-view-poster-box">
             ${
@@ -536,14 +542,21 @@ function addSavedViewItemEvents() {
     item.addEventListener("click", () => {
       const movieId = item.dataset.movieId;
       const ott = item.dataset.ott;
-      const meal = encodeURIComponent(item.dataset.meal);
-      const genre = encodeURIComponent(item.dataset.genre);
+      const meal = encodeURIComponent(item.dataset.meal || "");
+      const genre = encodeURIComponent(item.dataset.genre || "전체");
+      const foodName = encodeURIComponent(item.dataset.foodName || "");
+      const foodCategory = encodeURIComponent(item.dataset.foodCategory || "기타");
+      const reason = encodeURIComponent(item.dataset.reason || "");
 
       window.location.href =
         `recommend.html?movieId=${movieId}` +
         `&ott=${ott}` +
         `&meal=${meal}` +
-        `&genre=${genre}`;
+        `&genre=${genre}` +
+        `&mode=saved` +
+        `&foodName=${foodName}` +
+        `&foodCategory=${foodCategory}` +
+        `&reason=${reason}`;
     });
   });
 }
@@ -735,11 +748,12 @@ function renderAiPickCards(picks) {
 
       return `
         <div 
-          class="ai-pick-card ai-genre-card"
-          data-ott="${pick.ott || "netflix"}"
-          data-genre="${pick.genre || "전체"}"
-          data-food-name="${pick.foodName || ""}"
-        >
+  class="ai-pick-card ai-genre-card"
+  data-ott="${pick.ott || "netflix"}"
+  data-genre="${pick.genre || "전체"}"
+  data-food-name="${pick.foodName || ""}"
+  data-reason="${pick.reason || ""}"
+>
           <span class="${badgeClass}">${pick.badge}</span>
 
           <h3>${pick.title}</h3>
@@ -774,7 +788,8 @@ function addAiGenreCardEvents() {
     card.addEventListener("click", () => {
       const ott = card.dataset.ott || "netflix";
       const genre = encodeURIComponent(card.dataset.genre || "전체");
-      const foodName = encodeURIComponent(card.dataset.foodName || "");
+      const foodParam = encodeURIComponent(card.dataset.foodName || "");
+      const reasonParam = encodeURIComponent(card.dataset.reason || "");
 
       const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
       const recentCombo = savedCombos[savedCombos.length - 1];
@@ -785,7 +800,8 @@ function addAiGenreCardEvents() {
         `movie.html?ott=${ott}` +
         `&meal=${meal}` +
         `&genre=${genre}` +
-        `&food=${foodName}`;
+        `&food=${foodParam}` +
+        `&aiReason=${reasonParam}`;
     });
   });
 }
@@ -825,16 +841,28 @@ async function renderAiPicks() {
 }
 
   function addSavedMiniCardEvents() {
-    document.querySelectorAll(".saved-mini-card").forEach((card) => {
-      card.addEventListener("click", () => {
-        const movieId = card.dataset.movieId;
-        const ott = card.dataset.ott;
-        const meal = encodeURIComponent(card.dataset.meal);
-        const genre = encodeURIComponent(card.dataset.genre);
-        window.location.href = `recommend.html?movieId=${movieId}&ott=${ott}&meal=${meal}&genre=${genre}`;
-      });
+  document.querySelectorAll(".saved-mini-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const movieId = card.dataset.movieId;
+      const ott = card.dataset.ott;
+      const meal = encodeURIComponent(card.dataset.meal || "");
+      const genre = encodeURIComponent(card.dataset.genre || "전체");
+      const foodName = encodeURIComponent(card.dataset.foodName || "");
+      const foodCategory = encodeURIComponent(card.dataset.foodCategory || "기타");
+      const reason = encodeURIComponent(card.dataset.reason || "");
+
+      window.location.href =
+        `recommend.html?movieId=${movieId}` +
+        `&ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}` +
+        `&mode=saved` +
+        `&foodName=${foodName}` +
+        `&foodCategory=${foodCategory}` +
+        `&reason=${reason}`;
     });
-  }
+  });
+}
 
   renderSavedCombosOnMain();
   renderAiPicks();
