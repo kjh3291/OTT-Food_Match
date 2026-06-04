@@ -67,3 +67,19 @@ export function buildUserProfile({
       recommendReactions.filter((r) => r.reaction === "dislike").map((r) => r.foodName)
     ),
   ].filter(Boolean);
+
+  // --- 자주 고른 장르 / 식사 상황 / OTT ---
+  const favoriteGenres = countTop([
+    ...savedCombos.map((c) => c.genre),
+    ...recommendReactions.map((r) => r.genre),
+  ]);
+ 
+  const favoriteMeals = countTop([
+    ...savedCombos.map((c) => c.meal),
+    ...recommendReactions.map((r) => r.meal),
+  ]);
+ 
+  const favoriteOtt = countTop([
+    ...savedCombos.map((c) => c.ott),
+    ...recommendReactions.map((r) => r.ott),
+  ]);
