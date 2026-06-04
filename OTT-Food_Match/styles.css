@@ -936,19 +936,6 @@ body.dark-mode .recommend-divider {
    영화 정렬 / 더보기
 ================================ */
 
-.movie-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.sort-area {
-  position: relative;
-  flex: 0 0 auto;
-}
-
 .sort-menu-btn {
   border: none;
   background: #ff7a59;
@@ -1011,23 +998,6 @@ body.dark-mode .sort-option:hover {
   background: #333333;
 }
 
-@media (max-width: 600px) {
-  .movie-title-row {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .sort-area {
-    align-self: center;
-  }
-
-  .sort-menu {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-  }
-}
-
 .primary-btn:disabled,
 .secondary-btn:disabled {
   opacity: 0.55;
@@ -1040,43 +1010,6 @@ body.dark-mode .sort-option:hover {
 
 .saved-combo-section {
   margin-top: 18px;
-}
-
-.section-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.section-title-row h2 {
-  margin-bottom: 6px;
-  text-align: left !important;
-}
-
-.section-title-row p {
-  color: #666;
-  font-size: 0.95rem;
-  text-align: left !important;
-}
-
-.saved-combo-list {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.saved-mini-card {
-  width: 150px;
-  background: #fafafa;
-  border: 1px solid #eeeeee;
-  border-radius: 22px;
-  padding: 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
 .saved-combo-poster-box {
@@ -1161,14 +1094,6 @@ body.dark-mode .sort-option:hover {
   color: #333333;
 }
 
-.saved-empty-card {
-  background: #fff3ec;
-  border: 1px dashed #ffb59f;
-  border-radius: 18px;
-  padding: 24px;
-  text-align: center;
-}
-
 .saved-empty-icon {
   font-size: 2rem;
   margin-bottom: 8px;
@@ -1177,11 +1102,6 @@ body.dark-mode .sort-option:hover {
 .saved-empty-card h3 {
   margin-bottom: 8px;
   color: #2d2d2d;
-}
-
-.saved-empty-card p {
-  color: #666;
-  font-size: 0.95rem;
 }
 
 /* ===============================
@@ -1226,24 +1146,6 @@ body.dark-mode .sort-option:hover {
 /* ===============================
    메인 - 최근 저장 조합 미니 카드 최종 조정
 ================================ */
-
-.saved-combo-list {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.saved-mini-card {
-  width: 150px;
-  background: #fafafa;
-  border: 1px solid #eeeeee;
-  border-radius: 22px;
-  padding: 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-}
 
 .saved-mini-card:hover {
   transform: translateY(-4px);
@@ -1299,15 +1201,6 @@ body.dark-mode .sort-option:hover {
 }
 
 /* 다크모드 */
-body.dark-mode .saved-mini-card {
-  background: #2a2a2a;
-  border-color: #333333;
-}
-
-body.dark-mode .saved-mini-food strong {
-  color: #ffffff;
-}
-
 body.dark-mode .saved-mini-poster-box {
   background: #333333;
 }
@@ -1531,22 +1424,8 @@ body.dark-mode .saved-manage-empty p {
   color: #dddddd !important;
 }
 
-body.dark-mode .saved-manage-item {
-  background: #2a2a2a;
-  border-color: #333333;
-}
-
-body.dark-mode .saved-manage-info strong {
-  color: #ffffff;
-}
-
 body.dark-mode .saved-manage-poster-box {
   background: #333333;
-}
-
-body.dark-mode .saved-manage-empty {
-  background: rgba(255, 122, 89, 0.12);
-  border-color: #ff7a59;
 }
 
 @media (max-width: 600px) {
@@ -1644,17 +1523,8 @@ body.dark-mode .saved-manage-empty {
   text-align: center;
 }
 
-body.dark-mode .saved-view-item {
-  background: #2a2a2a;
-  border-color: #333333;
-}
-
 body.dark-mode .saved-view-item:hover {
   background: rgba(255, 122, 89, 0.12);
-}
-
-body.dark-mode .saved-view-info strong {
-  color: #ffffff;
 }
 
 body.dark-mode .saved-view-info p {
@@ -1667,4 +1537,163 @@ body.dark-mode .saved-view-poster-box {
 
 body.dark-mode .saved-view-arrow {
   color: #dddddd;
+}
+
+/* =========================================
+   ✨ '최근 저장한 조합' 영역 중앙 정렬 패치 (수정 버튼 복구용 배열)
+========================================= */
+
+.section-title-row {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 14px;
+}
+
+.section-title-row h2,
+.section-title-row p {
+  text-align: center !important;
+}
+
+.saved-combo-list {
+  justify-content: center !important;
+}
+
+/* =========================================
+   🌙 다크 모드 세부 요소 추가 보완 패치
+========================================= */
+
+body.dark-mode .modal-content {
+  background: #222222;
+  color: #eeeeee;
+  border: 1px solid #333333;
+}
+body.dark-mode .lang-select-btn {
+  background: #2a2a2a;
+  color: #eeeeee;
+  border-color: #444444;
+}
+body.dark-mode .lang-select-btn:hover {
+  background: #333333;
+}
+body.dark-mode .lang-select-btn.active-lang {
+  background: #ff7a59;
+  color: #ffffff;
+  border-color: #ff7a59;
+}
+
+body.dark-mode .saved-mini-card {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+body.dark-mode .saved-mini-card:hover {
+  background: #333333;
+}
+body.dark-mode .saved-mini-food strong {
+  color: #eeeeee;
+}
+body.dark-mode .saved-mini-no-poster,
+body.dark-mode .saved-manage-no-poster {
+  background: #444444;
+  color: #aaaaaa;
+}
+
+body.dark-mode .saved-manage-item,
+body.dark-mode .saved-view-item {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+body.dark-mode .saved-manage-item:hover,
+body.dark-mode .saved-view-item:hover {
+  background: #333333;
+}
+body.dark-mode .saved-manage-info strong,
+body.dark-mode .saved-view-info strong {
+  color: #eeeeee;
+}
+body.dark-mode .saved-manage-info p,
+body.dark-mode .saved-view-info p {
+  color: #bbbbbb;
+}
+body.dark-mode .saved-view-arrow {
+  color: #888888;
+}
+
+body.dark-mode .saved-empty-card,
+body.dark-mode .saved-manage-empty {
+  background: rgba(255, 122, 89, 0.1);
+  border-color: #ff7a59;
+  color: #eeeeee;
+}
+body.dark-mode .saved-empty-card p {
+  color: #cccccc;
+}
+
+body.dark-mode .movie-card {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+body.dark-mode .movie-card:hover {
+  background: #333333;
+}
+body.dark-mode .movie-info strong {
+  color: #eeeeee;
+}
+body.dark-mode .genre-tab {
+  background: #2a2a2a;
+  color: #cccccc;
+  border-color: #444444;
+}
+body.dark-mode .genre-tab:hover {
+  background: #333333;
+}
+body.dark-mode .genre-tab.selected {
+  background: #ff7a59;
+  color: #ffffff;
+  border-color: #ff7a59;
+}
+
+body.dark-mode div[style*="background: #fcfcfc"],
+body.dark-mode div[style*="background: #ffffff"] {
+  background: #2a2a2a !important;
+  border-color: #333333 !important;
+  color: #eeeeee !important;
+}
+
+/* =========================================
+   ✨ 영화 목록 헤더(타이틀 중앙, 정렬 버튼 우측 상단) 패치
+========================================= */
+
+.movie-title-row {
+  display: flex;
+  justify-content: center !important;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+.sort-area {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .movie-title-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sort-area {
+    position: relative !important;
+    margin-top: 14px;
+  }
+  
+  .sort-menu {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
 }

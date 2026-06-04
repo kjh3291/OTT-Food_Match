@@ -26,18 +26,17 @@ const i18nData = {
     releaseDate: "개봉일", rating: "평점", noReleaseInfo: "개봉일 정보 없음", noRatingInfo: "정보 없음",
     noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.", noMoviesDesc: "다른 장르를 선택하거나 검색을 다시 시도해보세요.",
     modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식", modalShareBtn: "결과 공유하기 🔗", closeFinalResultModal: "닫기",
-    
-    // 💡 새로 추가된 번역: 메인 페이지 '이렇게 추천해요'
     recommendInfoTitle: "이렇게 추천해요",
     infoLabel1: "영화 장르", infoDesc1: "선택한 영화의 분위기를 반영해요.",
     infoLabel2: "식사 상황", infoDesc2: "혼밥, 야식, 친구와 함께 등 상황을 고려해요.",
     infoLabel3: "음식 카테고리", infoDesc3: "장르와 상황에 어울리는 메뉴를 추천해요.",
-    
-    // 💡 새로 추가된 번역: recommend.html 관련
     recommendPageTitle: "추천 상세", recommendPageInfo: "선택한 영화와 어울리는 음식을 확인해보세요.",
     recommendLoadingText: "추천 정보를 불러오는 중입니다...", reactionTitle: "이 추천은 어땠나요?",
     likeBtn: "👍 좋아요", dislikeBtn: "👎 싫어요", saveComboBtn: "💾 조합 저장", backToMovieBtn: "영화 목록으로 돌아가기",
-    errorLoadMovie: "영화 정보를 불러오지 못했습니다."
+    errorLoadMovie: "영화 정보를 불러오지 못했습니다.",
+    savedComboTitle: "최근 저장한 조합", savedComboDesc: "마음에 든 조합을 다시 확인해보세요.", editSavedComboBtn: "수정",
+    savedManageTitle: "저장한 조합 관리", savedViewTitle: "저장한 조합 전체보기", savedManageDoneBtn: "닫기", savedViewDoneBtn: "닫기",
+    savedEmptyTitle: "아직 저장한 조합이 없어요", savedEmptyDesc: "영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.", noPoster: "포스터 없음", cancelSave: "저장 취소", noSavedCombo: "저장된 조합이 없습니다.", comboDeleted: "저장한 조합이 삭제되었습니다."
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
@@ -62,8 +61,6 @@ const i18nData = {
     releaseDate: "Release", rating: "Rating", noReleaseInfo: "No date info", noRatingInfo: "No info",
     noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.", noMoviesDesc: "Try selecting another genre or search again.",
     modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing", modalShareBtn: "Save Image 🔗", closeFinalResultModal: "Close",
-    
-    // 💡 새로 추가된 번역
     recommendInfoTitle: "How We Recommend",
     infoLabel1: "Movie Genre", infoDesc1: "Reflects the mood of your selected movie.",
     infoLabel2: "Meal Setting", infoDesc2: "Considers your situation like eating alone or with friends.",
@@ -71,7 +68,10 @@ const i18nData = {
     recommendPageTitle: "Recommendation Details", recommendPageInfo: "Check out the food pairing for your selected movie.",
     recommendLoadingText: "Loading recommendation info...", reactionTitle: "How was this recommendation?",
     likeBtn: "👍 Like", dislikeBtn: "👎 Dislike", saveComboBtn: "💾 Save Combo", backToMovieBtn: "Back to Movies",
-    errorLoadMovie: "Failed to load movie information."
+    errorLoadMovie: "Failed to load movie information.",
+    savedComboTitle: "Recently Saved Combos", savedComboDesc: "Check out your favorite combos again.", editSavedComboBtn: "Edit",
+    savedManageTitle: "Manage Saved Combos", savedViewTitle: "View All Saved Combos", savedManageDoneBtn: "Close", savedViewDoneBtn: "Close",
+    savedEmptyTitle: "No saved combos yet", savedEmptyDesc: "Save your favorite combos on the movie details page and they will appear here.", noPoster: "No Poster", cancelSave: "Unsave", noSavedCombo: "There are no saved combos.", comboDeleted: "Saved combo has been deleted."
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
@@ -96,8 +96,6 @@ const i18nData = {
     releaseDate: "上映日期", rating: "评分", noReleaseInfo: "暂无上映信息", noRatingInfo: "暂无评分",
     noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。", noMoviesDesc: "尝试选择其他类型或重新搜索。",
     modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配", modalShareBtn: "保存图片 🔗", closeFinalResultModal: "关闭",
-    
-    // 💡 새로 추가된 번역
     recommendInfoTitle: "推荐方式",
     infoLabel1: "电影类型", infoDesc1: "反映所选电影的氛围。",
     infoLabel2: "用餐场景", infoDesc2: "考虑一人食、夜宵、朋友聚会等场景。",
@@ -105,7 +103,10 @@ const i18nData = {
     recommendPageTitle: "推荐详情", recommendPageInfo: "查看与所选电影搭配的美食。",
     recommendLoadingText: "正在加载推荐信息...", reactionTitle: "这个推荐怎么样？",
     likeBtn: "👍 喜欢", dislikeBtn: "👎 不喜欢", saveComboBtn: "💾 保存组合", backToMovieBtn: "返回电影列表",
-    errorLoadMovie: "无法加载电影信息。"
+    errorLoadMovie: "无法加载电影信息。",
+    savedComboTitle: "最近保存的组合", savedComboDesc: "再次查看您喜欢的组合。", editSavedComboBtn: "编辑",
+    savedManageTitle: "管理保存的组合", savedViewTitle: "查看所有组合", savedManageDoneBtn: "关闭", savedViewDoneBtn: "关闭",
+    savedEmptyTitle: "暂无保存的组合", savedEmptyDesc: "在电影详情页保存您喜欢的组合，它们会显示在这里。", noPoster: "无海报", cancelSave: "取消保存", noSavedCombo: "没有保存的组合。", comboDeleted: "保存的组合已删除。"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
@@ -130,8 +131,6 @@ const i18nData = {
     releaseDate: "公開日", rating: "評価", noReleaseInfo: "公開日情報なし", noRatingInfo: "情報なし",
     noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。", noMoviesDesc: "別のジャンルを選択するか、再度検索してみてください。",
     modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物", modalShareBtn: "結果をシェアする 🔗", closeFinalResultModal: "閉じる",
-    
-    // 💡 새로 추가된 번역
     recommendInfoTitle: "おすすめの理由",
     infoLabel1: "映画のジャンル", infoDesc1: "選択した映画の雰囲気を反映します。",
     infoLabel2: "食事の状況", infoDesc2: "一人ご飯、夜食、友達と一緒などの状況を考慮します。",
@@ -139,7 +138,10 @@ const i18nData = {
     recommendPageTitle: "おすすめの詳細", recommendPageInfo: "選択した映画に合う食べ物を確認してみてください。",
     recommendLoadingText: "おすすめ情報を読み込んでいます...", reactionTitle: "このおすすめはどうでしたか？",
     likeBtn: "👍 いいね", dislikeBtn: "👎 いまいち", saveComboBtn: "💾 コンボを保存", backToMovieBtn: "映画リストに戻る",
-    errorLoadMovie: "映画情報を読み込めませんでした。"
+    errorLoadMovie: "映画情報を読み込めませんでした。",
+    savedComboTitle: "最近保存したコンボ", savedComboDesc: "お気に入りのコンボをもう一度確認してみてください。", editSavedComboBtn: "編集",
+    savedManageTitle: "保存したコンボの管理", savedViewTitle: "保存したコンボをすべて見る", savedManageDoneBtn: "閉じる", savedViewDoneBtn: "閉じる",
+    savedEmptyTitle: "まだ保存したコンボがありません", savedEmptyDesc: "映画の詳細ページでお気に入りのコンボを保存すると、ここに表示されます。", noPoster: "ポスターなし", cancelSave: "保存取消", noSavedCombo: "保存されたコンボはありません。", comboDeleted: "保存したコンボが削除されました。"
   }
 };
 
@@ -148,6 +150,9 @@ function t(key) { return i18nData[getLang()][key] || key; }
 
 function applyLanguage() {
   const lang = getLang();
+  
+  if (!i18nData[lang]) return;
+
   Object.keys(i18nData[lang]).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = i18nData[lang][id];
@@ -161,7 +166,6 @@ function applyLanguage() {
       darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : "🌙 ダークモード"));
     }
   }
-  document.dispatchEvent(new Event("languageChanged"));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -186,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (closeLangModal) {
     closeLangModal.addEventListener("click", () => langModal.classList.remove("show"));
   }
+  
   if (langModal) {
     langModal.addEventListener("click", (e) => {
       if (e.target === langModal) langModal.classList.remove("show");
@@ -198,8 +203,23 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lang", selectedLang);
       applyLanguage();
       langModal.classList.remove("show");
+      document.dispatchEvent(new Event("languageChanged"));
     });
   });
   
   applyLanguage();
+});
+
+document.addEventListener("languageChanged", () => {
+  const savedMoreBtn = document.getElementById("savedMoreBtn");
+  if (savedMoreBtn && !savedMoreBtn.classList.contains("hidden")) {
+    const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+    if (savedCombos.length > 4) {
+       const lang = getLang();
+       if (lang === "ko") savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
+       else if (lang === "en") savedMoreBtn.textContent = `View More Combos (${savedCombos.length})`;
+       else if (lang === "zh") savedMoreBtn.textContent = `查看更多组合 (${savedCombos.length})`;
+       else if (lang === "ja") savedMoreBtn.textContent = `もっと見る (${savedCombos.length})`;
+    }
+  }
 });
