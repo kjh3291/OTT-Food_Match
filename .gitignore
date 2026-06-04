@@ -1,4 +1,3 @@
-config.js
 .DS_Store
-node_modules
-coverage
+config.js
+.env.local.env.local

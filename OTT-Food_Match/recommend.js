@@ -17,17 +17,6 @@ const selectedGenre = urlParams.get("genre")
 
 
 // ===============================
-// 2. 음식 데이터 준비
-// ===============================
-
-const mealData = convertFoods(meals, "식사");
-const dessertData = convertFoods(desserts, "디저트");
-const fastfoodData = convertFoods(fastfoods, "패스트푸드");
-
-const allFoods = [...mealData, ...dessertData, ...fastfoodData];
-
-
-// ===============================
 // 3. HTML 요소 가져오기
 // ===============================
 
@@ -57,46 +46,46 @@ let currentReason = "";
 // ===============================
 
 async function fetchMovieDetail() {
-  const apiKey = window.CONFIG?.TMDB_API_KEY;
-  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  if (!apiKey) {
-    alert("TMDB API Key가 없습니다. config.js를 확인해주세요.");
-    return null;
-  }
-
   if (!movieId) {
     alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요.");
-    window.location.href = "main.html";
+    window.location.href = "index.html";
     return null;
   }
 
+  const lang = localStorage.getItem("lang") || "ko";
+
+  const tmdbLangMap = {
+    ko: "ko-KR",
+    en: "en-US",
+    zh: "zh-CN",
+    ja: "ja-JP",
+  };
+
+  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
+
   const url =
-    `${baseUrl}/movie/${movieId}` +
-    `?api_key=${apiKey}` +
-    `&language=ko-KR`;
+    `/api/movie-detail` +
+    `?movieId=${encodeURIComponent(movieId)}` +
+    `&lang=${encodeURIComponent(tmdbLang)}`;
 
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error("영화 상세 정보 요청 실패:", response.status);
-      alert("영화 상세 정보를 불러오지 못했습니다.");
+      const errorData = await response.json().catch(() => null);
+      console.error("영화 상세 API 오류:", response.status, errorData);
+      alert(errorData?.message || "영화 상세 정보를 불러오지 못했습니다.");
       return null;
     }
 
-    const movie = await response.json();
+    const data = await response.json();
 
-    return {
-      id: movie.id,
-      title: movie.title || "제목 없음",
-      overview: movie.overview || "줄거리 정보가 없습니다.",
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date || "개봉일 정보 없음",
-      rating: movie.vote_average,
-      runtime: movie.runtime || 0,
-      genres: movie.genres ? movie.genres.map((genre) => genre.name) : [],
-    };
+    if (!data.movie) {
+      alert("영화 상세 응답 형식이 올바르지 않습니다.");
+      return null;
+    }
+
+    return data.movie;
   } catch (error) {
     console.error("영화 상세 API 요청 중 오류:", error);
     alert("API 요청 중 오류가 발생했습니다.");
@@ -104,96 +93,90 @@ async function fetchMovieDetail() {
   }
 }
 
-
-// ===============================
-// 6. 장르 → 음식 카테고리 변환
-// ===============================
-
-function getCategoriesFromGenre(genre) {
-  switch (genre) {
-    case "액션":
-      return ["패스트푸드", "식사"];
-    case "코미디":
-      return ["식사"];
-    case "드라마":
-      return ["디저트"];
-    case "로맨스":
-      return ["디저트"];
-    case "스릴러":
-      return ["패스트푸드"];
-    case "애니메이션":
-      return ["패스트푸드", "디저트"];
-    default:
-      return ["식사", "패스트푸드", "디저트"];
-  }
-}
-
-function getFoodsByCategories(categories) {
-  return allFoods.filter((food) => categories.includes(food.category));
-}
-
-
-// ===============================
-// 7. 추천 사유 만들기
-// ===============================
-
-function makeRecommendReason(movie, food) {
-  let reason = "";
-
-  if (selectedGenre === "액션") {
-    reason += "액션 영화는 빠른 전개와 강한 몰입감이 특징입니다. ";
-    reason += `${food.name}은 영화에 집중하면서 먹기 좋고, 자극적인 분위기와 잘 어울립니다. `;
-  } else if (selectedGenre === "코미디") {
-    reason += "코미디 영화는 가볍고 즐거운 분위기가 중요합니다. ";
-    reason += `${food.name}은 부담 없이 먹기 좋아서 편안한 감상 분위기를 만들어줍니다. `;
-  } else if (selectedGenre === "드라마") {
-    reason += "드라마 영화는 감정선과 몰입감이 중요한 장르입니다. ";
-    reason += `${food.name}은 차분한 분위기에서 영화를 보기 좋게 만들어줍니다. `;
-  } else if (selectedGenre === "로맨스") {
-    reason += "로맨스 영화는 부드럽고 감성적인 분위기가 중요합니다. ";
-    reason += `${food.name}은 분위기를 해치지 않고 깔끔하게 즐기기 좋습니다. `;
-  } else if (selectedGenre === "스릴러") {
-    reason += "스릴러 영화는 긴장감이 강하고 화면 집중도가 높은 장르입니다. ";
-    reason += `${food.name}은 간단히 먹을 수 있어 영화 흐름을 방해하지 않습니다. `;
-  } else if (selectedGenre === "애니메이션") {
-    reason += "애니메이션은 편하게 즐기기 좋은 경우가 많습니다. ";
-    reason += `${food.name}은 가볍게 먹기 좋아서 캐주얼한 감상에 잘 어울립니다. `;
-  } else {
-    reason += "전체 장르에서는 부담 없이 즐길 수 있는 음식 조합이 좋습니다. ";
-    reason += `${food.name}은 다양한 영화와 무난하게 어울리는 메뉴입니다. `;
-  }
-
-  if (selectedMeal === "혼밥") {
-    reason += "또한 혼밥 상황에서는 혼자 먹기 편하고 준비 부담이 적은 음식이 적합합니다.";
-  } else if (selectedMeal === "야식") {
-    reason += "또한 야식 상황에서는 너무 복잡하지 않고 편하게 먹을 수 있는 음식이 잘 맞습니다.";
-  } else if (selectedMeal === "친구와 함께") {
-    reason += "또한 친구와 함께 볼 때는 나눠 먹기 좋은 음식일수록 만족도가 높아집니다.";
-  } else if (selectedMeal === "연인과 함께") {
-    reason += "또한 연인과 함께라면 분위기를 해치지 않고 깔끔하게 먹을 수 있는 조합이 좋습니다.";
-  } else if (selectedMeal === "간단한 식사") {
-    reason += "또한 간단한 식사 상황이기 때문에 부담 없이 먹을 수 있는 메뉴가 잘 어울립니다.";
-  } else if (selectedMeal === "든든한 식사") {
-    reason += "또한 든든한 식사가 필요한 상황이므로 포만감 있는 메뉴가 더 잘 어울립니다.";
-  }
-
-  return reason;
-}
-
-
 // ===============================
 // 8. 추천 음식 생성
 // ===============================
 
-function makeFoodRecommendation(movie) {
-  const categories = getCategoriesFromGenre(selectedGenre);
-  const filteredFoods = getFoodsByCategories(categories);
+function getPreferenceWeights() {
+  return JSON.parse(localStorage.getItem("preferenceWeights")) || {};
+}
 
-  const food = recommend(filteredFoods);
+function updatePreferenceWeights(reactionType) {
+  if (!currentFood) return;
+
+  const weights = getPreferenceWeights();
+  const foodName = currentFood.name;
+  const category = currentFood.category || "기타";
+
+  if (!weights.foods) weights.foods = {};
+  if (!weights.categories) weights.categories = {};
+  if (!weights.meals) weights.meals = {};
+  if (!weights.genres) weights.genres = {};
+
+  const delta = reactionType === "like" ? 1 : -1;
+
+  weights.foods[foodName] = (weights.foods[foodName] || 0) + delta;
+  weights.categories[category] = (weights.categories[category] || 0) + delta;
+  weights.meals[selectedMeal] = (weights.meals[selectedMeal] || 0) + delta;
+  weights.genres[selectedGenre] = (weights.genres[selectedGenre] || 0) + delta;
+
+  localStorage.setItem("preferenceWeights", JSON.stringify(weights));
+}
+
+async function fetchAiFoodRecommendation(movie) {
+  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+  const recommendReactions =
+    JSON.parse(localStorage.getItem("recommendReactions")) || [];
+  const preferenceWeights = getPreferenceWeights();
+
+  const response = await fetch("/api/food-recommend", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      movie,
+      meal: selectedMeal,
+      selectedGenre,
+      savedCombos,
+      recommendReactions,
+      preferenceWeights,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("AI 음식 추천 API 요청 실패");
+  }
+
+  const data = await response.json();
+
+  if (!data.recommendation) {
+    throw new Error("AI 음식 추천 응답 형식 오류");
+  }
+
+  return data.recommendation;
+}
+
+function makeFallbackFoodRecommendation(movie) {
+  const fallbackFoods = [
+    { name: "치킨", category: "패스트푸드" },
+    { name: "피자", category: "패스트푸드" },
+    { name: "떡볶이", category: "식사" },
+    { name: "햄버거", category: "패스트푸드" },
+    { name: "파스타", category: "식사" },
+    { name: "티라미수", category: "디저트" },
+    { name: "샌드위치", category: "간식" },
+    { name: "감자튀김", category: "간식" },
+  ];
+
+  const pickedFood =
+    fallbackFoods[Math.floor(Math.random() * fallbackFoods.length)];
 
   return {
-    food,
-    reason: makeRecommendReason(movie, food),
+    foodName: pickedFood.name,
+    foodCategory: pickedFood.category,
+    reason: `${movie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${pickedFood.name}은 부담 없이 즐기기 좋은 조합입니다. AI 추천을 불러오지 못해 기본 추천으로 보여드리고 있습니다.`,
+    keywords: ["기본 추천", selectedMeal, selectedGenre],
   };
 }
 
@@ -287,11 +270,13 @@ function saveReaction(reactionType) {
 
   localStorage.setItem("recommendReactions", JSON.stringify(reactions));
 
-  if (reactionType === "like") {
-    alert("좋아요가 반영되었습니다.");
-  } else {
-    alert("싫어요가 반영되었습니다.");
-  }
+updatePreferenceWeights(reactionType);
+
+if (reactionType === "like") {
+  alert("좋아요가 반영되었습니다. 다음 추천에 이 취향을 반영할게요.");
+} else {
+  alert("싫어요가 반영되었습니다. 다음 추천에서 비슷한 조합은 줄일게요.");
+}
 }
 
 
@@ -360,13 +345,18 @@ if (saveComboBtn) {
 if (backToMovieBtn) {
   backToMovieBtn.addEventListener("click", () => {
     const mealParam = encodeURIComponent(selectedMeal);
-    window.location.href = `movie.html?ott=${ottKey}&meal=${mealParam}`;
+    const genreParam = encodeURIComponent(selectedGenre);
+
+    window.location.href =
+      `movie.html?ott=${ottKey}` +
+      `&meal=${mealParam}` +
+      `&genre=${genreParam}`;
   });
 }
 
 if (backToMainBtn) {
   backToMainBtn.addEventListener("click", () => {
-    window.location.href = "main.html";
+    window.location.href = "index.html";
   });
 }
 
@@ -433,11 +423,41 @@ async function initRecommendPage() {
 
   currentMovie = movie;
 
-  const recommendation = makeFoodRecommendation(movie);
-  currentFood = recommendation.food;
-  currentReason = recommendation.reason;
+  recommendDetailArea.innerHTML = `
+    <div class="saved-empty-card">
+      <div class="saved-empty-icon">🤖</div>
+      <h3>AI가 음식 조합을 고르는 중이에요</h3>
+      <p>선택한 영화와 식사 상황을 고려하고 있어요. 잠시만 기다려주세요.</p>
+    </div>
+  `;
 
-  renderRecommendDetail(currentMovie, currentFood, currentReason);
+  try {
+    const aiRecommendation = await fetchAiFoodRecommendation(movie);
+
+    currentFood = {
+      name: aiRecommendation.foodName,
+      category: aiRecommendation.foodCategory || "기타",
+    };
+
+    currentReason = aiRecommendation.reason;
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+  } catch (error) {
+    console.error("AI 음식 추천 오류:", error);
+
+    const fallback = makeFallbackFoodRecommendation(movie);
+
+    currentFood = {
+      name: fallback.foodName,
+      category: fallback.foodCategory || "기타",
+    };
+
+    currentReason = fallback.reason;
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+
+    alert("AI 추천을 불러오지 못해 기본 추천을 표시했습니다. 잠시 후 다시 시도해주세요.");
+  }
 }
 
 initRecommendPage();
