@@ -157,29 +157,24 @@
   </div>
 </section>
 
-        <section class="card recommend-info-section" id="recommendInfoSection">
-          <h2 id="recommendInfoTitle">이렇게 추천해요</h2>
+        <section class="card ai-pick-section" id="aiPickSection">
+  <div class="section-title-row">
+    <div>
+      <h2 id="aiPickTitle">AI가 골라본 조합</h2>
+      <p id="aiPickDesc">저장한 취향과 랜덤 추천을 섞어 3가지를 보여드려요.</p>
+    </div>
 
-          <div class="recommend-info-grid">
-            <div class="recommend-info-item">
-              <span>🎬</span>
-              <strong>영화 장르</strong>
-              <p>선택한 영화의 분위기를 반영해요.</p>
-            </div>
+    <button id="refreshAiPickBtn" class="saved-edit-btn">새로 추천</button>
+  </div>
 
-            <div class="recommend-info-item">
-              <span>🍽</span>
-              <strong>식사 상황</strong>
-              <p>혼밥, 야식, 친구와 함께 등 상황을 고려해요.</p>
-            </div>
-
-            <div class="recommend-info-item">
-              <span>💡</span>
-              <strong>음식 카테고리</strong>
-              <p>장르와 상황에 어울리는 메뉴를 추천해요.</p>
-            </div>
-          </div>
-        </section>
+  <div id="aiPickList" class="ai-pick-list">
+    <div class="saved-empty-card">
+      <div class="saved-empty-icon">🤖</div>
+      <h3>추천 조합을 준비 중이에요</h3>
+      <p>저장한 조합이 있으면 더 취향에 맞게 추천할 수 있어요.</p>
+    </div>
+  </div>
+</section>
             </main>
     </div>
 
