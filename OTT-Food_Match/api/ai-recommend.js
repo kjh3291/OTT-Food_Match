@@ -1,17 +1,29 @@
+import {
+  FOOD_CATEGORIES,
+  FOOD_CATEGORY_LIST,
+  FOOD_NAME_TO_CATEGORY,
+  CATEGORIZED_FOODS,
+} from "./food-data.js";
+import { buildUserProfile, formatProfileForPrompt } from "./personalize.js";
+ 
+const ALL_FOOD_NAMES = CATEGORIZED_FOODS.map((f) => f.name);
+ 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      message: "POST 요청만 허용됩니다.",
-    });
+    return res.status(405).json({ message: "POST 요청만 허용됩니다." });
   }
-
-  const apiKey = process.env.Gemini_API;
-
+ 
+  const apiKey = process.env.Gemini_API || process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({
-      message: "Gemini_API가 설정되지 않았습니다.",
-    });
+    return res.status(500).json({ message: "Gemini_API가 설정되지 않았습니다." });
   }
+ 
+  try {
+    const {
+      savedCombos = [],
+      recommendReactions = [],
+      matchHistory = [],
+    } = req.body || {};
 
   try {
     const { savedCombos = [] } = req.body || {};
