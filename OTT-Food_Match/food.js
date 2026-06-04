@@ -106,3 +106,22 @@ const foodCategories = {
     "닭강정"
   ]
 };
+
+// 카테고리 이름 목록: ["한식", "중식", "일식", "양식", "치킨", "패스트푸드", "디저트"]
+const foodCategoryList = Object.keys(foodCategories);
+ 
+// 평면화된 전체 목록: [{ name: "김치찌개", category: "한식" }, ...]
+const categorizedFoods = Object.entries(foodCategories).flatMap(
+  ([category, names]) => names.map((name) => ({ name, category }))
+);
+ 
+// 특정 카테고리의 음식 배열 반환 (없으면 빈 배열)
+function getFoodsByCategory(category) {
+  return foodCategories[category] ? [...foodCategories[category]] : [];
+}
+ 
+// 여러 카테고리를 한 번에 합쳐서 {name, category} 객체 배열로 반환
+function getFoodsByCategories(categories) {
+  return categorizedFoods.filter((food) => categories.includes(food.category));
+}
+ 
