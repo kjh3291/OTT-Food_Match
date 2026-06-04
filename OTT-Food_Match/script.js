@@ -788,7 +788,8 @@ function addAiGenreCardEvents() {
     card.addEventListener("click", () => {
       const ott = card.dataset.ott || "netflix";
       const genre = encodeURIComponent(card.dataset.genre || "전체");
-      const reason = encodeURIComponent(card.dataset.reason || "");
+      const foodParam = encodeURIComponent(card.dataset.foodName || "");
+      const reasonParam = encodeURIComponent(card.dataset.reason || "");
 
       const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
       const recentCombo = savedCombos[savedCombos.length - 1];
@@ -796,11 +797,11 @@ function addAiGenreCardEvents() {
       const meal = encodeURIComponent(recentCombo?.meal || "혼밥");
 
       window.location.href =
-  `movie.html?ott=${ott}` +
-  `&meal=${meal}` +
-  `&genre=${genre}` +
-  `&food=${foodName}` +
-  `&aiReason=${reason}`;
+        `movie.html?ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}` +
+        `&food=${foodParam}` +
+        `&aiReason=${reasonParam}`;
     });
   });
 }
