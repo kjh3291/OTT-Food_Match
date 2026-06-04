@@ -106,3 +106,62 @@ export function buildUserProfile({
     topFoods,
   };
 }
+
+/**
+ * 취향 프로필을 프롬프트에 넣기 좋은 한국어 텍스트로 변환한다.
+ */
+export function formatProfileForPrompt(profile) {
+  if (!profile || !profile.hasData) {
+    return [
+      "[사용자 취향 프로필]",
+      "- 아직 누적된 취향 데이터가 거의 없음 (개인화 신호 부족).",
+      "- 무난하고 보편적인 조합 위주로 추천하되, 사용을 이어가면 점점 더 개인화된다는 점을 자연스럽게 한 문장으로 녹여라.",
+    ].join("\n");
+  }
+ 
+  const lines = ["[사용자 취향 프로필]"];
+ 
+  if (profile.preferredCategories.length > 0) {
+    lines.push(
+      "- 선호 카테고리(점수 높을수록 강함): " +
+        profile.preferredCategories
+          .map((c) => `${c.category}(${c.score})`)
+          .join(", ")
+    );
+  }
+  if (profile.avoidCategories.length > 0) {
+    lines.push("- 피하는 편인 카테고리: " + profile.avoidCategories.join(", "));
+  }
+  if (profile.likedFoods.length > 0) {
+    lines.push("- 좋아요/저장한 음식: " + profile.likedFoods.slice(0, 8).join(", "));
+  }
+  if (profile.dislikedFoods.length > 0) {
+    lines.push("- 싫어요 누른 음식(피할 것): " + profile.dislikedFoods.join(", "));
+  }
+  if (profile.favoriteGenres.length > 0) {
+    lines.push(
+      "- 자주 고른 장르: " +
+        profile.favoriteGenres.map((g) => `${g.key}(${g.count}회)`).join(", ")
+    );
+  }
+  if (profile.favoriteMeals.length > 0) {
+    lines.push(
+      "- 자주 고른 식사 상황: " +
+        profile.favoriteMeals.map((m) => `${m.key}(${m.count}회)`).join(", ")
+    );
+  }
+  if (profile.favoriteOtt.length > 0) {
+    lines.push(
+      "- 자주 본 OTT: " + profile.favoriteOtt.map((o) => o.key).join(", ")
+    );
+  }
+  if (profile.topFoods.length > 0) {
+    lines.push(
+      "- 특히 자주 고른 음식: " +
+        profile.topFoods.map((f) => f.key).join(", ")
+    );
+  }
+ 
+  return lines.join("\n");
+}
+ 
