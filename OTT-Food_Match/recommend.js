@@ -76,6 +76,18 @@ function hideReactionCard() {
   }
 }
 
+function hideBackToMovieButton() {
+  if (backToMovieBtn) {
+    backToMovieBtn.style.display = "none";
+  }
+}
+
+function showBackToMovieButton() {
+  if (backToMovieBtn) {
+    backToMovieBtn.style.display = "";
+  }
+}
+
 // ===============================
 // 4. 현재 선택된 정보 저장
 // ===============================
@@ -522,6 +534,7 @@ async function initRecommendPage() {
 
     renderRecommendDetail(currentMovie, currentFood, currentReason);
     hideReactionCard();
+    hideBackToMovieButton();
 
     if (recommendPageInfo) {
       recommendPageInfo.textContent = `저장된 조합 / 식사 상황: ${selectedMeal} / 장르: ${selectedGenre}`;
@@ -531,6 +544,8 @@ async function initRecommendPage() {
   }
 
   if (pageMode === "aiPick") {
+  showBackToMovieButton();
+
   currentFood = {
     name: savedFoodName || "추천 음식 정보 없음",
     category: savedFoodCategory || "AI 추천",
@@ -562,6 +577,7 @@ async function initRecommendPage() {
   // ===============================
   // 일반 추천 모드
   // ===============================
+  showBackToMovieButton();
   showRecommendLoading("AI가 음식 조합을 고르는 중이에요");
 
   try {
