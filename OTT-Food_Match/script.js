@@ -712,6 +712,19 @@ function makeAiPicks() {
   return [basedPick, randomPick1, randomPick2];
 }
 
+// 사용자 개인화 신호를 한 번에 모아주는 헬퍼
+function getUserSignals() {
+  const read = (key) => {
+    try { return JSON.parse(localStorage.getItem(key)) || []; }
+    catch { return []; }
+  };
+  return {
+    savedCombos: read("savedCombos"),
+    recommendReactions: read("recommendReactions"), // ← 실제 키 확인 필요
+    matchHistory: read("matchHistory"),             // ← 실제 키 확인 필요
+  };
+}
+
 async function fetchAiPicksFromServer() {
   const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
 
