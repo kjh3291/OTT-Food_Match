@@ -748,11 +748,12 @@ function renderAiPickCards(picks) {
 
       return `
         <div 
-          class="ai-pick-card ai-genre-card"
-          data-ott="${pick.ott || "netflix"}"
-          data-genre="${pick.genre || "전체"}"
-          data-food-name="${pick.foodName || ""}"
-        >
+  class="ai-pick-card ai-genre-card"
+  data-ott="${pick.ott || "netflix"}"
+  data-genre="${pick.genre || "전체"}"
+  data-food-name="${pick.foodName || ""}"
+  data-reason="${pick.reason || ""}"
+>
           <span class="${badgeClass}">${pick.badge}</span>
 
           <h3>${pick.title}</h3>
@@ -787,7 +788,7 @@ function addAiGenreCardEvents() {
     card.addEventListener("click", () => {
       const ott = card.dataset.ott || "netflix";
       const genre = encodeURIComponent(card.dataset.genre || "전체");
-      const foodName = encodeURIComponent(card.dataset.foodName || "");
+      const reason = encodeURIComponent(card.dataset.reason || "");
 
       const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
       const recentCombo = savedCombos[savedCombos.length - 1];
@@ -795,10 +796,11 @@ function addAiGenreCardEvents() {
       const meal = encodeURIComponent(recentCombo?.meal || "혼밥");
 
       window.location.href =
-        `movie.html?ott=${ott}` +
-        `&meal=${meal}` +
-        `&genre=${genre}` +
-        `&food=${foodName}`;
+  `movie.html?ott=${ott}` +
+  `&meal=${meal}` +
+  `&genre=${genre}` +
+  `&food=${foodName}` +
+  `&aiReason=${reason}`;
     });
   });
 }

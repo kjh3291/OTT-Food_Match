@@ -201,6 +201,36 @@ async function fetchAiFoodRecommendation(movie) {
   return data.recommendation;
 }
 
+async function fetchAiMatchReason(movie, food) {
+  const response = await fetch("/api/match-reason", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      movie,
+      meal: selectedMeal,
+      selectedGenre,
+      foodName: food.name,
+      foodCategory: food.category,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    console.error("AI 매칭 사유 API 오류:", response.status, errorData);
+    throw new Error(errorData?.message || "AI 매칭 사유 API 요청 실패");
+  }
+
+  const data = await response.json();
+
+  if (!data.reason) {
+    throw new Error("AI 매칭 사유 응답 형식 오류");
+  }
+
+  return data.reason;
+}
+
 function makeFallbackFoodRecommendation(movie) {
   const fallbackFoods = [
     { name: "치킨", category: "패스트푸드" },
@@ -499,6 +529,35 @@ async function initRecommendPage() {
 
     return;
   }
+
+  if (pageMode === "aiPick") {
+  currentFood = {
+    name: savedFoodName || "추천 음식 정보 없음",
+    category: savedFoodCategory || "AI 추천",
+  };
+
+  showRecommendLoading("영화와 음식의 매칭 사유를 작성하는 중입니다...");
+
+  try {
+    currentReason = await fetchAiMatchReason(currentMovie, currentFood);
+  } catch (error) {
+    console.warn("AI 매칭 사유 생성 실패, 기본 사유로 대체:", error);
+
+    currentReason =
+      savedReason ||
+      `${currentMovie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${currentFood.name}은 잘 어울리는 조합입니다.`;
+  }
+
+  renderRecommendDetail(currentMovie, currentFood, currentReason);
+
+  if (recommendPageInfo) {
+    recommendPageInfo.textContent = `AI가 골라본 조합 / 식사 상황: ${selectedMeal} / 장르: ${selectedGenre}`;
+  }
+
+  showReactionCard();
+
+  return;
+}
 
   // ===============================
   // 일반 추천 모드

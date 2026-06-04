@@ -29,6 +29,10 @@ const selectedFood = urlParams.get("food")
   ? decodeURIComponent(urlParams.get("food"))
   : "";
 
+const selectedAiReason = urlParams.get("aiReason")
+  ? decodeURIComponent(urlParams.get("aiReason"))
+  : "";
+
 let currentMovies = [];
 
 let currentSort = "popularity";
@@ -310,11 +314,28 @@ function renderMovies(movies) {
       const mealParam = encodeURIComponent(selectedMeal);
       const genreParam = encodeURIComponent(selectedGenre);
 
-      window.location.href =
-        `recommend.html?movieId=${selectedMovie.id}` +
-        `&ott=${ottKey}` +
-        `&meal=${mealParam}` +
-        `&genre=${genreParam}`;
+      let recommendUrl =
+  `recommend.html?movieId=${selectedMovie.id}` +
+  `&ott=${ottKey}` +
+  `&meal=${mealParam}` +
+  `&genre=${genreParam}`;
+
+if (selectedFood) {
+  const foodParam = encodeURIComponent(selectedFood);
+  const foodCategoryParam = encodeURIComponent("AI 추천");
+
+  const reasonText =
+    selectedAiReason ||
+    `${selectedMovie.title}의 분위기와 ${selectedMeal} 상황을 고려해 AI가 골라본 조합에서 추천한 음식입니다.`;
+
+  recommendUrl +=
+    `&mode=aiPick` +
+    `&foodName=${foodParam}` +
+    `&foodCategory=${foodCategoryParam}` +
+    `&reason=${encodeURIComponent(reasonText)}`;
+}
+
+window.location.href = recommendUrl;
     });
   });
 
