@@ -124,4 +124,32 @@ function getFoodsByCategory(category) {
 function getFoodsByCategories(categories) {
   return categorizedFoods.filter((food) => categories.includes(food.category));
 }
+
+// =====================================================================
+// ♻️ 하위 호환 (기존 recommend.js 가 사용하는 meals / desserts / fastfoods)
+//   - 기존 코드는 "식사" / "디저트" / "패스트푸드" 3분류를 사용하므로
+//     위 7개 카테고리에서 다시 합쳐 그대로 동작하도록 유지합니다.
+// =====================================================================
+ 
+const meals = [
+  ...foodCategories["한식"],
+  ...foodCategories["중식"],
+  ...foodCategories["일식"],
+  ...foodCategories["양식"]
+];
+ 
+const desserts = [...foodCategories["디저트"]];
+ 
+const fastfoods = [
+  ...foodCategories["치킨"],
+  ...foodCategories["패스트푸드"]
+];
+ 
+// 문자열 배열 → {name, category} 객체 배열 (기존 함수 유지)
+function convertFoods(foodArray, category) {
+  return foodArray.map((food) => ({
+    name: food,
+    category: category
+  }));
+}
  
