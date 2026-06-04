@@ -1,3 +1,21 @@
+import {
+  FOOD_CATEGORY_LIST,
+  FOOD_NAME_TO_CATEGORY,
+  getCategoriesByGenres,
+  getFoodsByCategories,
+  CATEGORIZED_FOODS,
+} from "./food-data.js";
+ 
+// 배열을 섞는 헬퍼 (같은 조건에서도 추천이 다양해지도록 후보 순서를 매번 섞음)
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
