@@ -47,6 +47,22 @@ export default async function handler(req, res) {
       });
     }
 
+     // -------------------------------------------------------------
+    // 1. 영화 장르 → 후보 음식 카테고리 → 후보 음식 목록 구성
+    //    (food-data.js의 분류 데이터를 그대로 참고)
+    // -------------------------------------------------------------
+    const genreNames = [selectedGenre, ...(movie.genres || [])];
+    const candidateCategories = getCategoriesByGenres(genreNames);
+    let candidateFoods = getFoodsByCategories(candidateCategories);
+ 
+    // 혹시라도 후보가 비면 전체 목록으로 안전하게 대체
+    if (candidateFoods.length === 0) {
+      candidateFoods = [...CATEGORIZED_FOODS];
+    }
+ 
+    const candidateNames = candidateFoods.map((f) => f.name);
+    const candidateNameSet = new Set(candidateNames);
+
     const recentSavedCombos = savedCombos.slice(-5).reverse();
     const recentReactions = recommendReactions.slice(-10).reverse();
 
