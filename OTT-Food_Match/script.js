@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. 상태 관리 객체
   const state = { currentStep: 1, primary: "", situation: "", detail: "", selectedOtt: "" };
 
   const steps = { 
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const progressBar = document.getElementById("progressBar");
   const progressFill = document.getElementById("progressFill");
 
-  // 버튼 이벤트 등록
   document.querySelectorAll(".option-btn").forEach((button) => {
     button.addEventListener("click", () => {
       const key = button.dataset.key;
@@ -48,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 다음 단계 버튼
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
       if (state.currentStep === 1) {
@@ -75,11 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         updateProgress(3);
       } else if (state.currentStep === "3-ott") {
-  if (!state.detail) {
-    return showCustomAlert(typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요.");
-  }
-  goToMoviePage(state.detail, state.situation);
-} 
+        if (!state.detail) {
+          return showCustomAlert(typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요.");
+        }
+        goToMoviePage(state.detail, state.situation);
+      } 
       else if (state.currentStep === "3-food") {
         if (!state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "음식을 선택해주세요.");
         steps["3-food"].classList.add("hidden");
@@ -89,16 +86,14 @@ document.addEventListener("DOMContentLoaded", () => {
         state.currentStep = 4;
         updateProgress(4);
       } else if (state.currentStep === 4) {
-  if (!state.selectedOtt) {
-    return showCustomAlert(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
-  }
-
-  goToMoviePage(state.selectedOtt, state.situation, state.detail);
-}
+        if (!state.selectedOtt) {
+          return showCustomAlert(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
+        }
+        goToMoviePage(state.selectedOtt, state.situation, state.detail);
+      }
     });
   }
 
-  // 이전 단계 버튼
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
       if (state.currentStep === 2) {
@@ -134,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 💡 다국어 지원 결과 도출 함수
   async function showResult() {
     const wizardForm = document.getElementById("wizardForm");
     if (wizardForm) wizardForm.querySelectorAll(".card, #navArea, .progress-bar").forEach(el => el.style.display = 'none');
@@ -156,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ottMapEn = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
       const ottMapZh = { "넷플릭스": "网飞", "디즈니+": "迪士尼+", "티빙": "TVING", "웨이브": "wavve" };
       const ottMapJa = { "넷플릭스": "Netflix", "디즈니+": "Disney+", "티빙": "TVING", "웨이브": "wavve" };
+      
       const ottName = lang === "ko" ? rawOttName : (lang === "en" ? (ottMapEn[rawOttName] || rawOttName) : (lang === "zh" ? (ottMapZh[rawOttName] || rawOttName) : (ottMapJa[rawOttName] || rawOttName)));
 
       const foodMap = { "치킨/피자": "food_chicken_pizza", "분식(떡볶이 등)": "food_bunsik", "한식(국밥/찌개)": "food_korean", "양식(파스타 등)": "food_western" };
@@ -231,32 +226,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function goToMoviePage(ottName, mealName, foodName = "") {
-  const ottUrlMap = {
-    "넷플릭스": "netflix",
-    "디즈니+": "disney",
-    "티빙": "tving",
-    "웨이브": "wavve",
-  };
+    const ottUrlMap = {
+      "넷플릭스": "netflix",
+      "디즈니+": "disney",
+      "티빙": "tving",
+      "웨이브": "wavve",
+    };
 
-  const ottParam = ottUrlMap[ottName];
+    const ottParam = ottUrlMap[ottName];
 
-  if (!ottParam) {
-    showCustomAlert(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
-    return;
+    if (!ottParam) {
+      showCustomAlert(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
+      return;
+    }
+
+    const mealParam = encodeURIComponent(mealName || "");
+    const foodParam = encodeURIComponent(foodName || "");
+
+    let url = `movie.html?ott=${ottParam}&meal=${mealParam}`;
+
+    if (foodName) {
+      url += `&food=${foodParam}`;
+    }
+
+    window.location.href = url;
   }
-
-  const mealParam = encodeURIComponent(mealName || "");
-  const foodParam = encodeURIComponent(foodName || "");
-
-  let url = `movie.html?ott=${ottParam}&meal=${mealParam}`;
-
-  if (foodName) {
-    url += `&food=${foodParam}`;
-  }
-
-  window.location.href = url;
-}
-
 
   const editSavedComboBtn = document.getElementById("editSavedComboBtn");
   const savedManageModal = document.getElementById("savedManageModal");
@@ -265,25 +259,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedManageList = document.getElementById("savedManageList");
   const savedMoreBtn = document.getElementById("savedMoreBtn");
   const savedViewModal = document.getElementById("savedViewModal");
-const closeSavedViewModal = document.getElementById("closeSavedViewModal");
-const savedViewDoneBtn = document.getElementById("savedViewDoneBtn");
-const savedViewList = document.getElementById("savedViewList");
+  const closeSavedViewModal = document.getElementById("closeSavedViewModal");
+  const savedViewDoneBtn = document.getElementById("savedViewDoneBtn");
+  const savedViewList = document.getElementById("savedViewList");
 
-    // ===============================
-  // 최근 저장한 조합 메인 화면 표시
-  // ===============================
-
-    if (editSavedComboBtn) {
+  if (editSavedComboBtn) {
     editSavedComboBtn.addEventListener("click", () => {
       openSavedManageModal();
     });
   }
 
-    if (savedMoreBtn) {
+  if (savedMoreBtn) {
     savedMoreBtn.addEventListener("click", () => {
-    openSavedViewModal();
-  });
-}
+      openSavedViewModal();
+    });
+  }
 
   if (closeSavedManageModal) {
     closeSavedManageModal.addEventListener("click", () => {
@@ -306,24 +296,24 @@ const savedViewList = document.getElementById("savedViewList");
   }
 
   if (closeSavedViewModal) {
-  closeSavedViewModal.addEventListener("click", () => {
-    closeSavedViewModalFn();
-  });
-}
-
-if (savedViewDoneBtn) {
-  savedViewDoneBtn.addEventListener("click", () => {
-    closeSavedViewModalFn();
-  });
-}
-
-if (savedViewModal) {
-  savedViewModal.addEventListener("click", (event) => {
-    if (event.target === savedViewModal) {
+    closeSavedViewModal.addEventListener("click", () => {
       closeSavedViewModalFn();
-    }
-  });
-}
+    });
+  }
+
+  if (savedViewDoneBtn) {
+    savedViewDoneBtn.addEventListener("click", () => {
+      closeSavedViewModalFn();
+    });
+  }
+
+  if (savedViewModal) {
+    savedViewModal.addEventListener("click", (event) => {
+      if (event.target === savedViewModal) {
+        closeSavedViewModalFn();
+      }
+    });
+  }
 
   function renderSavedCombosOnMain() {
     const savedComboList = document.getElementById("savedComboList");
@@ -334,91 +324,88 @@ if (savedViewModal) {
     const recentCombos = savedCombos.slice(-4).reverse();
 
     if (savedMoreBtn) {
-  if (savedCombos.length > 4) {
-    savedMoreBtn.classList.remove("hidden");
-    savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
-  } else {
-    savedMoreBtn.classList.add("hidden");
-  }
-}
+      if (savedCombos.length > 4) {
+        savedMoreBtn.classList.remove("hidden");
+        const lang = typeof getLang === 'function' ? getLang() : "ko";
+        savedMoreBtn.textContent = lang === "ko" ? `저장 조합 더보기 (${savedCombos.length})` : (lang === "en" ? `View More Combos (${savedCombos.length})` : (lang === "zh" ? `查看更多组合 (${savedCombos.length})` : `もっと見る (${savedCombos.length})`));
+      } else {
+        savedMoreBtn.classList.add("hidden");
+      }
+    }
 
-if (recentCombos.length === 0) {
-  if (savedMoreBtn) {
-    savedMoreBtn.classList.add("hidden");
-  }
+    if (recentCombos.length === 0) {
+      if (savedMoreBtn) {
+        savedMoreBtn.classList.add("hidden");
+      }
 
-  savedComboList.innerHTML = `
-    <div class="saved-empty-card">
-      <div class="saved-empty-icon">🍿</div>
-      <h3>아직 저장한 조합이 없어요</h3>
-      <p>영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.</p>
-    </div>
-  `;
+      savedComboList.innerHTML = `
+        <div class="saved-empty-card">
+          <div class="saved-empty-icon">🍿</div>
+          <h3>${typeof t === 'function' ? t('savedEmptyTitle') : '아직 저장한 조합이 없어요'}</h3>
+          <p>${typeof t === 'function' ? t('savedEmptyDesc') : '영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.'}</p>
+        </div>
+      `;
 
-  return;
-}
+      return;
+    }
 
     savedComboList.innerHTML = recentCombos
-  .map((combo) => {
-    const posterUrl = combo.posterPath
-      ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
-      : "";
+      .map((combo) => {
+        const posterUrl = combo.posterPath
+          ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
+          : "";
 
-    return `
-      <div 
-        class="saved-mini-card"
-        data-movie-id="${combo.movieId}"
-        data-ott="${combo.ott}"
-        data-meal="${combo.meal}"
-        data-genre="${combo.genre}"
-      >
-        <div class="saved-mini-poster-box">
-          ${
-            posterUrl
-              ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-mini-poster">`
-              : `<div class="saved-mini-no-poster">포스터 없음</div>`
-          }
-        </div>
+        return `
+          <div 
+            class="saved-mini-card"
+            data-movie-id="${combo.movieId}"
+            data-ott="${combo.ott}"
+            data-meal="${combo.meal}"
+            data-genre="${combo.genre}"
+          >
+            <div class="saved-mini-poster-box">
+              ${
+                posterUrl
+                  ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-mini-poster">`
+                  : `<div class="saved-mini-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
+              }
+            </div>
 
-        <div class="saved-mini-food">
-          <span>🍽</span>
-          <strong>${combo.foodName}</strong>
-        </div>
-      </div>
-    `;
-  })
-  .join("");
+            <div class="saved-mini-food">
+              <span>🍽</span>
+              <strong>${combo.foodName}</strong>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
 
-addSavedMiniCardEvents();
+    addSavedMiniCardEvents();
   }
 
-    function openSavedManageModal() {
+  function openSavedManageModal() {
     if (!savedManageModal) return;
-
     renderSavedManageList();
     savedManageModal.classList.add("show");
   }
 
   function openSavedViewModal() {
-  if (!savedViewModal) return;
+    if (!savedViewModal) return;
+    renderSavedViewList();
+    savedViewModal.classList.add("show");
+  }
 
-  renderSavedViewList();
-  savedViewModal.classList.add("show");
-}
-
-function closeSavedViewModalFn() {
-  if (!savedViewModal) return;
-
-  savedViewModal.classList.remove("show");
-}
+  function closeSavedViewModalFn() {
+    if (!savedViewModal) return;
+    savedViewModal.classList.remove("show");
+  }
 
   function closeSavedManageModalFn() {
     if (!savedManageModal) return;
-
     savedManageModal.classList.remove("show");
   }
 
-    function renderSavedManageList() {
+  function renderSavedManageList() {
     if (!savedManageList) return;
 
     const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
@@ -426,7 +413,7 @@ function closeSavedViewModalFn() {
     if (savedCombos.length === 0) {
       savedManageList.innerHTML = `
         <div class="saved-manage-empty">
-          <p>저장된 조합이 없습니다.</p>
+          <p>${typeof t === 'function' ? t('noSavedCombo') : '저장된 조합이 없습니다.'}</p>
         </div>
       `;
       return;
@@ -446,7 +433,7 @@ function closeSavedViewModalFn() {
               ${
                 posterUrl
                   ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-manage-poster">`
-                  : `<div class="saved-manage-no-poster">포스터 없음</div>`
+                  : `<div class="saved-manage-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
               }
             </div>
 
@@ -460,7 +447,7 @@ function closeSavedViewModalFn() {
               data-movie-id="${combo.movieId}"
               data-food-name="${combo.foodName}"
             >
-              저장 취소
+              ${typeof t === 'function' ? t('cancelSave') : '저장 취소'}
             </button>
           </div>
         `;
@@ -471,75 +458,75 @@ function closeSavedViewModalFn() {
   }
 
   function renderSavedViewList() {
-  if (!savedViewList) return;
+    if (!savedViewList) return;
 
-  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+    const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
 
-  if (savedCombos.length === 0) {
-    savedViewList.innerHTML = `
-      <div class="saved-manage-empty">
-        <p>저장된 조합이 없습니다.</p>
-      </div>
-    `;
-    return;
-  }
-
-  const allCombos = [...savedCombos].reverse();
-
-  savedViewList.innerHTML = allCombos
-    .map((combo) => {
-      const posterUrl = combo.posterPath
-        ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
-        : "";
-
-      return `
-        <div 
-          class="saved-view-item"
-          data-movie-id="${combo.movieId}"
-          data-ott="${combo.ott}"
-          data-meal="${combo.meal}"
-          data-genre="${combo.genre}"
-        >
-          <div class="saved-view-poster-box">
-            ${
-              posterUrl
-                ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-view-poster">`
-                : `<div class="saved-manage-no-poster">포스터 없음</div>`
-            }
-          </div>
-
-          <div class="saved-view-info">
-            <strong>${combo.movieTitle}</strong>
-            <p>🍽 ${combo.foodName}</p>
-          </div>
-
-          <span class="saved-view-arrow">›</span>
+    if (savedCombos.length === 0) {
+      savedViewList.innerHTML = `
+        <div class="saved-manage-empty">
+          <p>${typeof t === 'function' ? t('noSavedCombo') : '저장된 조합이 없습니다.'}</p>
         </div>
       `;
-    })
-    .join("");
+      return;
+    }
 
-  addSavedViewItemEvents();
-}
+    const allCombos = [...savedCombos].reverse();
 
-function addSavedViewItemEvents() {
-  document.querySelectorAll(".saved-view-item").forEach((item) => {
-    item.addEventListener("click", () => {
-      const movieId = item.dataset.movieId;
-      const ott = item.dataset.ott;
-      const meal = encodeURIComponent(item.dataset.meal);
-      const genre = encodeURIComponent(item.dataset.genre);
+    savedViewList.innerHTML = allCombos
+      .map((combo) => {
+        const posterUrl = combo.posterPath
+          ? `https://image.tmdb.org/t/p/w200${combo.posterPath}`
+          : "";
 
-      window.location.href =
-        `recommend.html?movieId=${movieId}` +
-        `&ott=${ott}` +
-        `&meal=${meal}` +
-        `&genre=${genre}`;
+        return `
+          <div 
+            class="saved-view-item"
+            data-movie-id="${combo.movieId}"
+            data-ott="${combo.ott}"
+            data-meal="${combo.meal}"
+            data-genre="${combo.genre}"
+          >
+            <div class="saved-view-poster-box">
+              ${
+                posterUrl
+                  ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-view-poster">`
+                  : `<div class="saved-manage-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
+              }
+            </div>
+
+            <div class="saved-view-info">
+              <strong>${combo.movieTitle}</strong>
+              <p>🍽 ${combo.foodName}</p>
+            </div>
+
+            <span class="saved-view-arrow">›</span>
+          </div>
+        `;
+      })
+      .join("");
+
+    addSavedViewItemEvents();
+  }
+
+  function addSavedViewItemEvents() {
+    document.querySelectorAll(".saved-view-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        const movieId = item.dataset.movieId;
+        const ott = item.dataset.ott;
+        const meal = encodeURIComponent(item.dataset.meal);
+        const genre = encodeURIComponent(item.dataset.genre);
+
+        window.location.href =
+          `recommend.html?movieId=${movieId}` +
+          `&ott=${ott}` +
+          `&meal=${meal}` +
+          `&genre=${genre}`;
+      });
     });
-  });
-}
+  }
 
-    function addSavedRemoveEvents() {
+  function addSavedRemoveEvents() {
     document.querySelectorAll(".saved-remove-btn").forEach((button) => {
       button.addEventListener("click", () => {
         const movieId = Number(button.dataset.movieId);
@@ -553,7 +540,7 @@ function addSavedViewItemEvents() {
 
         localStorage.setItem("savedCombos", JSON.stringify(filteredCombos));
 
-        showCustomAlert("저장한 조합이 삭제되었습니다.");
+        showCustomAlert(typeof t === 'function' ? t('comboDeleted') : "저장한 조합이 삭제되었습니다.");
 
         renderSavedCombosOnMain();
         renderSavedManageList();
@@ -583,5 +570,43 @@ function addSavedViewItemEvents() {
     });
   }
 
+  document.addEventListener("languageChanged", () => {
+    renderSavedCombosOnMain();
+    renderSavedManageList();
+    renderSavedViewList();
+  });
+
   renderSavedCombosOnMain();
-}); 
+
+  const settingBtn = document.getElementById("settingBtn");
+  const settingPopup = document.getElementById("settingPopup");
+  const darkModeToggle = document.getElementById("darkModeToggle");
+
+  if (settingBtn && settingPopup) {
+    settingBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      settingPopup.classList.toggle("hidden");
+    });
+
+    settingPopup.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    document.addEventListener("click", () => {
+      settingPopup.classList.add("hidden");
+    });
+  }
+
+  if (darkModeToggle) {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+      document.dispatchEvent(new Event("languageChanged"));
+    });
+  }
+});
+
