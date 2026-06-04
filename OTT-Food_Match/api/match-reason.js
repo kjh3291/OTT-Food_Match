@@ -1,25 +1,33 @@
+import { buildUserProfile, formatProfileForPrompt } from "./personalize.js";
+ 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      message: "POST 요청만 허용됩니다.",
-    });
+    return res.status(405).json({ message: "POST 요청만 허용됩니다." });
   }
-
+ 
   const apiKey = process.env.Gemini_API || process.env.GEMINI_API_KEY;
-
   if (!apiKey) {
-    return res.status(500).json({
-      message: "Gemini_API가 설정되지 않았습니다.",
-    });
+    return res.status(500).json({ message: "Gemini_API가 설정되지 않았습니다." });
   }
-
-  const { movie, meal, selectedGenre, foodName, foodCategory } = req.body;
-
+ 
+  const {
+    movie,
+    meal,
+    selectedGenre,
+    foodName,
+    foodCategory,
+    savedCombos = [],
+    recommendReactions = [],
+    matchHistory = [],
+  } = req.body || {};
+ 
   if (!movie || !foodName) {
-    return res.status(400).json({
-      message: "movie 또는 foodName 값이 없습니다.",
-    });
+    return res.status(400).json({ message: "movie 또는 foodName 값이 없습니다." });
   }
+ 
+  // 사용자 신호 → 취향 프로필
+  const profile = buildUserProfile({ savedCombos, recommendReactions, matchHistory });
+  const profileText = formatProfileForPrompt(profile);
 
   const prompt = `
 너는 영화와 음식 조합을 추천하는 AI야.
