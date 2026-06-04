@@ -115,3 +115,28 @@ export const GENRE_CATEGORY_MAP = {
   "스릴러": ["패스트푸드", "치킨", "중식"],
   "애니메이션": ["패스트푸드", "디저트", "일식"]
 };
+
+// 여러 장르명(탭 장르 + TMDB 장르들)을 받아 후보 카테고리 배열로 변환
+// 매칭되는 게 하나도 없으면 전체 7개 카테고리를 반환
+export function getCategoriesByGenres(genreNames = []) {
+  const set = new Set();
+ 
+  genreNames
+    .filter(Boolean)
+    .forEach((genre) => {
+      const cats = GENRE_CATEGORY_MAP[genre];
+      if (cats) cats.forEach((c) => set.add(c));
+    });
+ 
+  if (set.size === 0) {
+    return [...FOOD_CATEGORY_LIST];
+  }
+ 
+  return [...set];
+}
+ 
+// 주어진 카테고리들에 속한 음식들을 {name, category} 배열로 반환
+export function getFoodsByCategories(categories = []) {
+  return CATEGORIZED_FOODS.filter((food) => categories.includes(food.category));
+}
+ 
