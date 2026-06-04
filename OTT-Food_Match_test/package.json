@@ -1,0 +1,14 @@
+{
+  "name": "ott-food-match",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest --testPathPattern='OTT-Food_Match_test'",
+    "coverage": "jest --testPathPattern='OTT-Food_Match_test' --coverage --collectCoverageFrom='OTT-Food_Match/src/**/*.js' --coverageReporters=text"
+  },
+  "jest": {
+    "testMatch": ["**/OTT-Food_Match_test/**/*.js"]
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
