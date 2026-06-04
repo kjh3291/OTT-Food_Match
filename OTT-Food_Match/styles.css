@@ -1188,24 +1188,6 @@ body.dark-mode .sort-option:hover {
    메인 - 추천 방식 소개
 ================================ */
 
-.recommend-info-section {
-  margin-top: 18px;
-}
-
-.recommend-info-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.recommend-info-item {
-  background: #fafafa;
-  border: 1px solid #eeeeee;
-  border-radius: 18px;
-  padding: 18px;
-  text-align: center;
-}
-
 .recommend-info-item span {
   display: block;
   font-size: 2rem;

@@ -67,7 +67,7 @@ async function fetchMovieDetail() {
 
   if (!movieId) {
     alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요.");
-    window.location.href = "main.html";
+    window.location.href = "index.html";
     return null;
   }
 
