@@ -117,42 +117,26 @@ ${groupedFoodList}
       }
     );
 
-    if (!geminiResponse.ok) {
+     if (!geminiResponse.ok) {
       const errorText = await geminiResponse.text();
-
       return res.status(geminiResponse.status).json({
         message: "Gemini API 요청 실패",
         detail: errorText,
       });
     }
-
+ 
     const data = await geminiResponse.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
     if (!text) {
-      return res.status(500).json({
-        message: "Gemini 응답이 비어 있습니다.",
-      });
+      return res.status(500).json({ message: "Gemini 응답이 비어 있습니다." });
     }
-
+ 
     let recommendations;
-
     try {
       recommendations = JSON.parse(text);
-    } catch (parseError) {
+    } catch (error) {
       return res.status(500).json({
         message: "Gemini 응답 JSON 파싱 실패",
         raw: text,
       });
     }
-
-    return res.status(200).json({
-      recommendations,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "AI 추천 처리 중 오류가 발생했습니다.",
-      error: error.message,
-    });
-  }
-}
