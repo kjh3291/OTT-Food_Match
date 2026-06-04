@@ -83,3 +83,26 @@ export function buildUserProfile({
     ...savedCombos.map((c) => c.ott),
     ...recommendReactions.map((r) => r.ott),
   ]);
+
+  // --- 자주 저장/선택한 음식 ---
+  const topFoods = countTop([
+    ...savedCombos.map((c) => c.foodName),
+    ...matchHistory.map((h) => h.foodName),
+  ]);
+ 
+  const signalCount =
+    savedCombos.length + recommendReactions.length + matchHistory.length;
+ 
+  return {
+    hasData: signalCount >= 2, // 신호가 2개 이상이면 개인화 가능
+    signalCount,
+    preferredCategories,
+    avoidCategories,
+    likedFoods,
+    dislikedFoods,
+    favoriteGenres,
+    favoriteMeals,
+    favoriteOtt,
+    topFoods,
+  };
+}
