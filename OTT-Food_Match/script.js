@@ -726,16 +726,10 @@ function getUserSignals() {
 }
 
 async function fetchAiPicksFromServer() {
-  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
-
   const response = await fetch("/api/ai-recommend", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      savedCombos,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(getUserSignals()),
   });
 
   if (!response.ok) {
