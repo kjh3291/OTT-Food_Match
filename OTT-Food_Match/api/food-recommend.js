@@ -209,8 +209,32 @@ ${groupedListText}
       });
     }
 
+    // -------------------------------------------------------------
+    // 4. 검증 & 보정
+    //    - foodName이 후보 목록에 없으면 후보 중 무작위로 대체
+    //    - foodCategory는 항상 우리 데이터 기준으로 다시 채움(신뢰성 보장)
+    // -------------------------------------------------------------
+    let finalName = recommendation.foodName;
+ 
+    if (!candidateNameSet.has(finalName)) {
+      finalName = candidateNames[Math.floor(Math.random() * candidateNames.length)];
+    }
+ 
+    const finalCategory = FOOD_NAME_TO_CATEGORY[finalName] || "기타";
+ 
+    const result = {
+      foodName: finalName,
+      foodCategory: finalCategory,
+      reason:
+        recommendation.reason ||
+        `${movie.title}의 분위기와 ${meal || "현재 상황"}을(를) 고려하면 ${finalName}이(가) 잘 어울리는 조합입니다.`,
+      keywords: Array.isArray(recommendation.keywords)
+        ? recommendation.keywords.slice(0, 3)
+        : [],
+    };
+ 
     return res.status(200).json({
-      recommendation,
+      recommendation: result,
     });
   } catch (error) {
     return res.status(500).json({
@@ -219,3 +243,4 @@ ${groupedListText}
     });
   }
 }
+ 
