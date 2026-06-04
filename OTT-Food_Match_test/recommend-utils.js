@@ -1,8 +1,8 @@
 // recommend-utils.js
 // recommend.js에서 순수 함수만 분리 (DOM/fetch 제외)
 
-const { convertFoods, recommend } = require('./food-algorithm');
-const { meals, desserts, fastfoods } = require('./food');
+const { convertFoods, recommend } = require('./food-algorithm.js');
+const { meals, desserts, fastfoods } = require('./food.js');
 
 const mealData     = convertFoods(meals,     "식사");
 const dessertData  = convertFoods(desserts,  "디저트");

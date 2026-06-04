@@ -3,7 +3,7 @@
  * food-algorithm.js 에 대한 Jest Unit Test
  */
 
-const { convertFoods, recommend } = require('../OTT-Food_Match/src/food-algorithm');
+const { convertFoods, recommend } = require('./food-algorithm');
 
 // ─────────────────────────────────────────────
 // convertFoods

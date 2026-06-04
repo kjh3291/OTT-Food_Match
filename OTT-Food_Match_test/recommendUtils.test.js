@@ -8,7 +8,7 @@ const {
   getCategoriesFromGenre,
   getFoodsByCategories,
   makeRecommendReason,
-} = require('../OTT-Food_Match/src/recommend-utils');
+} = require('./recommend-utils');
 
 // ─────────────────────────────────────────────
 // getCategoriesFromGenre
