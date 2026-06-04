@@ -712,17 +712,24 @@ function makeAiPicks() {
   return [basedPick, randomPick1, randomPick2];
 }
 
-async function fetchAiPicksFromServer() {
-  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+// 사용자 개인화 신호를 한 번에 모아주는 헬퍼
+function getUserSignals() {
+  const read = (key) => {
+    try { return JSON.parse(localStorage.getItem(key)) || []; }
+    catch { return []; }
+  };
+  return {
+    savedCombos: read("savedCombos"),
+    recommendReactions: read("recommendReactions"), // ← 실제 키 확인 필요
+    matchHistory: read("matchHistory"),             // ← 실제 키 확인 필요
+  };
+}
 
+async function fetchAiPicksFromServer() {
   const response = await fetch("/api/ai-recommend", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      savedCombos,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(getUserSignals()),
   });
 
   if (!response.ok) {
@@ -744,16 +751,17 @@ function renderAiPickCards(picks) {
   aiPickList.innerHTML = picks
     .map((pick) => {
       const badgeClass =
-        pick.type === "random" ? "ai-pick-badge random" : "ai-pick-badge";
+        pick.type === "based" ? "ai-pick-badge" : "ai-pick-badge random";
 
       return `
-        <div 
-  class="ai-pick-card ai-genre-card"
-  data-ott="${pick.ott || "netflix"}"
-  data-genre="${pick.genre || "전체"}"
-  data-food-name="${pick.foodName || ""}"
-  data-reason="${pick.reason || ""}"
->
+        <div
+          class="ai-pick-card ai-genre-card"
+          data-ott="${pick.ott || "netflix"}"
+        data-genre="${pick.genre || "전체"}"
+        data-food-name="${pick.foodName || ""}"
+        data-food-category="${pick.foodCategory || "기타"}"
+        data-reason="${pick.reason || ""}"
+        >
           <span class="${badgeClass}">${pick.badge}</span>
 
           <h3>${pick.title}</h3>
@@ -770,7 +778,7 @@ function renderAiPickCards(picks) {
 
           <div class="ai-pick-row">
             <strong>🍽 추천 음식</strong>
-            <p>${pick.foodName}</p>
+            <p>${pick.foodName}${pick.foodCategory ? ` <span class="ai-pick-cat">(${pick.foodCategory})</span>` : ""}</p>
           </div>
 
           <p class="ai-pick-reason">${pick.reason}</p>
@@ -789,11 +797,11 @@ function addAiGenreCardEvents() {
       const ott = card.dataset.ott || "netflix";
       const genre = encodeURIComponent(card.dataset.genre || "전체");
       const foodParam = encodeURIComponent(card.dataset.foodName || "");
+      const foodCategoryParam = encodeURIComponent(card.dataset.foodCategory || "기타");
       const reasonParam = encodeURIComponent(card.dataset.reason || "");
 
       const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
       const recentCombo = savedCombos[savedCombos.length - 1];
-
       const meal = encodeURIComponent(recentCombo?.meal || "혼밥");
 
       window.location.href =
@@ -801,6 +809,7 @@ function addAiGenreCardEvents() {
         `&meal=${meal}` +
         `&genre=${genre}` +
         `&food=${foodParam}` +
+        `&foodCategory=${foodCategoryParam}` +
         `&aiReason=${reasonParam}`;
     });
   });
