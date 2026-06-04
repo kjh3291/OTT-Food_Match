@@ -46,46 +46,46 @@ let currentReason = "";
 // ===============================
 
 async function fetchMovieDetail() {
-  const apiKey = window.CONFIG?.TMDB_API_KEY;
-  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  if (!apiKey) {
-    alert("TMDB API Key가 없습니다. config.js를 확인해주세요.");
-    return null;
-  }
-
   if (!movieId) {
     alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요.");
     window.location.href = "index.html";
     return null;
   }
 
+  const lang = localStorage.getItem("lang") || "ko";
+
+  const tmdbLangMap = {
+    ko: "ko-KR",
+    en: "en-US",
+    zh: "zh-CN",
+    ja: "ja-JP",
+  };
+
+  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
+
   const url =
-    `${baseUrl}/movie/${movieId}` +
-    `?api_key=${apiKey}` +
-    `&language=ko-KR`;
+    `/api/movie-detail` +
+    `?movieId=${encodeURIComponent(movieId)}` +
+    `&lang=${encodeURIComponent(tmdbLang)}`;
 
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error("영화 상세 정보 요청 실패:", response.status);
-      alert("영화 상세 정보를 불러오지 못했습니다.");
+      const errorData = await response.json().catch(() => null);
+      console.error("영화 상세 API 오류:", response.status, errorData);
+      alert(errorData?.message || "영화 상세 정보를 불러오지 못했습니다.");
       return null;
     }
 
-    const movie = await response.json();
+    const data = await response.json();
 
-    return {
-      id: movie.id,
-      title: movie.title || "제목 없음",
-      overview: movie.overview || "줄거리 정보가 없습니다.",
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date || "개봉일 정보 없음",
-      rating: movie.vote_average,
-      runtime: movie.runtime || 0,
-      genres: movie.genres ? movie.genres.map((genre) => genre.name) : [],
-    };
+    if (!data.movie) {
+      alert("영화 상세 응답 형식이 올바르지 않습니다.");
+      return null;
+    }
+
+    return data.movie;
   } catch (error) {
     console.error("영화 상세 API 요청 중 오류:", error);
     alert("API 요청 중 오류가 발생했습니다.");
