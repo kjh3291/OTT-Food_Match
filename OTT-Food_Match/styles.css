@@ -1758,3 +1758,34 @@ body.dark-mode .ai-pick-badge.random {
     grid-template-columns: 1fr;
   }
 }
+
+.ai-error-card {
+  grid-column: 1 / -1;
+  background: #fff7f2;
+  border-color: #ffb59f;
+}
+
+body.dark-mode .ai-error-card {
+  background: rgba(255, 122, 89, 0.12);
+  border-color: #ff7a59;
+}
+
+.ai-genre-card {
+  cursor: pointer;
+}
+
+.ai-genre-card:hover {
+  border-color: #ff7a59;
+}
+
+.ai-pick-click-guide {
+  margin-top: 12px;
+  color: #ff7a59 !important;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: right !important;
+}
+
+body.dark-mode .ai-pick-click-guide {
+  color: #ff9a7d !important;
+}

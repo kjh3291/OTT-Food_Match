@@ -197,6 +197,89 @@ function makeFoodRecommendation(movie) {
   };
 }
 
+function getPreferenceWeights() {
+  return JSON.parse(localStorage.getItem("preferenceWeights")) || {};
+}
+
+function updatePreferenceWeights(reactionType) {
+  if (!currentFood) return;
+
+  const weights = getPreferenceWeights();
+  const foodName = currentFood.name;
+  const category = currentFood.category || "기타";
+
+  if (!weights.foods) weights.foods = {};
+  if (!weights.categories) weights.categories = {};
+  if (!weights.meals) weights.meals = {};
+  if (!weights.genres) weights.genres = {};
+
+  const delta = reactionType === "like" ? 1 : -1;
+
+  weights.foods[foodName] = (weights.foods[foodName] || 0) + delta;
+  weights.categories[category] = (weights.categories[category] || 0) + delta;
+  weights.meals[selectedMeal] = (weights.meals[selectedMeal] || 0) + delta;
+  weights.genres[selectedGenre] = (weights.genres[selectedGenre] || 0) + delta;
+
+  localStorage.setItem("preferenceWeights", JSON.stringify(weights));
+}
+
+async function fetchAiFoodRecommendation(movie) {
+  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+  const recommendReactions =
+    JSON.parse(localStorage.getItem("recommendReactions")) || [];
+  const preferenceWeights = getPreferenceWeights();
+
+  const response = await fetch("/api/food-recommend", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      movie,
+      meal: selectedMeal,
+      selectedGenre,
+      savedCombos,
+      recommendReactions,
+      preferenceWeights,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("AI 음식 추천 API 요청 실패");
+  }
+
+  const data = await response.json();
+
+  if (!data.recommendation) {
+    throw new Error("AI 음식 추천 응답 형식 오류");
+  }
+
+  return data.recommendation;
+}
+
+function makeFallbackFoodRecommendation(movie) {
+  const fallbackFoods = [
+    { name: "치킨", category: "패스트푸드" },
+    { name: "피자", category: "패스트푸드" },
+    { name: "떡볶이", category: "식사" },
+    { name: "햄버거", category: "패스트푸드" },
+    { name: "파스타", category: "식사" },
+    { name: "티라미수", category: "디저트" },
+    { name: "샌드위치", category: "간식" },
+    { name: "감자튀김", category: "간식" },
+  ];
+
+  const pickedFood =
+    fallbackFoods[Math.floor(Math.random() * fallbackFoods.length)];
+
+  return {
+    foodName: pickedFood.name,
+    foodCategory: pickedFood.category,
+    reason: `${movie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${pickedFood.name}은 부담 없이 즐기기 좋은 조합입니다. AI 추천을 불러오지 못해 기본 추천으로 보여드리고 있습니다.`,
+    keywords: ["기본 추천", selectedMeal, selectedGenre],
+  };
+}
+
 
 // ===============================
 // 9. 화면 출력
@@ -287,11 +370,13 @@ function saveReaction(reactionType) {
 
   localStorage.setItem("recommendReactions", JSON.stringify(reactions));
 
-  if (reactionType === "like") {
-    alert("좋아요가 반영되었습니다.");
-  } else {
-    alert("싫어요가 반영되었습니다.");
-  }
+updatePreferenceWeights(reactionType);
+
+if (reactionType === "like") {
+  alert("좋아요가 반영되었습니다. 다음 추천에 이 취향을 반영할게요.");
+} else {
+  alert("싫어요가 반영되었습니다. 다음 추천에서 비슷한 조합은 줄일게요.");
+}
 }
 
 
@@ -433,11 +518,41 @@ async function initRecommendPage() {
 
   currentMovie = movie;
 
-  const recommendation = makeFoodRecommendation(movie);
-  currentFood = recommendation.food;
-  currentReason = recommendation.reason;
+  recommendDetailArea.innerHTML = `
+    <div class="saved-empty-card">
+      <div class="saved-empty-icon">🤖</div>
+      <h3>AI가 음식 조합을 고르는 중이에요</h3>
+      <p>선택한 영화와 식사 상황을 고려하고 있어요. 잠시만 기다려주세요.</p>
+    </div>
+  `;
 
-  renderRecommendDetail(currentMovie, currentFood, currentReason);
+  try {
+    const aiRecommendation = await fetchAiFoodRecommendation(movie);
+
+    currentFood = {
+      name: aiRecommendation.foodName,
+      category: aiRecommendation.foodCategory || "기타",
+    };
+
+    currentReason = aiRecommendation.reason;
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+  } catch (error) {
+    console.error("AI 음식 추천 오류:", error);
+
+    const fallback = makeFallbackFoodRecommendation(movie);
+
+    currentFood = {
+      name: fallback.foodName,
+      category: fallback.foodCategory || "기타",
+    };
+
+    currentReason = fallback.reason;
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+
+    alert("AI 추천을 불러오지 못해 기본 추천을 표시했습니다. 잠시 후 다시 시도해주세요.");
+  }
 }
 
 initRecommendPage();

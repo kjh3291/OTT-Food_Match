@@ -289,9 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
     if (refreshAiPickBtn) {
-    refreshAiPickBtn.addEventListener("click", () => {
+  refreshAiPickBtn.addEventListener("click", () => {
     renderAiPicks();
-    showCustomAlert("새로운 추천 조합을 골라봤어요.");
   });
 }
 
@@ -625,6 +624,7 @@ function getBasedOnSavedPick(savedCombos) {
       title: "저장 조합을 기다리는 추천",
       movieHint: randomMovie.movieHint,
       genre: randomMovie.genre,
+      ott: randomMovie.ott,
       foodName: randomFood,
       reason: "아직 저장한 조합이 많지 않아, 누구나 편하게 즐길 수 있는 조합으로 추천했어요.",
     };
@@ -667,6 +667,7 @@ function getBasedOnSavedPick(savedCombos) {
     title: "최근 저장 조합을 참고했어요",
     movieHint: movieCandidate.movieHint,
     genre: movieCandidate.genre,
+    ott: recentCombo.ott || movieCandidate.ott,
     foodName: pickedFood,
     reason: `최근 저장한 “${recentCombo.movieTitle} + ${recentCombo.foodName}” 조합을 참고해서 비슷한 분위기로 골라봤어요.`,
   };
@@ -682,6 +683,7 @@ function getRandomAiPick() {
     title: "오늘은 이런 조합 어때요?",
     movieHint: movieCandidate.movieHint,
     genre: movieCandidate.genre,
+    ott: movieCandidate.ott,
     foodName,
     reason: "평소와 다른 조합을 시도해볼 수 있도록 무작위로 골라봤어요.",
   };
@@ -697,17 +699,47 @@ function makeAiPicks() {
   return [basedPick, randomPick1, randomPick2];
 }
 
-function renderAiPicks() {
-  if (!aiPickList) return;
+async function fetchAiPicksFromServer() {
+  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
 
-  const picks = makeAiPicks();
+  const response = await fetch("/api/ai-recommend", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      savedCombos,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("AI 추천 API 요청에 실패했습니다.");
+  }
+
+  const data = await response.json();
+
+  if (!data.recommendations || !Array.isArray(data.recommendations)) {
+    throw new Error("AI 추천 응답 형식이 올바르지 않습니다.");
+  }
+
+  return data.recommendations;
+}
+
+function renderAiPickCards(picks) {
+  if (!aiPickList) return;
 
   aiPickList.innerHTML = picks
     .map((pick) => {
-      const badgeClass = pick.type === "random" ? "ai-pick-badge random" : "ai-pick-badge";
+      const badgeClass =
+        pick.type === "random" ? "ai-pick-badge random" : "ai-pick-badge";
 
       return `
-        <div class="ai-pick-card">
+        <div 
+          class="ai-pick-card ai-genre-card"
+          data-ott="${pick.ott || "netflix"}"
+          data-genre="${pick.genre || "전체"}"
+          data-food-name="${pick.foodName || ""}"
+        >
           <span class="${badgeClass}">${pick.badge}</span>
 
           <h3>${pick.title}</h3>
@@ -728,10 +760,68 @@ function renderAiPicks() {
           </div>
 
           <p class="ai-pick-reason">${pick.reason}</p>
+          <p class="ai-pick-click-guide">이 장르 영화 보러가기 →</p>
         </div>
       `;
     })
     .join("");
+
+  addAiGenreCardEvents();
+}
+
+function addAiGenreCardEvents() {
+  document.querySelectorAll(".ai-genre-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const ott = card.dataset.ott || "netflix";
+      const genre = encodeURIComponent(card.dataset.genre || "전체");
+      const foodName = encodeURIComponent(card.dataset.foodName || "");
+
+      const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+      const recentCombo = savedCombos[savedCombos.length - 1];
+
+      const meal = encodeURIComponent(recentCombo?.meal || "혼밥");
+
+      window.location.href =
+        `movie.html?ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}` +
+        `&food=${foodName}`;
+    });
+  });
+}
+
+async function renderAiPicks() {
+  if (!aiPickList) return;
+
+  aiPickList.innerHTML = `
+    <div class="saved-empty-card">
+      <div class="saved-empty-icon">🤖</div>
+      <h3>AI가 조합을 고르는 중이에요</h3>
+      <p>저장한 조합을 참고해서 추천을 만들고 있어요. 잠시만 기다려주세요.</p>
+    </div>
+  `;
+
+  try {
+    const aiPicks = await fetchAiPicksFromServer();
+    renderAiPickCards(aiPicks);
+  } catch (error) {
+    console.error("AI 추천 API 오류:", error);
+
+    aiPickList.innerHTML = `
+      <div class="saved-empty-card ai-error-card">
+        <div class="saved-empty-icon">⚠️</div>
+        <h3>AI 추천을 불러오지 못했어요</h3>
+        <p>잠시 후 다시 시도해주세요. 지금은 기본 추천 조합을 대신 보여드릴게요.</p>
+      </div>
+    `;
+
+    showCustomAlert("AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.");
+
+    setTimeout(() => {
+      const fallbackPicks = makeAiPicks();
+      renderAiPickCards(fallbackPicks);
+    }, 1200);
+  }
 }
 
   function addSavedMiniCardEvents() {
