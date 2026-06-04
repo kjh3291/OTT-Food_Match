@@ -184,24 +184,22 @@ ${groupedListText}
 
     if (!geminiResponse.ok) {
       const errorText = await geminiResponse.text();
-
       return res.status(geminiResponse.status).json({
         message: "Gemini API 요청 실패",
         detail: errorText,
       });
     }
-
+ 
     const data = await geminiResponse.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
+ 
     if (!text) {
       return res.status(500).json({
         message: "Gemini 응답이 비어 있습니다.",
       });
     }
-
+ 
     let recommendation;
-
     try {
       recommendation = JSON.parse(text);
     } catch (error) {
