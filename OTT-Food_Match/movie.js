@@ -430,7 +430,7 @@ function recommendFood(genre) {
 }
 
 if (backToMainBtn) {
-  backToMainBtn.addEventListener("click", () => { window.location.href = "main.html"; });
+  backToMainBtn.addEventListener("click", () => { window.location.href = "index.html"; });
 }
 
 document.addEventListener("languageChanged", () => {

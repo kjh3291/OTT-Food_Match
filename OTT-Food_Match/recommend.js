@@ -366,7 +366,7 @@ if (backToMovieBtn) {
 
 if (backToMainBtn) {
   backToMainBtn.addEventListener("click", () => {
-    window.location.href = "main.html";
+    window.location.href = "index.html";
   });
 }
 
