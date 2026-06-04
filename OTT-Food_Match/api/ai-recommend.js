@@ -140,3 +140,34 @@ ${groupedFoodList}
         raw: text,
       });
     }
+
+    // -------------------------------------------------------------
+    // 4. 검증 & 보정: 목록 밖 음식은 대체, 카테고리는 우리 데이터 기준으로
+    // -------------------------------------------------------------
+    const validNameSet = new Set(ALL_FOOD_NAMES);
+    const safeRecommendations = (Array.isArray(recommendations) ? recommendations : [])
+      .slice(0, 3)
+      .map((rec) => {
+        let foodName = rec.foodName;
+        if (!validNameSet.has(foodName)) {
+          foodName = ALL_FOOD_NAMES[Math.floor(Math.random() * ALL_FOOD_NAMES.length)];
+        }
+        return {
+          ...rec,
+          foodName,
+          foodCategory: FOOD_NAME_TO_CATEGORY[foodName] || "기타",
+        };
+      });
+ 
+    return res.status(200).json({
+      personalized: profile.hasData,
+      recommendations: safeRecommendations,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "AI 추천 처리 중 오류가 발생했습니다.",
+      error: error.message,
+    });
+  }
+}
+ 
