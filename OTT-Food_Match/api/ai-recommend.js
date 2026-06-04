@@ -3,7 +3,7 @@ import {
   FOOD_CATEGORY_LIST,
   FOOD_NAME_TO_CATEGORY,
   CATEGORIZED_FOODS,
-} from "./food-data.js";
+} from "./food_data.js";
 import { buildUserProfile, formatProfileForPrompt } from "./personalize.js";
  
 const ALL_FOOD_NAMES = CATEGORIZED_FOODS.map((f) => f.name);

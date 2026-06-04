@@ -4,7 +4,7 @@ import {
   getCategoriesByGenres,
   getFoodsByCategories,
   CATEGORIZED_FOODS,
-} from "./food-data.js";
+} from "./food_data.js";
  
 // 배열을 섞는 헬퍼 (같은 조건에서도 추천이 다양해지도록 후보 순서를 매번 섞음)
 function shuffle(array) {

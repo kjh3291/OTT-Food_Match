@@ -1,4 +1,4 @@
-import { FOOD_NAME_TO_CATEGORY } from "./food-data.js";
+import { FOOD_NAME_TO_CATEGORY } from "./food_data.js";
  
 // =====================================================================
 // 🧑‍🍳 사용자 개인화 모듈
