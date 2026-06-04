@@ -1668,3 +1668,111 @@ body.dark-mode .saved-view-poster-box {
 body.dark-mode .saved-view-arrow {
   color: #dddddd;
 }
+
+/* ===============================
+   메인 - AI 추천 조합
+================================ */
+
+.ai-pick-section {
+  margin-top: 18px;
+}
+
+.ai-pick-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.ai-pick-card {
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
+  padding: 18px;
+  transition: 0.2s ease;
+}
+
+.ai-pick-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.ai-pick-badge {
+  display: inline-block;
+  background: #ff7a59;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.ai-pick-badge.random {
+  background: #2d2d2d;
+}
+
+.ai-pick-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+  color: #2d2d2d;
+}
+
+.ai-pick-row {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.ai-pick-row strong {
+  display: block;
+  color: #ff7a59;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.ai-pick-row p {
+  color: #333333;
+  font-size: 0.95rem;
+  margin: 0;
+  text-align: left !important;
+}
+
+.ai-pick-reason {
+  color: #666666;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-top: 10px;
+  text-align: left !important;
+}
+
+/* 다크모드 */
+body.dark-mode .ai-pick-card {
+  background: #2a2a2a;
+  border-color: #333333;
+}
+
+body.dark-mode .ai-pick-card h3,
+body.dark-mode .ai-pick-row p {
+  color: #ffffff !important;
+}
+
+body.dark-mode .ai-pick-row {
+  background: #222222;
+  border-color: #333333;
+}
+
+body.dark-mode .ai-pick-reason {
+  color: #dddddd !important;
+}
+
+body.dark-mode .ai-pick-badge.random {
+  background: #444444;
+}
+
+@media (max-width: 800px) {
+  .ai-pick-list {
+    grid-template-columns: 1fr;
+  }
+}

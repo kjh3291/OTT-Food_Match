@@ -265,9 +265,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedManageList = document.getElementById("savedManageList");
   const savedMoreBtn = document.getElementById("savedMoreBtn");
   const savedViewModal = document.getElementById("savedViewModal");
-const closeSavedViewModal = document.getElementById("closeSavedViewModal");
-const savedViewDoneBtn = document.getElementById("savedViewDoneBtn");
-const savedViewList = document.getElementById("savedViewList");
+  const closeSavedViewModal = document.getElementById("closeSavedViewModal");
+  const savedViewDoneBtn = document.getElementById("savedViewDoneBtn");
+  const savedViewList = document.getElementById("savedViewList");
+
+  const aiPickList = document.getElementById("aiPickList");
+  const refreshAiPickBtn = document.getElementById("refreshAiPickBtn");
 
     // ===============================
   // 최근 저장한 조합 메인 화면 표시
@@ -282,6 +285,13 @@ const savedViewList = document.getElementById("savedViewList");
     if (savedMoreBtn) {
     savedMoreBtn.addEventListener("click", () => {
     openSavedViewModal();
+  });
+}
+
+    if (refreshAiPickBtn) {
+    refreshAiPickBtn.addEventListener("click", () => {
+    renderAiPicks();
+    showCustomAlert("새로운 추천 조합을 골라봤어요.");
   });
 }
 
@@ -571,6 +581,159 @@ function addSavedViewItemEvents() {
     return ottNameMap[ottKey] || "OTT";
   }
 
+  // ===============================
+// AI 추천 조합 임시 구현
+// 실제 AI 연결 전 JS 버전
+// ===============================
+
+const aiMovieCandidates = [
+  { genre: "액션", movieHint: "빠른 전개의 액션 영화", ott: "netflix" },
+  { genre: "코미디", movieHint: "가볍게 웃기 좋은 코미디 영화", ott: "tving" },
+  { genre: "드라마", movieHint: "잔잔하게 몰입하기 좋은 드라마 영화", ott: "wavve" },
+  { genre: "로맨스", movieHint: "분위기 있게 보기 좋은 로맨스 영화", ott: "disney" },
+  { genre: "스릴러", movieHint: "긴장감 있는 스릴러 영화", ott: "netflix" },
+  { genre: "애니메이션", movieHint: "편하게 보기 좋은 애니메이션 영화", ott: "disney" },
+];
+
+const aiFoodCandidates = [
+  "치킨",
+  "피자",
+  "떡볶이",
+  "햄버거",
+  "파스타",
+  "티라미수",
+  "새우버거",
+  "로제파스타",
+  "수제쿠키",
+  "치즈케이크",
+  "도넛",
+  "감자튀김",
+];
+
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function getBasedOnSavedPick(savedCombos) {
+  if (!savedCombos || savedCombos.length === 0) {
+    const randomMovie = getRandomItem(aiMovieCandidates);
+    const randomFood = getRandomItem(aiFoodCandidates);
+
+    return {
+      type: "based",
+      badge: "취향 기반",
+      title: "저장 조합을 기다리는 추천",
+      movieHint: randomMovie.movieHint,
+      genre: randomMovie.genre,
+      foodName: randomFood,
+      reason: "아직 저장한 조합이 많지 않아, 누구나 편하게 즐길 수 있는 조합으로 추천했어요.",
+    };
+  }
+
+  const recentCombo = savedCombos[savedCombos.length - 1];
+
+  const similarGenreMap = {
+    "액션": ["액션", "스릴러"],
+    "스릴러": ["스릴러", "액션"],
+    "코미디": ["코미디", "애니메이션"],
+    "애니메이션": ["애니메이션", "코미디"],
+    "드라마": ["드라마", "로맨스"],
+    "로맨스": ["로맨스", "드라마"],
+    "전체": ["액션", "코미디", "드라마", "로맨스", "스릴러", "애니메이션"],
+  };
+
+  const similarGenres = similarGenreMap[recentCombo.genre] || similarGenreMap["전체"];
+  const pickedGenre = getRandomItem(similarGenres);
+
+  const movieCandidate =
+    aiMovieCandidates.find((item) => item.genre === pickedGenre) ||
+    getRandomItem(aiMovieCandidates);
+
+  const foodByCategory = {
+    "패스트푸드": ["치킨", "햄버거", "새우버거", "감자튀김", "피자"],
+    "식사": ["떡볶이", "파스타", "로제파스타", "치킨"],
+    "디저트": ["티라미수", "수제쿠키", "치즈케이크", "도넛"],
+  };
+
+  const foodPool =
+    foodByCategory[recentCombo.foodCategory] ||
+    aiFoodCandidates;
+
+  const pickedFood = getRandomItem(foodPool);
+
+  return {
+    type: "based",
+    badge: "취향 기반",
+    title: "최근 저장 조합을 참고했어요",
+    movieHint: movieCandidate.movieHint,
+    genre: movieCandidate.genre,
+    foodName: pickedFood,
+    reason: `최근 저장한 “${recentCombo.movieTitle} + ${recentCombo.foodName}” 조합을 참고해서 비슷한 분위기로 골라봤어요.`,
+  };
+}
+
+function getRandomAiPick() {
+  const movieCandidate = getRandomItem(aiMovieCandidates);
+  const foodName = getRandomItem(aiFoodCandidates);
+
+  return {
+    type: "random",
+    badge: "랜덤 추천",
+    title: "오늘은 이런 조합 어때요?",
+    movieHint: movieCandidate.movieHint,
+    genre: movieCandidate.genre,
+    foodName,
+    reason: "평소와 다른 조합을 시도해볼 수 있도록 무작위로 골라봤어요.",
+  };
+}
+
+function makeAiPicks() {
+  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+
+  const basedPick = getBasedOnSavedPick(savedCombos);
+  const randomPick1 = getRandomAiPick();
+  const randomPick2 = getRandomAiPick();
+
+  return [basedPick, randomPick1, randomPick2];
+}
+
+function renderAiPicks() {
+  if (!aiPickList) return;
+
+  const picks = makeAiPicks();
+
+  aiPickList.innerHTML = picks
+    .map((pick) => {
+      const badgeClass = pick.type === "random" ? "ai-pick-badge random" : "ai-pick-badge";
+
+      return `
+        <div class="ai-pick-card">
+          <span class="${badgeClass}">${pick.badge}</span>
+
+          <h3>${pick.title}</h3>
+
+          <div class="ai-pick-row">
+            <strong>🎬 추천 영화 분위기</strong>
+            <p>${pick.movieHint}</p>
+          </div>
+
+          <div class="ai-pick-row">
+            <strong>🎭 추천 장르</strong>
+            <p>${pick.genre}</p>
+          </div>
+
+          <div class="ai-pick-row">
+            <strong>🍽 추천 음식</strong>
+            <p>${pick.foodName}</p>
+          </div>
+
+          <p class="ai-pick-reason">${pick.reason}</p>
+        </div>
+      `;
+    })
+    .join("");
+}
+
   function addSavedMiniCardEvents() {
     document.querySelectorAll(".saved-mini-card").forEach((card) => {
       card.addEventListener("click", () => {
@@ -584,4 +747,5 @@ function addSavedViewItemEvents() {
   }
 
   renderSavedCombosOnMain();
+  renderAiPicks();
 }); 
