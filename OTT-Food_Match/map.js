@@ -166,6 +166,7 @@ function getDynamicMenus(category) {
     if (category.includes('일식') || category.includes('초밥')) return [{ name: "모듬초밥", price: 15000 }, { name: "돈까스", price: 10000 }];
     if (category.includes('양식') || category.includes('파스타')) return [{ name: "크림 파스타", price: 14000 }, { name: "마르게리따 피자", price: 18000 }];
     if (category.includes('분식') || category.includes('떡볶이')) return [{ name: "떡볶이", price: 4000 }, { name: "모듬튀김", price: 5000 }, { name: "순대", price: 4500 }];
+    if (category.includes('패스트푸드') || category.includes('')) return [{ name: "햄버거", price: 8000 }, { name: "샌드위치", price: 6000 }];
 
     return [{ name: "추천 대표 메뉴", price: 9000 }, { name: "인기 사이드 메뉴", price: 5000 }, { name: "공기밥", price: 1000 }];
 }
