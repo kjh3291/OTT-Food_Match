@@ -88,3 +88,17 @@ export const FOOD_CATEGORIES = {
     "크림브륄레", "파블로바"
   ]
 };
+
+// 카테고리 이름 목록
+export const FOOD_CATEGORY_LIST = Object.keys(FOOD_CATEGORIES);
+ 
+// 평면화된 전체 목록: [{ name, category }, ...]
+export const CATEGORIZED_FOODS = Object.entries(FOOD_CATEGORIES).flatMap(
+  ([category, names]) => names.map((name) => ({ name, category }))
+);
+ 
+// 음식명 → 카테고리 빠른 조회 맵
+export const FOOD_NAME_TO_CATEGORY = CATEGORIZED_FOODS.reduce((acc, food) => {
+  acc[food.name] = food.category;
+  return acc;
+}, {});
