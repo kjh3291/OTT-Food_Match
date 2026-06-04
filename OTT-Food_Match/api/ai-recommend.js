@@ -79,6 +79,9 @@ ${groupedFoodList}
 ]
 `;
 
+    // -------------------------------------------------------------
+    // 3. Gemini 호출 (foodName을 후보 목록 enum으로 강제)
+    // -------------------------------------------------------------
     const geminiResponse = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
@@ -88,18 +91,27 @@ ${groupedFoodList}
           "x-goog-api-key": apiKey,
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt,
-                },
-              ],
-            },
-          ],
+          contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
-            temperature: 0.9,
+            temperature: 0.95,
             responseMimeType: "application/json",
+            responseSchema: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  type: { type: "STRING", enum: ["based", "expand", "discovery"] },
+                  badge: { type: "STRING" },
+                  title: { type: "STRING" },
+                  movieHint: { type: "STRING" },
+                  genre: { type: "STRING" },
+                  foodName: { type: "STRING", enum: ALL_FOOD_NAMES },
+                  foodCategory: { type: "STRING", enum: FOOD_CATEGORY_LIST },
+                  reason: { type: "STRING" },
+                },
+                required: ["type", "badge", "title", "movieHint", "genre", "foodName", "reason"],
+              },
+            },
           },
         }),
       }
