@@ -95,51 +95,55 @@ export default async function handler(req, res) {
 - 매번 같은 음식만 고르지 말고, 같은 조건이어도 자연스럽게 다양하게 추천한다.
 - 추천 사유는 한국어로 2~4문장으로 구체적으로 쓴다.
 
-현재 선택한 영화:
+[현재 선택한 영화]
 - 제목: ${movie.title}
 - 장르: ${movie.genres && movie.genres.length > 0 ? movie.genres.join(", ") : selectedGenre}
 - 평점: ${movie.rating || "정보 없음"}
-- 상영 시간: ${movie.runtime || "정보 없음"}분
+- 상영 시간: ${movie.runtime ? movie.runtime + "분" : "정보 없음"}
 - 줄거리: ${movie.overview || "정보 없음"}
-
-현재 식사 상황:
+ 
+[현재 식사 상황]
 ${meal || "정보 없음"}
-
-사용자가 선택한 장르 탭:
+ 
+[사용자가 선택한 장르 탭]
 ${selectedGenre || "전체"}
-
-최근 저장한 조합:
+ 
+[최근 저장한 조합]
 ${
   recentSavedCombos.length > 0
     ? recentSavedCombos
-        .map((combo, index) => {
-          return `${index + 1}. 영화: ${combo.movieTitle}, 음식: ${combo.foodName}, 장르: ${combo.genre}, 식사 상황: ${combo.meal}`;
-        })
+        .map(
+          (combo, index) =>
+            `${index + 1}. 영화: ${combo.movieTitle}, 음식: ${combo.foodName}, 장르: ${combo.genre}, 식사 상황: ${combo.meal}`
+        )
         .join("\n")
     : "저장한 조합 없음"
 }
-
-최근 좋아요/싫어요 기록:
+ 
+[최근 좋아요/싫어요 기록]
 ${
   recentReactions.length > 0
     ? recentReactions
-        .map((item, index) => {
-          return `${index + 1}. 영화: ${item.movieTitle}, 음식: ${item.foodName}, 반응: ${item.reaction}, 장르: ${item.genre}, 식사 상황: ${item.meal}`;
-        })
+        .map(
+          (item, index) =>
+            `${index + 1}. 음식: ${item.foodName}, 반응: ${item.reaction}, 장르: ${item.genre}, 식사 상황: ${item.meal}`
+        )
         .join("\n")
     : "반응 기록 없음"
 }
-
-음식 선호 가중치:
+ 
+[음식 선호 가중치]
 ${JSON.stringify(preferenceWeights, null, 2)}
-
+ 
+[후보 음식 목록] (이 안에서만 골라야 함)
+${groupedListText}
+ 
 반드시 아래 JSON 형식만 반환해. JSON 밖에 설명을 쓰지 마.
-
 {
-  "foodName": "추천 음식명",
-  "foodCategory": "식사/디저트/패스트푸드/간식/기타 중 하나",
-  "reason": "왜 이 영화와 식사 상황에 이 음식이 어울리는지 2~4문장으로 설명",
-  "keywords": ["추천 근거 키워드1", "추천 근거 키워드2", "추천 근거 키워드3"]
+  "foodName": "후보 목록 중 하나",
+  "foodCategory": "${FOOD_CATEGORY_LIST.join("/")} 중 하나",
+  "reason": "왜 이 영화와 식사 상황에 이 음식이 어울리는지 2~4문장",
+  "keywords": ["근거 키워드1", "근거 키워드2", "근거 키워드3"]
 }
 `;
 
