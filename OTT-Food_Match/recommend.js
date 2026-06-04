@@ -395,14 +395,16 @@ function saveCombo() {
   );
 
   if (isAlreadySaved) {
-    alert("이미 저장된 조합입니다.");
-    return;
-  }
+  alert("이미 저장된 조합입니다. 메인으로 이동합니다.");
+  window.location.href = "index.html";
+  return;
+}
 
   savedCombos.push(combo);
-  localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
+localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
 
-  alert("조합이 저장되었습니다.");
+alert("조합이 저장되었습니다. 메인으로 이동합니다.");
+window.location.href = "index.html";
 }
 
 
