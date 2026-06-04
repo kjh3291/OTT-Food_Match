@@ -1744,3 +1744,25 @@ body.dark-mode div[style*="background: #ffffff"] {
     margin-top: 14px !important;
   }
 }
+
+/* =========================================
+   ✨ '저장된 조합 없음(Empty State)' 완벽 중앙 정렬 패치
+========================================= */
+
+.saved-empty-card {
+  width: 100% !important; /* 부모 영역의 전체 너비를 사용하도록 강제 */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important; /* 내부 요소들을 가로 정중앙으로 모음 */
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.saved-empty-card .saved-empty-icon,
+.saved-empty-card h3,
+.saved-empty-card p {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
