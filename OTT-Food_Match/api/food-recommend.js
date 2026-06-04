@@ -63,6 +63,20 @@ export default async function handler(req, res) {
     const candidateNames = candidateFoods.map((f) => f.name);
     const candidateNameSet = new Set(candidateNames);
 
+    // 카테고리별로 묶고, 각 카테고리 안에서 순서를 섞어 프롬프트에 제공
+    const groupedListText = candidateCategories
+      .map((category) => {
+        const names = shuffle(
+          candidateFoods
+            .filter((f) => f.category === category)
+            .map((f) => f.name)
+        );
+        if (names.length === 0) return null;
+        return `- ${category}: ${names.join(", ")}`;
+      })
+      .filter(Boolean)
+      .join("\n");
+
     const recentSavedCombos = savedCombos.slice(-5).reverse();
     const recentReactions = recommendReactions.slice(-10).reverse();
 
