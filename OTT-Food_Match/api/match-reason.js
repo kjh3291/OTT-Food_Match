@@ -90,28 +90,26 @@ ${profileText}
 
     if (!response.ok) {
       const errorText = await response.text();
-
       return res.status(response.status).json({
         message: "Gemini 매칭 사유 요청 실패",
         detail: errorText,
       });
     }
-
+ 
     const data = await response.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
     if (!text) {
-      return res.status(500).json({
-        message: "Gemini 응답이 비어 있습니다.",
-      });
+      return res.status(500).json({ message: "Gemini 응답이 비어 있습니다." });
     }
-
+ 
     const parsed = JSON.parse(text);
-
+ 
     return res.status(200).json({
       reason:
         parsed.reason ||
-        `${movie.title}의 분위기와 ${meal} 상황을 고려했을 때, ${foodName}은 잘 어울리는 조합입니다.`,
+        `${movie.title}의 분위기와 ${meal || "현재 상황"}을(를) 고려하면 ${foodName}은(는) 잘 어울리는 조합입니다.`,
+      personalTouch: parsed.personalTouch || "",
+      personalized: profile.hasData && !!parsed.personalTouch,
     });
   } catch (error) {
     return res.status(500).json({
@@ -120,3 +118,4 @@ ${profileText}
     });
   }
 }
+ 
