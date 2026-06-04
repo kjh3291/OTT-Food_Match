@@ -155,98 +155,67 @@ async function loadMoviesByGenre(genre) {
 }
 
 async function fetchMoviesFromTMDB(genre) {
-  const apiKey = window.CONFIG?.TMDB_API_KEY;
-  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  if (!apiKey) return [];
-
-  const providerId = ottProviderMap[ottKey];
-  if (!providerId) return [];
-
-  const genreId = genreIdMap[genre];
-
   const lang = localStorage.getItem("lang") || "ko";
+
   const tmdbLangMap = {
     ko: "ko-KR",
     en: "en-US",
     zh: "zh-CN",
     ja: "ja-JP",
   };
-  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
 
+  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
   const maxPagesToFetch = 8;
   const allResults = [];
 
-  function buildMovieUrl(page) {
-    let url =
-      `${baseUrl}/discover/movie` +
-      `?api_key=${apiKey}` +
-      `&language=${tmdbLang}` +
-      `&region=KR` +
-      `&watch_region=KR` +
-      `&with_watch_providers=${providerId}` +
-      `&sort_by=popularity.desc` +
-      `&include_adult=false` +
+  async function fetchMoviePage(page) {
+    const url =
+      `/api/movies` +
+      `?ott=${encodeURIComponent(ottKey)}` +
+      `&genre=${encodeURIComponent(genre)}` +
+      `&lang=${encodeURIComponent(tmdbLang)}` +
       `&page=${page}`;
 
-    if (genre !== "전체" && genreId) {
-      url += `&with_genres=${genreId}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      console.error("영화 목록 API 오류:", response.status, errorData);
+      return null;
     }
 
-    return url;
+    return await response.json();
   }
 
   try {
-    const firstResponse = await fetch(buildMovieUrl(1));
+    const firstData = await fetchMoviePage(1);
 
-    if (!firstResponse.ok) {
-      console.error("TMDB 첫 페이지 요청 실패:", firstResponse.status);
+    if (!firstData) {
       return [];
     }
 
-    const firstData = await firstResponse.json();
-    const totalPages = Math.min(firstData.total_pages || 1, maxPagesToFetch);
+    allResults.push(...(firstData.movies || []));
 
-    const firstMovies = firstData.results.map((movie) => ({
-      id: movie.id,
-      title: movie.title || movie.name || "No Title",
-      overview: movie.overview || "",
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date || "",
-      rating: movie.vote_average || 0,
-      popularity: movie.popularity || 0,
-      genre: genre,
-    }));
-
-    allResults.push(...firstMovies);
+    const totalPages = Math.min(firstData.totalPages || 1, maxPagesToFetch);
 
     for (let page = 2; page <= totalPages; page++) {
-      const response = await fetch(buildMovieUrl(page));
+      const data = await fetchMoviePage(page);
 
-      if (!response.ok) {
-        console.error(`${page}페이지 요청 실패:`, response.status);
-        continue;
-      }
+      if (!data) continue;
 
-      const data = await response.json();
-
-      const movies = data.results.map((movie) => ({
-        id: movie.id,
-        title: movie.title || movie.name || "No Title",
-        overview: movie.overview || "",
-        posterPath: movie.poster_path,
-        releaseDate: movie.release_date || "",
-        rating: movie.vote_average || 0,
-        popularity: movie.popularity || 0,
-        genre: genre,
-      }));
-
-      allResults.push(...movies);
+      allResults.push(...(data.movies || []));
     }
 
-    return removeDuplicateMovies(allResults);
+    const uniqueMovies = removeDuplicateMovies(allResults);
+
+    if (uniqueMovies.length === 0 && genre !== "전체") {
+      console.warn(`${genre} 장르 결과가 없어 전체 영화로 다시 불러옵니다.`);
+      return await fetchMoviesFromTMDB("전체");
+    }
+
+    return uniqueMovies;
   } catch (error) {
-    console.error("TMDB API 요청 중 오류 발생:", error);
+    console.error("영화 목록 요청 중 오류 발생:", error);
     return [];
   }
 }

@@ -5,11 +5,11 @@ export default async function handler(req, res) {
     });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.Gemini_API;
 
   if (!apiKey) {
     return res.status(500).json({
-      message: "GEMINI_API_KEY가 설정되지 않았습니다.",
+      message: "Gemini_API가 설정되지 않았습니다.",
     });
   }
 
