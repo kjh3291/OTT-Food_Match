@@ -53,3 +53,17 @@ export function buildUserProfile({
     .filter(([, score]) => score < 0)
     .sort((a, b) => a[1] - b[1])
     .map(([category]) => category);
+
+    // --- 좋아요/싫어요 음식 ---
+  const likedFoods = [
+    ...new Set([
+      ...recommendReactions.filter((r) => r.reaction === "like").map((r) => r.foodName),
+      ...savedCombos.map((c) => c.foodName),
+    ]),
+  ].filter(Boolean);
+ 
+  const dislikedFoods = [
+    ...new Set(
+      recommendReactions.filter((r) => r.reaction === "dislike").map((r) => r.foodName)
+    ),
+  ].filter(Boolean);
