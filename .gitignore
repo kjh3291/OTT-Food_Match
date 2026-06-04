@@ -1,4 +1,4 @@
-.vercel
-.env*
+Ds_Store
+config.js
 coverage
 node_modules
