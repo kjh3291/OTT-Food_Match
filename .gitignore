@@ -1,3 +1,4 @@
-.DS_Store
-config.js
-.env.local.env.local
+.vercel
+.env*
+coverage
+node_modules
