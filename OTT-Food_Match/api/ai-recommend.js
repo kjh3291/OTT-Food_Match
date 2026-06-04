@@ -25,10 +25,20 @@ export default async function handler(req, res) {
       matchHistory = [],
     } = req.body || {};
 
-  try {
-    const { savedCombos = [] } = req.body || {};
-
-    const recentCombos = savedCombos.slice(-5).reverse();
+   // -------------------------------------------------------------
+    // 1. 사용자 신호 → 취향 프로필
+    // -------------------------------------------------------------
+    const profile = buildUserProfile({
+      savedCombos,
+      recommendReactions,
+      matchHistory,
+    });
+    const profileText = formatProfileForPrompt(profile);
+ 
+    // 후보 음식을 카테고리별로 묶어 프롬프트에 제공 (food-data.js 그대로 참고)
+    const groupedFoodList = FOOD_CATEGORY_LIST.map(
+      (cat) => `- ${cat}: ${FOOD_CATEGORIES[cat].join(", ")}`
+    ).join("\n");
 
     const prompt = `
 너는 영화와 음식 조합을 추천하는 AI야.
