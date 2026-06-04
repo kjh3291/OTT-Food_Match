@@ -376,10 +376,13 @@ if (recentCombos.length === 0) {
     return `
       <div 
         class="saved-mini-card"
-        data-movie-id="${combo.movieId}"
-        data-ott="${combo.ott}"
-        data-meal="${combo.meal}"
-        data-genre="${combo.genre}"
+data-movie-id="${combo.movieId}"
+data-ott="${combo.ott}"
+data-meal="${combo.meal}"
+data-genre="${combo.genre}"
+data-food-name="${combo.foodName || ""}"
+data-food-category="${combo.foodCategory || "기타"}"
+data-reason="${combo.reason || ""}"
       >
         <div class="saved-mini-poster-box">
           ${
@@ -504,10 +507,13 @@ function closeSavedViewModalFn() {
       return `
         <div 
           class="saved-view-item"
-          data-movie-id="${combo.movieId}"
-          data-ott="${combo.ott}"
-          data-meal="${combo.meal}"
-          data-genre="${combo.genre}"
+data-movie-id="${combo.movieId}"
+data-ott="${combo.ott}"
+data-meal="${combo.meal}"
+data-genre="${combo.genre}"
+data-food-name="${combo.foodName || ""}"
+data-food-category="${combo.foodCategory || "기타"}"
+data-reason="${combo.reason || ""}"
         >
           <div class="saved-view-poster-box">
             ${
@@ -536,14 +542,21 @@ function addSavedViewItemEvents() {
     item.addEventListener("click", () => {
       const movieId = item.dataset.movieId;
       const ott = item.dataset.ott;
-      const meal = encodeURIComponent(item.dataset.meal);
-      const genre = encodeURIComponent(item.dataset.genre);
+      const meal = encodeURIComponent(item.dataset.meal || "");
+      const genre = encodeURIComponent(item.dataset.genre || "전체");
+      const foodName = encodeURIComponent(item.dataset.foodName || "");
+      const foodCategory = encodeURIComponent(item.dataset.foodCategory || "기타");
+      const reason = encodeURIComponent(item.dataset.reason || "");
 
       window.location.href =
         `recommend.html?movieId=${movieId}` +
         `&ott=${ott}` +
         `&meal=${meal}` +
-        `&genre=${genre}`;
+        `&genre=${genre}` +
+        `&mode=saved` +
+        `&foodName=${foodName}` +
+        `&foodCategory=${foodCategory}` +
+        `&reason=${reason}`;
     });
   });
 }
@@ -825,16 +838,28 @@ async function renderAiPicks() {
 }
 
   function addSavedMiniCardEvents() {
-    document.querySelectorAll(".saved-mini-card").forEach((card) => {
-      card.addEventListener("click", () => {
-        const movieId = card.dataset.movieId;
-        const ott = card.dataset.ott;
-        const meal = encodeURIComponent(card.dataset.meal);
-        const genre = encodeURIComponent(card.dataset.genre);
-        window.location.href = `recommend.html?movieId=${movieId}&ott=${ott}&meal=${meal}&genre=${genre}`;
-      });
+  document.querySelectorAll(".saved-mini-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const movieId = card.dataset.movieId;
+      const ott = card.dataset.ott;
+      const meal = encodeURIComponent(card.dataset.meal || "");
+      const genre = encodeURIComponent(card.dataset.genre || "전체");
+      const foodName = encodeURIComponent(card.dataset.foodName || "");
+      const foodCategory = encodeURIComponent(card.dataset.foodCategory || "기타");
+      const reason = encodeURIComponent(card.dataset.reason || "");
+
+      window.location.href =
+        `recommend.html?movieId=${movieId}` +
+        `&ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}` +
+        `&mode=saved` +
+        `&foodName=${foodName}` +
+        `&foodCategory=${foodCategory}` +
+        `&reason=${reason}`;
     });
-  }
+  });
+}
 
   renderSavedCombosOnMain();
   renderAiPicks();

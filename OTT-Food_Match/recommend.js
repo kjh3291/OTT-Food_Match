@@ -15,6 +15,19 @@ const selectedGenre = urlParams.get("genre")
   ? decodeURIComponent(urlParams.get("genre"))
   : "전체";
 
+  const pageMode = urlParams.get("mode") || "recommend";
+
+const savedFoodName = urlParams.get("foodName")
+  ? decodeURIComponent(urlParams.get("foodName"))
+  : "";
+
+const savedFoodCategory = urlParams.get("foodCategory")
+  ? decodeURIComponent(urlParams.get("foodCategory"))
+  : "기타";
+
+const savedReason = urlParams.get("reason")
+  ? decodeURIComponent(urlParams.get("reason"))
+  : "";
 
 // ===============================
 // 3. HTML 요소 가져오기
@@ -31,6 +44,37 @@ const saveComboBtn = document.getElementById("saveComboBtn");
 const backToMovieBtn = document.getElementById("backToMovieBtn");
 const backToMainBtn = document.getElementById("backToMainBtn");
 
+const reactionCard =
+  likeBtn?.closest(".card") ||
+  document.querySelector(".reaction-area")?.closest(".card");
+
+function showRecommendLoading(message = "추천 정보를 불러오는 중입니다...") {
+  if (recommendDetailArea) {
+    recommendDetailArea.innerHTML = `
+      <div class="saved-empty-card recommend-loading-card">
+        <div class="saved-empty-icon">🤖</div>
+        <h3>${message}</h3>
+        <p>잠시만 기다려주세요.</p>
+      </div>
+    `;
+  }
+
+  if (reactionCard) {
+    reactionCard.style.display = "none";
+  }
+}
+
+function showReactionCard() {
+  if (reactionCard && pageMode !== "saved") {
+    reactionCard.style.display = "";
+  }
+}
+
+function hideReactionCard() {
+  if (reactionCard) {
+    reactionCard.style.display = "none";
+  }
+}
 
 // ===============================
 // 4. 현재 선택된 정보 저장
@@ -175,8 +219,8 @@ function makeFallbackFoodRecommendation(movie) {
   return {
     foodName: pickedFood.name,
     foodCategory: pickedFood.category,
-    reason: `${movie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${pickedFood.name}은 부담 없이 즐기기 좋은 조합입니다. AI 추천을 불러오지 못해 기본 추천으로 보여드리고 있습니다.`,
-    keywords: ["기본 추천", selectedMeal, selectedGenre],
+    reason: `${movie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${pickedFood.name}은 부담 없이 즐기기 좋은 조합입니다.`,
+    keywords: ["추천", selectedMeal, selectedGenre],
   };
 }
 
@@ -412,24 +456,54 @@ if (darkModeToggle) {
 
 
 async function initRecommendPage() {
+  showRecommendLoading(
+    pageMode === "saved"
+      ? "저장된 조합을 불러오는 중입니다..."
+      : "AI가 음식 조합을 고르는 중이에요"
+  );
+
   const movie = await fetchMovieDetail();
 
   if (!movie) {
+    hideReactionCard();
+
     recommendDetailArea.innerHTML = `
-      <p>${typeof t === "function" ? t("errorLoadMovie") : "영화 정보를 불러오지 못했습니다."}</p>
+      <div class="saved-empty-card">
+        <div class="saved-empty-icon">⚠️</div>
+        <h3>영화 정보를 불러오지 못했습니다.</h3>
+        <p>영화 목록에서 다시 선택해주세요.</p>
+      </div>
     `;
     return;
   }
 
   currentMovie = movie;
 
-  recommendDetailArea.innerHTML = `
-    <div class="saved-empty-card">
-      <div class="saved-empty-icon">🤖</div>
-      <h3>AI가 음식 조합을 고르는 중이에요</h3>
-      <p>선택한 영화와 식사 상황을 고려하고 있어요. 잠시만 기다려주세요.</p>
-    </div>
-  `;
+  // ===============================
+  // 저장 조합 보기 모드
+  // ===============================
+  if (pageMode === "saved") {
+    currentFood = {
+      name: savedFoodName || "저장된 음식 정보 없음",
+      category: savedFoodCategory || "기타",
+    };
+
+    currentReason = savedReason || "저장된 추천 사유가 없습니다.";
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+    hideReactionCard();
+
+    if (recommendPageInfo) {
+      recommendPageInfo.textContent = `저장된 조합 / 식사 상황: ${selectedMeal} / 장르: ${selectedGenre}`;
+    }
+
+    return;
+  }
+
+  // ===============================
+  // 일반 추천 모드
+  // ===============================
+  showRecommendLoading("AI가 음식 조합을 고르는 중이에요");
 
   try {
     const aiRecommendation = await fetchAiFoodRecommendation(movie);
@@ -442,8 +516,9 @@ async function initRecommendPage() {
     currentReason = aiRecommendation.reason;
 
     renderRecommendDetail(currentMovie, currentFood, currentReason);
+    showReactionCard();
   } catch (error) {
-    console.error("AI 음식 추천 오류:", error);
+    console.warn("AI 추천 실패, 기본 추천으로 대체:", error);
 
     const fallback = makeFallbackFoodRecommendation(movie);
 
@@ -455,8 +530,7 @@ async function initRecommendPage() {
     currentReason = fallback.reason;
 
     renderRecommendDetail(currentMovie, currentFood, currentReason);
-
-    alert("AI 추천을 불러오지 못해 기본 추천을 표시했습니다. 잠시 후 다시 시도해주세요.");
+    showReactionCard();
   }
 }
 
