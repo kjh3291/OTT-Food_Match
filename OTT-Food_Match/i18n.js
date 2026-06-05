@@ -26,18 +26,27 @@ const i18nData = {
     releaseDate: "개봉일", rating: "평점", noReleaseInfo: "개봉일 정보 없음", noRatingInfo: "정보 없음",
     noOverview: "줄거리 정보가 없습니다.", noTitle: "제목 없음", noMoviesTitle: "선택한 조건에 맞는 영화가 없습니다.", noMoviesDesc: "다른 장르를 선택하거나 검색을 다시 시도해보세요.",
     modalResultTitle: "✨ 맞춤 추천 결과 ✨", modalMovieHeader: "🎬 선택한 영화", modalFoodHeader: "🍽 추천 음식", modalShareBtn: "결과 공유하기 🔗", closeFinalResultModal: "닫기",
-    
-    // 💡 새로 추가된 번역: 메인 페이지 '이렇게 추천해요'
     recommendInfoTitle: "이렇게 추천해요",
     infoLabel1: "영화 장르", infoDesc1: "선택한 영화의 분위기를 반영해요.",
     infoLabel2: "식사 상황", infoDesc2: "혼밥, 야식, 친구와 함께 등 상황을 고려해요.",
     infoLabel3: "음식 카테고리", infoDesc3: "장르와 상황에 어울리는 메뉴를 추천해요.",
-    
-    // 💡 새로 추가된 번역: recommend.html 관련
     recommendPageTitle: "추천 상세", recommendPageInfo: "선택한 영화와 어울리는 음식을 확인해보세요.",
     recommendLoadingText: "추천 정보를 불러오는 중입니다...", reactionTitle: "이 추천은 어땠나요?",
     likeBtn: "👍 좋아요", dislikeBtn: "👎 싫어요", saveComboBtn: "💾 조합 저장", backToMovieBtn: "영화 목록으로 돌아가기",
-    errorLoadMovie: "영화 정보를 불러오지 못했습니다."
+    errorLoadMovie: "영화 정보를 불러오지 못했습니다.",
+    savedComboTitle: "최근 저장한 조합", savedComboDesc: "마음에 든 조합을 다시 확인해보세요.", editSavedComboBtn: "수정",
+    savedManageTitle: "저장한 조합 관리", savedViewTitle: "저장한 조합 전체보기", savedManageDoneBtn: "닫기", savedViewDoneBtn: "닫기",
+    savedEmptyTitle: "아직 저장한 조합이 없어요", savedEmptyDesc: "영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.", noPoster: "포스터 없음", cancelSave: "저장 취소", noSavedCombo: "저장된 조합이 없습니다.", comboDeleted: "저장한 조합이 삭제되었습니다.",
+    
+    // AI 추천 관련 추가 다국어
+    aiPickTitle: "AI가 골라본 조합", aiPickDesc: "저장한 취향과 랜덤 추천을 섞어 3가지를 보여드려요.", refreshAiPickBtn: "새로 추천",
+    aiPickLoadingTitle: "AI가 조합을 고르는 중이에요", aiPickLoadingDesc: "저장한 조합을 참고해서 추천을 만들고 있어요. 잠시만 기다려주세요.",
+    aiPickErrorTitle: "AI 추천을 불러오지 못했어요", aiPickErrorDesc: "잠시 후 다시 시도해주세요. 지금은 기본 추천 조합을 대신 보여드릴게요.", aiPickErrorAlert: "AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.",
+    aiBadgeBased: "취향 기반", aiBadgeRandom: "랜덤 추천",
+    aiTitleWait: "저장 조합을 기다리는 추천", aiReasonWait: "아직 저장한 조합이 많지 않아, 누구나 편하게 즐길 수 있는 조합으로 추천했어요.",
+    aiTitleRecent: "최근 저장 조합을 참고했어요", aiTitleRandom: "오늘은 이런 조합 어때요?", aiReasonRandom: "평소와 다른 조합을 시도해볼 수 있도록 무작위로 골라봤어요.",
+    aiRowMovie: "🎬 추천 영화 분위기", aiRowGenre: "🎭 추천 장르", aiRowFood: "🍽 추천 음식", aiClickGuide: "이 장르 영화 보러가기 →",
+    aiHint_action: "빠른 전개의 액션 영화", aiHint_comedy: "가볍게 웃기 좋은 코미디 영화", aiHint_drama: "잔잔하게 몰입하기 좋은 드라마 영화", aiHint_romance: "분위기 있게 보기 좋은 로맨스 영화", aiHint_thriller: "긴장감 있는 스릴러 영화", aiHint_animation: "편하게 보기 좋은 애니메이션 영화"
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
@@ -62,8 +71,6 @@ const i18nData = {
     releaseDate: "Release", rating: "Rating", noReleaseInfo: "No date info", noRatingInfo: "No info",
     noOverview: "No plot description available.", noTitle: "No Title", noMoviesTitle: "No movies found matching criteria.", noMoviesDesc: "Try selecting another genre or search again.",
     modalResultTitle: "✨ Recommendation Result ✨", modalMovieHeader: "🎬 Selected Movie", modalFoodHeader: "🍽 Food Pairing", modalShareBtn: "Save Image 🔗", closeFinalResultModal: "Close",
-    
-    // 💡 새로 추가된 번역
     recommendInfoTitle: "How We Recommend",
     infoLabel1: "Movie Genre", infoDesc1: "Reflects the mood of your selected movie.",
     infoLabel2: "Meal Setting", infoDesc2: "Considers your situation like eating alone or with friends.",
@@ -71,7 +78,20 @@ const i18nData = {
     recommendPageTitle: "Recommendation Details", recommendPageInfo: "Check out the food pairing for your selected movie.",
     recommendLoadingText: "Loading recommendation info...", reactionTitle: "How was this recommendation?",
     likeBtn: "👍 Like", dislikeBtn: "👎 Dislike", saveComboBtn: "💾 Save Combo", backToMovieBtn: "Back to Movies",
-    errorLoadMovie: "Failed to load movie information."
+    errorLoadMovie: "Failed to load movie information.",
+    savedComboTitle: "Recently Saved Combos", savedComboDesc: "Check out your favorite combos again.", editSavedComboBtn: "Edit",
+    savedManageTitle: "Manage Saved Combos", savedViewTitle: "View All Saved Combos", savedManageDoneBtn: "Close", savedViewDoneBtn: "Close",
+    savedEmptyTitle: "No saved combos yet", savedEmptyDesc: "Save your favorite combos on the movie details page and they will appear here.", noPoster: "No Poster", cancelSave: "Unsave", noSavedCombo: "There are no saved combos.", comboDeleted: "Saved combo has been deleted.",
+    
+    // AI 추천 관련 추가 다국어
+    aiPickTitle: "AI Picked Combos", aiPickDesc: "Here are 3 combos mixing your tastes and random picks.", refreshAiPickBtn: "Refresh",
+    aiPickLoadingTitle: "AI is picking a combo", aiPickLoadingDesc: "Creating recommendations based on your saved combos. Please wait.",
+    aiPickErrorTitle: "Failed to load AI recommendations", aiPickErrorDesc: "Please try again later. Showing default recommendations for now.", aiPickErrorAlert: "AI connection unstable. Try again later.",
+    aiBadgeBased: "Taste Based", aiBadgeRandom: "Random Pick",
+    aiTitleWait: "Awaiting saved combos", aiReasonWait: "Not many saved combos yet, so we recommend a universally enjoyable combo.",
+    aiTitleRecent: "Based on recently saved combos", aiTitleRandom: "How about this combo today?", aiReasonRandom: "Picked randomly so you can try something different.",
+    aiRowMovie: "🎬 Movie Vibe", aiRowGenre: "🎭 Genre", aiRowFood: "🍽 Recommended Food", aiClickGuide: "Watch this genre →",
+    aiHint_action: "Fast-paced action", aiHint_comedy: "Lighthearted comedy", aiHint_drama: "Immersive emotional drama", aiHint_romance: "Atmospheric romantic movie", aiHint_thriller: "Tense thriller", aiHint_animation: "Easy-to-watch animation"
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
@@ -96,8 +116,6 @@ const i18nData = {
     releaseDate: "上映日期", rating: "评分", noReleaseInfo: "暂无上映信息", noRatingInfo: "暂无评分",
     noOverview: "暂无剧情简介。", noTitle: "无题", noMoviesTitle: "没有找到符合条件的电影。", noMoviesDesc: "尝试选择其他类型或重新搜索。",
     modalResultTitle: "✨ 专属推荐结果 ✨", modalMovieHeader: "🎬 已选电影", modalFoodHeader: "🍽 美食搭配", modalShareBtn: "保存图片 🔗", closeFinalResultModal: "关闭",
-    
-    // 💡 새로 추가된 번역
     recommendInfoTitle: "推荐方式",
     infoLabel1: "电影类型", infoDesc1: "反映所选电影的氛围。",
     infoLabel2: "用餐场景", infoDesc2: "考虑一人食、夜宵、朋友聚会等场景。",
@@ -105,7 +123,20 @@ const i18nData = {
     recommendPageTitle: "推荐详情", recommendPageInfo: "查看与所选电影搭配的美食。",
     recommendLoadingText: "正在加载推荐信息...", reactionTitle: "这个推荐怎么样？",
     likeBtn: "👍 喜欢", dislikeBtn: "👎 不喜欢", saveComboBtn: "💾 保存组合", backToMovieBtn: "返回电影列表",
-    errorLoadMovie: "无法加载电影信息。"
+    errorLoadMovie: "无法加载电影信息。",
+    savedComboTitle: "最近保存的组合", savedComboDesc: "再次查看您喜欢的组合。", editSavedComboBtn: "编辑",
+    savedManageTitle: "管理保存的组合", savedViewTitle: "查看所有组合", savedManageDoneBtn: "关闭", savedViewDoneBtn: "关闭",
+    savedEmptyTitle: "暂无保存的组合", savedEmptyDesc: "在电影详情页保存您喜欢的组合，它们会显示在这里。", noPoster: "无海报", cancelSave: "取消保存", noSavedCombo: "没有保存的组合。", comboDeleted: "保存的组合已删除。",
+    
+    // AI 추천 관련 추가 다국어
+    aiPickTitle: "AI为您挑选的组合", aiPickDesc: "结合您的口味和随机推荐，为您展示3种组合。", refreshAiPickBtn: "换一批",
+    aiPickLoadingTitle: "AI正在为您挑选组合", aiPickLoadingDesc: "正在参考您保存的组合生成推荐。请稍候。",
+    aiPickErrorTitle: "无法加载AI推荐", aiPickErrorDesc: "请稍后再试。现在将显示默认推荐组合。", aiPickErrorAlert: "AI连接不稳定。请稍后再试。",
+    aiBadgeBased: "基于口味", aiBadgeRandom: "随机推荐",
+    aiTitleWait: "等待保存组合的推荐", aiReasonWait: "因为保存的组合还不多，为您推荐大家都喜欢的组合。",
+    aiTitleRecent: "参考了最近保存的组合", aiTitleRandom: "今天尝试这个组合怎么样？", aiReasonRandom: "随机挑选，让您尝试与平时不同的组合。",
+    aiRowMovie: "🎬 推荐电影氛围", aiRowGenre: "🎭 推荐类型", aiRowFood: "🍽 推荐美食", aiClickGuide: "查看此类型电影 →",
+    aiHint_action: "快节奏动作片", aiHint_comedy: "轻松搞笑喜剧", aiHint_drama: "沉浸式温情剧情片", aiHint_romance: "唯美浪漫爱情片", aiHint_thriller: "紧张刺激的惊悚片", aiHint_animation: "轻松治愈的动画片"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
@@ -130,8 +161,6 @@ const i18nData = {
     releaseDate: "公開日", rating: "評価", noReleaseInfo: "公開日情報なし", noRatingInfo: "情報なし",
     noOverview: "あらすじ情報がありません。", noTitle: "タイトルなし", noMoviesTitle: "条件に一致する映画がありません。", noMoviesDesc: "別のジャンルを選択するか、再度検索してみてください。",
     modalResultTitle: "✨ おすすめの結果 ✨", modalMovieHeader: "🎬 選択した映画", modalFoodHeader: "🍽 おすすめの食べ物", modalShareBtn: "結果をシェアする 🔗", closeFinalResultModal: "閉じる",
-    
-    // 💡 새로 추가된 번역
     recommendInfoTitle: "おすすめの理由",
     infoLabel1: "映画のジャンル", infoDesc1: "選択した映画の雰囲気を反映します。",
     infoLabel2: "食事の状況", infoDesc2: "一人ご飯、夜食、友達と一緒などの状況を考慮します。",
@@ -139,7 +168,20 @@ const i18nData = {
     recommendPageTitle: "おすすめの詳細", recommendPageInfo: "選択した映画に合う食べ物を確認してみてください。",
     recommendLoadingText: "おすすめ情報を読み込んでいます...", reactionTitle: "このおすすめはどうでしたか？",
     likeBtn: "👍 いいね", dislikeBtn: "👎 いまいち", saveComboBtn: "💾 コンボを保存", backToMovieBtn: "映画リストに戻る",
-    errorLoadMovie: "映画情報を読み込めませんでした。"
+    errorLoadMovie: "映画情報を読み込めませんでした。",
+    savedComboTitle: "最近保存したコンボ", savedComboDesc: "お気に入りのコンボをもう一度確認してみてください。", editSavedComboBtn: "編集",
+    savedManageTitle: "保存したコンボの管理", savedViewTitle: "保存したコンボをすべて見る", savedManageDoneBtn: "閉じる", savedViewDoneBtn: "閉じる",
+    savedEmptyTitle: "まだ保存したコンボがありません", savedEmptyDesc: "映画の詳細ページでお気に入りのコンボを保存すると、ここに表示されます。", noPoster: "ポスターなし", cancelSave: "保存取消", noSavedCombo: "保存されたコンボはありません。", comboDeleted: "保存したコンボが削除されました。",
+    
+    // AI 추천 관련 추가 다국어
+    aiPickTitle: "AIが選んだコンボ", aiPickDesc: "保存した好みとランダムおすすめを混ぜて3つご紹介します。", refreshAiPickBtn: "新しくおすすめ",
+    aiPickLoadingTitle: "AIがコンボを選んでいます", aiPickLoadingDesc: "保存したコンボを参考におすすめを作成しています。少々お待ちください。",
+    aiPickErrorTitle: "AIのおすすめを読み込めませんでした", aiPickErrorDesc: "後でもう一度お試しください。現在はデフォルトのおすすめを表示しています。", aiPickErrorAlert: "AI接続が不安定です。後でもう一度お試しください。",
+    aiBadgeBased: "好みベース", aiBadgeRandom: "ランダムおすすめ",
+    aiTitleWait: "保存コンボ待ちのおすすめ", aiReasonWait: "まだ保存されたコンボが多くないため、誰でも楽しめるコンボをおすすめしました。",
+    aiTitleRecent: "最近保存したコンボを参考にしました", aiTitleRandom: "今日はこんなコンボいかがですか？", aiReasonRandom: "いつもと違うコンボを試せるよう、ランダムに選びました。",
+    aiRowMovie: "🎬 おすすめ映画の雰囲気", aiRowGenre: "🎭 おすすめジャンル", aiRowFood: "🍽 おすすめの食べ物", aiClickGuide: "このジャンルの映画を見る →",
+    aiHint_action: "テンポの速いアクション", aiHint_comedy: "気軽に笑えるコメディ", aiHint_drama: "静かに没入できるドラマ", aiHint_romance: "雰囲気の良いロマンス", aiHint_thriller: "緊張感のあるスリラー", aiHint_animation: "見やすいアニメ"
   }
 };
 
@@ -161,7 +203,6 @@ function applyLanguage() {
       darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : "🌙 ダークモード"));
     }
   }
-  document.dispatchEvent(new Event("languageChanged"));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -198,8 +239,10 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lang", selectedLang);
       applyLanguage();
       langModal.classList.remove("show");
+      document.dispatchEvent(new Event("languageChanged"));
     });
   });
   
   applyLanguage();
 });
+
