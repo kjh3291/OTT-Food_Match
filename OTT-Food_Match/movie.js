@@ -165,109 +165,86 @@ async function loadMoviesByGenre(genre) {
     }
 
     if (movieList) {
-      movieList.innerHTML = `
-        <div class="result-card">
-          <p><strong>영화 목록을 불러오지 못했습니다.</strong></p>
-          <p style="color:#666; margin-top:8px;">
-            잠시 후 다시 시도하거나 다른 장르를 선택해주세요.
-          </p>
-        </div>
-      `;
-    }
+  movieList.innerHTML = `
+    <div class="result-card">
+      <p><strong>영화 목록을 불러오지 못했습니다.</strong></p>
+      <p style="color:#666; margin-top:8px;">
+        ${error.message || "잠시 후 다시 시도하거나 다른 장르를 선택해주세요."}
+      </p>
+    </div>
+  `;
+}
   } finally {
     hideMovieLoading();
   }
 }
 
 async function fetchMoviesFromTMDB(genre) {
-  const apiKey = window.CONFIG?.TMDB_API_KEY;
-  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  if (!apiKey) return [];
-
-  const providerId = ottProviderMap[ottKey];
-  if (!providerId) return [];
-
-  const genreId = genreIdMap[genre];
-
   const lang = localStorage.getItem("lang") || "ko";
-  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
-  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
 
+  const tmdbLangMap = {
+    ko: "ko-KR",
+    en: "en-US",
+    zh: "zh-CN",
+    ja: "ja-JP",
+  };
+
+  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
   const maxPagesToFetch = 8;
   const allResults = [];
 
-  function buildMovieUrl(page) {
-    let url =
-      `${baseUrl}/discover/movie` +
-      `?api_key=${apiKey}` +
-      `&language=${tmdbLang}` +
-      `&region=KR` +
-      `&watch_region=KR` +
-      `&with_watch_providers=${providerId}` +
-      `&sort_by=popularity.desc` +
-      `&include_adult=false` +
+  async function fetchMoviePage(page) {
+    const url =
+      `/api/movies` +
+      `?ott=${encodeURIComponent(ottKey)}` +
+      `&genre=${encodeURIComponent(genre)}` +
+      `&lang=${encodeURIComponent(tmdbLang)}` +
       `&page=${page}`;
 
-    if (genre !== "전체" && genreId) {
-      url += `&with_genres=${genreId}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      console.error("영화 목록 API 오류:", response.status, errorData);
+
+      throw new Error(
+        errorData?.message || `영화 목록 API 오류: ${response.status}`
+      );
     }
 
-    return url;
+    return await response.json();
   }
 
   try {
-    const firstResponse = await fetch(buildMovieUrl(1));
+    const firstData = await fetchMoviePage(1);
 
-    if (!firstResponse.ok) {
-      console.error("TMDB 첫 페이지 요청 실패:", firstResponse.status);
-      return [];
+    if (!firstData.movies || !Array.isArray(firstData.movies)) {
+      throw new Error("영화 목록 응답 형식이 올바르지 않습니다.");
     }
 
-    const firstData = await firstResponse.json();
-    const totalPages = Math.min(firstData.total_pages || 1, maxPagesToFetch);
+    allResults.push(...firstData.movies);
 
-    const firstMovies = firstData.results.map((movie) => ({
-      id: movie.id,
-      title: movie.title || movie.name || "No Title",
-      overview: movie.overview || "",
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date || "",
-      rating: movie.vote_average || 0,
-      popularity: movie.popularity || 0,
-      genre: genre,
-    }));
-
-    allResults.push(...firstMovies);
+    const totalPages = Math.min(firstData.totalPages || 1, maxPagesToFetch);
 
     for (let page = 2; page <= totalPages; page++) {
-      const response = await fetch(buildMovieUrl(page));
+      const data = await fetchMoviePage(page);
 
-      if (!response.ok) {
-        console.error(`${page}페이지 요청 실패:`, response.status);
-        continue;
+      if (data.movies && Array.isArray(data.movies)) {
+        allResults.push(...data.movies);
       }
-
-      const data = await response.json();
-
-      const movies = data.results.map((movie) => ({
-        id: movie.id,
-        title: movie.title || movie.name || "No Title",
-        overview: movie.overview || "",
-        posterPath: movie.poster_path,
-        releaseDate: movie.release_date || "",
-        rating: movie.vote_average || 0,
-        popularity: movie.popularity || 0,
-        genre: genre,
-      }));
-
-      allResults.push(...movies);
     }
 
-    return removeDuplicateMovies(allResults);
+    const uniqueMovies = removeDuplicateMovies(allResults);
+
+    if (uniqueMovies.length === 0 && genre !== "전체") {
+      console.warn(`${genre} 장르 결과가 없어 전체 영화로 다시 불러옵니다.`);
+      return await fetchMoviesFromTMDB("전체");
+    }
+
+    return uniqueMovies;
   } catch (error) {
-    console.error("TMDB API 요청 중 오류 발생:", error);
-    return [];
+    console.error("영화 목록 요청 중 오류 발생:", error);
+    throw error;
   }
 }
 
@@ -317,8 +294,8 @@ function renderMovies(movies) {
       <div class="result-card">
         <p><strong>${typeof t === "function" ? t("noMoviesTitle") : "조건에 맞는 영화가 없습니다."}</strong></p>
         <p style="color:#666; margin-top:8px;">
-          ${typeof t === "function" ? t("noMoviesDesc") : "다른 장르를 선택하거나 다시 시도해보세요."}
-        </p>
+  ${error.message || "잠시 후 다시 시도하거나 다른 장르를 선택해주세요."}
+</p>
       </div>
     `;
 

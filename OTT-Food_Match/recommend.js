@@ -111,50 +111,46 @@ let currentReason = "";
 // ===============================
 
 async function fetchMovieDetail() {
-  const apiKey = window.CONFIG?.TMDB_API_KEY;
-  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  if (!apiKey) {
-    alert("TMDB API Key가 없습니다. config.js를 확인해주세요.");
-    return null;
-  }
-
   if (!movieId) {
     alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요.");
-    window.location.href = "index.html"; // 수정됨
+    window.location.href = "index.html";
     return null;
   }
 
-  const lang = typeof getLang === 'function' ? getLang() : "ko";
-  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
+  const lang = localStorage.getItem("lang") || "ko";
+
+  const tmdbLangMap = {
+    ko: "ko-KR",
+    en: "en-US",
+    zh: "zh-CN",
+    ja: "ja-JP",
+  };
+
   const tmdbLang = tmdbLangMap[lang] || "ko-KR";
 
   const url =
-    `${baseUrl}/movie/${movieId}` +
-    `?api_key=${apiKey}` +
-    `&language=${tmdbLang}`;
+    `/api/movie-detail` +
+    `?movieId=${encodeURIComponent(movieId)}` +
+    `&lang=${encodeURIComponent(tmdbLang)}`;
 
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error("영화 상세 정보 요청 실패:", response.status);
-      alert("영화 상세 정보를 불러오지 못했습니다.");
+      const errorData = await response.json().catch(() => null);
+      console.error("영화 상세 API 오류:", response.status, errorData);
+      alert(errorData?.message || "영화 상세 정보를 불러오지 못했습니다.");
       return null;
     }
 
-    const movie = await response.json();
+    const data = await response.json();
 
-    return {
-      id: movie.id,
-      title: movie.title || "제목 없음",
-      overview: movie.overview || "",
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date || "",
-      rating: movie.vote_average,
-      runtime: movie.runtime || 0,
-      genres: movie.genres ? movie.genres.map((genre) => genre.name) : [],
-    };
+    if (!data.movie) {
+      alert("영화 상세 응답 형식이 올바르지 않습니다.");
+      return null;
+    }
+
+    return data.movie;
   } catch (error) {
     console.error("영화 상세 API 요청 중 오류:", error);
     alert("API 요청 중 오류가 발생했습니다.");
@@ -334,6 +330,7 @@ function renderRecommendDetail(movie, food, reason) {
       </div>
     </div>
   `;
+
     hideRecommendOverlayLoading();
 }
 
@@ -411,14 +408,16 @@ function saveCombo() {
   );
 
   if (isAlreadySaved) {
-    alert(typeof t === 'function' ? t('alert_already_saved') : "이미 저장된 조합입니다.");
-    return;
-  }
+  alert(typeof t === 'function' ? t('alert_already_saved') : "이미 저장된 조합입니다.");
+  window.location.href = "index.html";
+  return;
+}
 
   savedCombos.push(combo);
-  localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
+localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
 
-  alert(typeof t === 'function' ? t('alert_saved') : "조합이 저장되었습니다.");
+alert(typeof t === 'function' ? t('alert_saved') : "조합이 저장되었습니다.");
+window.location.href = "index.html";
 }
 
 
@@ -460,8 +459,11 @@ if (backToMainBtn) {
 // 언어 변경 시 화면 텍스트 실시간 재반영 추가
 document.addEventListener("languageChanged", () => {
   if (currentMovie && currentFood) {
-     currentReason = makeRecommendReason(currentMovie, currentFood);
-     renderRecommendDetail(currentMovie, currentFood, currentReason);
+    if (pageMode !== "saved") {
+      currentReason = makeRecommendReason(currentMovie, currentFood);
+    }
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
   }
 });
 
@@ -540,18 +542,16 @@ async function initRecommendPage() {
   currentMovie = movie;
 
   if (pageMode === "saved" && savedFoodName) {
-    currentFood = {
-      name: savedFoodName,
-      category: savedFoodCategory || "기타",
-    };
-    currentReason = savedReason;
-    
-    // 만약 언어 변경이 발생하면 현재 언어로 다시 조합
-    currentReason = makeRecommendReason(currentMovie, currentFood);
-    
-    renderRecommendDetail(currentMovie, currentFood, currentReason);
-    return;
-  }
+  currentFood = {
+    name: savedFoodName,
+    category: savedFoodCategory || "기타",
+  };
+
+  currentReason = savedReason || "저장된 추천 사유가 없습니다.";
+
+  renderRecommendDetail(currentMovie, currentFood, currentReason);
+  return;
+}
 
   const recommendation = makeFoodRecommendation(movie);
   currentFood = recommendation.food;
