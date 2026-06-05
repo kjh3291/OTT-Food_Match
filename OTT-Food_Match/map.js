@@ -41,7 +41,6 @@ if (navigator.geolocation) {
     });
 }
 
-// 2. 내 위치 아이콘 표시
 function updateMyLocation(locPosition) {
     if (myLocationMarker) myLocationMarker.setMap(null);
     const content = '<div style="width:10px;height:10px;background-color:#6c5ce7;border:3px solid white;border-radius:50%;box-shadow:0 0 8px rgba(108,92,231,0.8);"></div>';
@@ -55,7 +54,7 @@ function updateMyLocation(locPosition) {
     myLocationMarker.setMap(map);
 }
 
-// 3. 지도 이벤트 설정
+// 2. 지도 이벤트 설정
 kakao.maps.event.addListener(map, 'idle', function () {
     if (!isSearchMode) {
         const currentCenter = map.getCenter();
@@ -68,7 +67,7 @@ kakao.maps.event.addListener(map, 'click', function () {
     infowindow.close();
 });
 
-// 4. 카테고리 버튼 이벤트
+// 3. 카테고리 버튼 이벤트
 const categoryBtns = document.querySelectorAll('.category-btn');
 function applyInitialCategoryButton() {
     categoryBtns.forEach((btn) => {
@@ -90,17 +89,32 @@ categoryBtns.forEach(btn => {
     });
 });
 
-// 5. 주변 검색
+// 4. 주변 검색 (전체 카테고리 지원)
 function searchPlacesByCategory(pos) {
-    const categoryCode = currentCategoryKeyword === '카페' ? 'CE7' : 'FD6';
-    ps.keywordSearch(currentCategoryKeyword, function (data, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            data.forEach(place => displayPlaceMarker(place));
-        }
-    }, { location: pos, radius: 1000, sort: kakao.maps.services.SortBy.DISTANCE, category_group_code: categoryCode });
+    const options = {
+        location: pos,
+        radius: 1000,
+        sort: kakao.maps.services.SortBy.DISTANCE
+    };
+
+    if (currentCategoryKeyword === '전체') {
+        // '전체'일 때 음식점(FD6) 전체 검색
+        ps.categorySearch('FD6', (data, status) => {
+            if (status === kakao.maps.services.Status.OK) {
+                data.forEach(place => displayPlaceMarker(place));
+            }
+        }, options);
+    } else {
+        const categoryCode = currentCategoryKeyword === '카페' ? 'CE7' : 'FD6';
+        ps.keywordSearch(currentCategoryKeyword, (data, status) => {
+            if (status === kakao.maps.services.Status.OK) {
+                data.forEach(place => displayPlaceMarker(place));
+            }
+        }, { ...options, category_group_code: categoryCode });
+    }
 }
 
-// 6. 검색 로직
+// 5. 직접 검색 및 제어
 const keywordInput = document.getElementById('keyword');
 const cancelBtn = document.getElementById('cancelBtn');
 if (document.getElementById('searchBtn')) document.getElementById('searchBtn').addEventListener('click', searchByManualKeyword);
@@ -132,7 +146,6 @@ function searchByManualKeyword() {
     }, { location: map.getCenter(), sort: kakao.maps.services.SortBy.DISTANCE });
 }
 
-// 7. 마커 표시
 function displayPlaceMarker(place) {
     const marker = new kakao.maps.Marker({ map: map, position: new kakao.maps.LatLng(place.y, place.x) });
     kakao.maps.event.addListener(marker, 'click', () => openInfoWindow(place, marker));
@@ -144,7 +157,7 @@ function removeMarkers() {
     markers = [];
 }
 
-// 정보창: 추천 메뉴 기능 제거, 식당 선택 버튼만 배치
+// 정보창: 식당 선택 버튼만 배치
 function openInfoWindow(place, marker) {
     currentSelectedPlace = place;
     const content = `
@@ -159,7 +172,7 @@ function openInfoWindow(place, marker) {
     infowindow.open(map, marker);
 }
 
-// 8. 내 위치 버튼 (속도 최적화 적용)
+// 8. 내 위치 버튼
 const myLocationBtn = document.getElementById('myLocationBtn');
 if (myLocationBtn) {
     myLocationBtn.addEventListener('click', () => {
