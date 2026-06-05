@@ -190,7 +190,7 @@ async function fetchMoviesFromTMDB(genre) {
   };
 
   const tmdbLang = tmdbLangMap[lang] || "ko-KR";
-  const maxPagesToFetch = 8;
+  const maxPagesToFetch = 3;
   const allResults = [];
 
   async function fetchMoviePage(page) {

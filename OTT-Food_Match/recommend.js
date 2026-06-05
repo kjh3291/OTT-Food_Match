@@ -96,6 +96,35 @@ const saveComboBtn = document.getElementById("saveComboBtn");
 const backToMovieBtn = document.getElementById("backToMovieBtn");
 const backToMainBtn = document.getElementById("backToMainBtn");
 
+const reactionCard =
+  likeBtn?.closest(".card") ||
+  document.querySelector(".reaction-area")?.closest(".card");
+
+function hideReactionCard() {
+  if (reactionCard) {
+    reactionCard.style.display = "none";
+  }
+}
+
+
+function showReactionCard() {
+  if (reactionCard && pageMode !== "saved") {
+    reactionCard.style.display = "";
+  }
+}
+
+function hideBackToMovieButton() {
+  if (backToMovieBtn) {
+    backToMovieBtn.style.display = "none";
+  }
+}
+
+function showBackToMovieButton() {
+  if (backToMovieBtn && pageMode !== "saved") {
+    backToMovieBtn.style.display = "";
+  }
+}
+
 
 // ===============================
 // 4. 현재 선택된 정보 저장
@@ -274,10 +303,18 @@ function getTranslatedGenre(genre) {
   return key && typeof t === 'function' ? t(key) : genre;
 }
 
-function updateRecommendPageInfo() {
-  if (recommendPageInfo) {
-    recommendPageInfo.textContent = typeof t === 'function' ? `${t('infoLabel2')}: ${getTranslatedMeal(selectedMeal)} / ${t('infoLabel1')}: ${getTranslatedGenre(selectedGenre)}` : `식사 상황: ${selectedMeal} / 장르: ${selectedGenre}`;
+function safeText(key, fallback) {
+  if (typeof t !== "function") {
+    return fallback;
   }
+
+  const translated = t(key);
+
+  if (!translated || translated === key) {
+    return fallback;
+  }
+
+  return translated;
 }
 
 // ===============================
@@ -290,7 +327,10 @@ function renderRecommendDetail(movie, food, reason) {
     : "";
 
   recommendPageTitle.textContent = movie.title;
-  updateRecommendPageInfo();
+
+if (recommendPageInfo) {
+  recommendPageInfo.textContent = `식사 상황: ${selectedMeal} / 영화 장르: ${selectedGenre}`;
+}
 
   recommendDetailArea.innerHTML = `
     <div class="recommend-layout">
@@ -298,34 +338,37 @@ function renderRecommendDetail(movie, food, reason) {
         ${
           posterUrl
             ? `<img src="${posterUrl}" alt="${movie.title} 포스터" class="recommend-poster">`
-            : `<div class="no-poster">${typeof t === 'function' ? t('infoNone') : "포스터 없음"}</div>`
-        }
+            : `<div class="no-poster">${safeText("noPoster", "포스터 없음")}</div>`  
+          }
       </div>
 
       <div class="recommend-content-box">
         <h2>${movie.title}</h2>
-        <p><strong>${typeof t === 'function' ? t('recDate') : '개봉일:'}</strong> ${movie.releaseDate || (typeof t === 'function' ? t('infoNone') : "정보 없음")}</p>
-        <p><strong>${typeof t === 'function' ? t('recRating') : '평점:'}</strong> ${
-          movie.rating ? movie.rating.toFixed(1) : (typeof t === 'function' ? t('infoNone') : "정보 없음")
-        }</p>
-        <p><strong>${typeof t === 'function' ? t('recRuntime') : '상영 시간:'}</strong> ${
-          movie.runtime ? movie.runtime + (typeof t === 'function' ? t('mins') : "분") : (typeof t === 'function' ? t('infoNone') : "정보 없음")
-        }</p>
-        <p><strong>${typeof t === 'function' ? t('recGenreLabel') : '영화 장르:'}</strong> ${
-          movie.genres.length > 0 ? movie.genres.join(", ") : getTranslatedGenre(selectedGenre)
-        }</p>
+        <p><strong>${safeText("recDate", "개봉일:")}</strong> ${movie.releaseDate || safeText("infoNone", "정보 없음")}</p>
+
+<p><strong>${safeText("recRating", "평점:")}</strong> ${
+  movie.rating ? movie.rating.toFixed(1) : safeText("infoNone", "정보 없음")
+}</p>
+
+<p><strong>${safeText("recRuntime", "상영 시간:")}</strong> ${
+  movie.runtime ? movie.runtime + safeText("mins", "분") : safeText("infoNone", "정보 없음")
+}</p>
+
+<p><strong>${safeText("recGenreLabel", "영화 장르:")}</strong> ${
+  movie.genres.length > 0 ? movie.genres.join(", ") : getTranslatedGenre(selectedGenre)
+}</p>
 
         <hr class="recommend-divider">
 
-        <h3>${typeof t === 'function' ? t('recMovieDesc') : '🎬 영화 설명'}</h3>
-        <p>${movie.overview || (typeof t === 'function' ? t('infoNone') : "줄거리 정보가 없습니다.")}</p>
+        <h3>${safeText("recMovieDesc", "🎬 영화 설명")}</h3>
+        <p>${movie.overview || safeText("noOverview", "줄거리 정보가 없습니다.")}</p>
 
         <hr class="recommend-divider">
 
-        <h3>${typeof t === 'function' ? t('recFoodRec') : '🍽 추천 음식'}</h3>
+        <h3>${safeText("recFoodRec", "🍽 추천 음식")}</h3>
         <p><strong>${food.name}</strong></p>
 
-        <h3>${typeof t === 'function' ? t('recReason') : '💡 추천 사유'}</h3>
+        <h3>${safeText("recReason", "💡 추천 사유")}</h3>
         <p>${reason}</p>
       </div>
     </div>
@@ -459,11 +502,8 @@ if (backToMainBtn) {
 // 언어 변경 시 화면 텍스트 실시간 재반영 추가
 document.addEventListener("languageChanged", () => {
   if (currentMovie && currentFood) {
-    if (pageMode !== "saved") {
-      currentReason = makeRecommendReason(currentMovie, currentFood);
-    }
-
-    renderRecommendDetail(currentMovie, currentFood, currentReason);
+     currentReason = makeRecommendReason(currentMovie, currentFood);
+     renderRecommendDetail(currentMovie, currentFood, currentReason);
   }
 });
 
@@ -542,6 +582,9 @@ async function initRecommendPage() {
   currentMovie = movie;
 
   if (pageMode === "saved" && savedFoodName) {
+  hideReactionCard();
+  hideBackToMovieButton();
+
   currentFood = {
     name: savedFoodName,
     category: savedFoodCategory || "기타",
@@ -553,11 +596,14 @@ async function initRecommendPage() {
   return;
 }
 
-  const recommendation = makeFoodRecommendation(movie);
-  currentFood = recommendation.food;
-  currentReason = recommendation.reason;
+showReactionCard();
+showBackToMovieButton();
 
-  renderRecommendDetail(currentMovie, currentFood, currentReason);
+const recommendation = makeFoodRecommendation(movie);
+currentFood = recommendation.food;
+currentReason = recommendation.reason;
+
+renderRecommendDetail(currentMovie, currentFood, currentReason);
 }
 
 initRecommendPage();
