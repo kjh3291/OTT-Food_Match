@@ -1935,3 +1935,79 @@ body.dark-mode .result-card.best-match p {
 }
 
 
+/* ===============================
+   공통 페이지 로딩 오버레이
+================================ */
+
+.page-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(248, 244, 241, 0.88);
+  backdrop-filter: blur(7px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-loading-overlay.hidden {
+  display: none;
+}
+
+.page-loading-box {
+  width: min(430px, 86vw);
+  padding: 42px 34px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14);
+  text-align: center;
+}
+
+.page-loading-spinner {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 22px;
+  border: 6px solid #eeeeee;
+  border-top-color: #ff715b;
+  border-radius: 50%;
+  animation: pageLoadingSpin 0.9s linear infinite;
+}
+
+.page-loading-box h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  color: #2b2b2b;
+}
+
+.page-loading-box p {
+  margin: 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+
+@keyframes pageLoadingSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body.dark-mode .page-loading-overlay {
+  background: rgba(20, 20, 24, 0.84);
+}
+
+body.dark-mode .page-loading-box {
+  background: rgba(38, 38, 44, 0.97);
+}
+
+body.dark-mode .page-loading-box h2 {
+  color: #f5f5f5;
+}
+
+body.dark-mode .page-loading-box p {
+  color: #cccccc;
+}

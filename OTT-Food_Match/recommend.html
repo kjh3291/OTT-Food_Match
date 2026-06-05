@@ -8,6 +8,14 @@
 </head>
 
 <body>
+  
+  <div id="recommendLoadingOverlay" class="page-loading-overlay hidden">
+  <div class="page-loading-box">
+    <div class="page-loading-spinner"></div>
+    <h2 id="recommendLoadingTitle">추천 정보를 불러오는 중입니다</h2>
+    <p id="recommendLoadingDesc">잠시만 기다려주세요.</p>
+  </div>
+</div>
   <div class="app recommend-app">
     <header class="header">
       <div class="setting-area">
@@ -64,6 +72,8 @@
   </div>
 
   <script src="i18n.js"></script>
+  <script src="food.js"></script>
+  <script src="food-algorithm.js"></script>
   <script src="recommend.js"></script>
 </body>
 </html>
