@@ -223,6 +223,7 @@ function safeText(key, fallback) {
 // ===============================
 // 9. 화면 출력 (다국어 + 지도 연동)
 // ===============================
+// recommend.js 내의 renderRecommendDetail 함수 수정
 function renderRecommendDetail(movie, food, reason) {
   const posterUrl = movie.posterPath ? `https://image.tmdb.org/t/p/w500${movie.posterPath}` : "";
   recommendPageTitle.textContent = movie.title;
@@ -231,17 +232,46 @@ function renderRecommendDetail(movie, food, reason) {
     recommendPageInfo.textContent = `식사 상황: ${selectedMeal} / 영화 장르: ${selectedGenre}`;
   }
 
-  // 💡 모드에 따라 추천 텍스트를 "선택한 식당"으로 동적 변경!
-  const isMapPick = (pageMode === "mapPick");
-  const foodTitle = isMapPick ? "🍽 선택한 식당" : safeText("recFoodRec", "🍽 추천 음식");
+  // 지도로 넘어갈 주소 조립 (추천받은 음식의 카테고리를 파라미터로 주입)
+  const mapUrl = `map.html?ott=${encodeURIComponent(ottKey)}&meal=${encodeURIComponent(selectedMeal)}&movieId=${encodeURIComponent(movieId)}&foodCategory=${encodeURIComponent(food.category)}`;
 
+  let mapPickHtml = "";
+  if (pageMode === "mapPick" && mapPickPlaceName) {
+    mapPickHtml = `
+      <div class="map-pick-info" style="margin-bottom: 25px; padding: 20px; border: 2px solid #ff715b; border-radius: 16px; background: rgba(255, 113, 91, 0.15);">
+        <h3 style="margin: 0 0 10px 0; color: #ff715b;">📍 선택하신 식당</h3>
+        <p style="margin: 5px 0; font-size: 1.1rem;"><strong>식당 이름:</strong> ${mapPickPlaceName}</p>
+        <p style="margin: 5px 0; color: #ccc;"><strong>업종:</strong> ${mapPickPlaceCategory}</p>
+      </div>
+    `;
+  }
+
+  // 포스터 박스 밑에 [🗺 내 주변 식당 찾아보기] 버튼 배치
   recommendDetailArea.innerHTML = `
     <div class="recommend-layout">
       <div class="recommend-poster-box">
         ${posterUrl ? `<img src="${posterUrl}" alt="${movie.title}" class="recommend-poster">` : `<div class="no-poster">${safeText("noPoster", "포스터 없음")}</div>`}
+        
+        <button onclick="window.location.href='${mapUrl}'" style="
+          width: 100%;
+          margin-top: 15px;
+          padding: 14px;
+          border: none;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+          color: white;
+          font-weight: bold;
+          font-size: 15px;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+          transition: 0.3s;
+        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+          🗺 내 주변 식당 찾아보기
+        </button>
       </div>
 
       <div class="recommend-content-box">
+        ${mapPickHtml}
         <h2>${movie.title}</h2>
         <p><strong>${safeText("recDate", "개봉일:")}</strong> ${movie.releaseDate || safeText("infoNone", "정보 없음")}</p>
         <p><strong>${safeText("recRating", "평점:")}</strong> ${movie.rating ? movie.rating.toFixed(1) : safeText("infoNone", "정보 없음")}</p>
@@ -253,8 +283,7 @@ function renderRecommendDetail(movie, food, reason) {
         <p>${movie.overview || safeText("noOverview", "줄거리 정보가 없습니다.")}</p>
 
         <hr class="recommend-divider">
-        
-        <h3 style="color: #ff715b;">${foodTitle}</h3>
+        <h3 style="color: #ff715b;">${pageMode === "mapPick" ? "🍽 선택한 식당" : safeText("recFoodRec", "🍽 추천 음식")}</h3>
         <p style="font-size: 1.5rem; font-weight: bold; color: #ff715b; background: rgba(255, 113, 91, 0.1); padding: 10px; border-radius: 8px; display: inline-block;">
             ${food.name}
         </p>
