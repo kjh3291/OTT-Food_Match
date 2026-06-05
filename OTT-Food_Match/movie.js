@@ -32,6 +32,21 @@ const loadingText = document.getElementById("loadingText");
 const movieList = document.getElementById("movieList");
 const backToMainBtn = document.getElementById("backToMainBtn");
 
+const movieLoadingOverlay = document.getElementById("movieLoadingOverlay");
+
+function showMovieLoading() {
+  if (movieLoadingOverlay) {
+    movieLoadingOverlay.classList.remove("hidden");
+  }
+}
+
+function hideMovieLoading() {
+  if (movieLoadingOverlay) {
+    movieLoadingOverlay.classList.add("hidden");
+  }
+}
+
+
 const sortMenuBtn = document.getElementById("sortMenuBtn");
 const sortMenu = document.getElementById("sortMenu");
 const sortOptions = document.querySelectorAll(".sort-option");
@@ -119,12 +134,19 @@ genreTabs.forEach((tab) => {
 });
 
 async function loadMoviesByGenre(genre) {
+  showMovieLoading();
+
   if (loadingText) {
     loadingText.classList.remove("hidden");
-    loadingText.textContent = typeof t === "function" ? t("loadingText") : "영화 목록을 불러오는 중입니다...";
+    loadingText.textContent =
+      typeof t === "function"
+        ? t("loadingText")
+        : "영화 목록을 불러오는 중입니다...";
   }
 
-  movieList.innerHTML = "";
+  if (movieList) {
+    movieList.innerHTML = "";
+  }
 
   if (loadMoreBtn) {
     loadMoreBtn.classList.add("hidden");
@@ -132,8 +154,29 @@ async function loadMoviesByGenre(genre) {
 
   visibleMovieCount = MOVIES_PER_LOAD;
 
-  currentMovies = await fetchMoviesFromTMDB(genre);
-  renderMovies(currentMovies);
+  try {
+    currentMovies = await fetchMoviesFromTMDB(genre);
+    renderMovies(currentMovies);
+  } catch (error) {
+    console.error("영화 목록 로딩 실패:", error);
+
+    if (loadingText) {
+      loadingText.classList.add("hidden");
+    }
+
+    if (movieList) {
+      movieList.innerHTML = `
+        <div class="result-card">
+          <p><strong>영화 목록을 불러오지 못했습니다.</strong></p>
+          <p style="color:#666; margin-top:8px;">
+            잠시 후 다시 시도하거나 다른 장르를 선택해주세요.
+          </p>
+        </div>
+      `;
+    }
+  } finally {
+    hideMovieLoading();
+  }
 }
 
 async function fetchMoviesFromTMDB(genre) {
