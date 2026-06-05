@@ -165,7 +165,7 @@ async function fetchMoviesFromTMDB(genre) {
     ko: "ko-KR",
     en: "en-US",
     zh: "zh-CN",
-    ja: "ja-JP",
+    ja: "ja-JP"
   };
 
   const tmdbLang = tmdbLangMap[lang] || "ko-KR";

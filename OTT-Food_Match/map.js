@@ -188,3 +188,4 @@ if (myLocationBtn) {
         });
     });
 }
+
