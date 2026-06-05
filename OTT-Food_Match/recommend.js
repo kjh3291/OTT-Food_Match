@@ -337,12 +337,18 @@ async function initRecommendPage() {
   let movie = null;
 
   if (pageMode === "mapPick") {
-    // 💡 1. 지도에서 넘어왔을 경우: 식당 카테고리를 바탕으로 랜덤 영화 불러오기
-    showRecommendLoading("선택하신 식당에 어울리는 영화를 찾는 중입니다...");
-    const recommendedGenre = getGenreFromFoodCategory(mapPickPlaceCategory);
-    movie = await fetchRandomMovie(recommendedGenre);
+    showRecommendLoading("선택하신 식당 정보를 불러오는 중입니다...");
+
+    // 핵심 수정: 이미 movieId가 존재하면 (영화->지도->식당선택 으로 온 경우) 기존 영화 정보 로드
+    if (movieId) {
+      movie = await fetchMovieDetailById(movieId);
+    } else {
+      // 만약 바로 식당을 고르고 온 경우라면 (메인->지도->식당선택), 식당 카테고리에 맞는 랜덤 영화 추출
+      const recommendedGenre = getGenreFromFoodCategory(mapPickPlaceCategory);
+      movie = await fetchRandomMovie(recommendedGenre);
+    }
   } else {
-    // 💡 2. 일반 영화 목록에서 넘어왔을 경우: 기존 방식 유지
+    // 일반 영화 목록에서 넘어왔을 경우
     showRecommendLoading("추천 정보를 불러오는 중입니다...");
     if (!movieId) {
       alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요.");
@@ -363,9 +369,8 @@ async function initRecommendPage() {
 
   // 화면 렌더링 분기
   if (pageMode === "mapPick") {
-    // 💡 핵심: 식당 이름이 추천 음식 영역에 들어갑니다!
     currentFood = { name: mapPickPlaceName || "추천 식당", category: mapPickPlaceCategory || "기타" };
-    currentReason = `지도에서 직접 선택하신 식당 '${mapPickPlaceName}'(${mapPickPlaceCategory})의 분위기와 어울리는 [${selectedGenre}] 장르의 영화를 자동으로 찾아드렸습니다! 맛있는 식사와 함께 영화를 감상해보세요.`;
+    currentReason = `선택하신 '${mapPickPlaceName}'의 음식과 ${movie.title} 영화는 최고의 조합이 될 것입니다! 맛있게 드시면서 즐거운 감상 되시길 바랍니다.`;
     renderRecommendDetail(currentMovie, currentFood, currentReason);
 
   } else if (pageMode === "saved" && savedFoodName) {
