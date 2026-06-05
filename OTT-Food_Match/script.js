@@ -16,6 +16,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const progressBar = document.getElementById("progressBar");
   const progressFill = document.getElementById("progressFill");
 
+  const ottStepTitle = document.getElementById("ottStepTitle");
+
+function updateOttStepTitle() {
+  if (!ottStepTitle) return;
+
+  if (state.primary === "food") {
+    ottStepTitle.textContent = "3. 이용 중인 OTT 플랫폼을 알려주세요.";
+  } else {
+    ottStepTitle.textContent = "3. 이용 중인 OTT 플랫폼을 알려주세요.";
+  }
+}
+
   // 버튼 이벤트 등록
   document.querySelectorAll(".option-btn").forEach((button) => {
     button.addEventListener("click", () => {
@@ -40,99 +52,166 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function updateProgress(step) {
-    if (progressBar && progressFill) {
-      progressBar.style.display = "block";
-      const totalSteps = state.primary === "ott" ? 3 : 4;
-      const percentage = (step / totalSteps) * 100;
-      progressFill.style.width = `${percentage}%`;
-    }
-  }
+  if (progressBar && progressFill) {
+    progressBar.style.display = "block";
 
-  // 다음 단계 버튼
-  if (nextBtn) {
-    nextBtn.addEventListener("click", () => {
-      if (state.currentStep === 1) {
-        if (!state.primary) return showCustomAlert(typeof t === 'function' ? t("alert_primary") : "기준을 선택해주세요.");
-        steps[1].classList.add("hidden");
-        steps[1].classList.remove("active");
-        steps[2].classList.remove("hidden");
-        steps[2].classList.add("active");
-        state.currentStep = 2;
-        if (prevBtn) prevBtn.style.display = "block";
-        updateProgress(2);
-      } else if (state.currentStep === 2) {
-        if (!state.situation) return showCustomAlert(typeof t === 'function' ? t("alert_situation") : "상황을 선택해주세요.");
-        steps[2].classList.add("hidden");
-        steps[2].classList.remove("active");
-        if (state.primary === "ott") {
-          steps["3-ott"].classList.remove("hidden");
-          steps["3-ott"].classList.add("active");
-          state.currentStep = "3-ott";
-        } else {
-          steps["3-food"].classList.remove("hidden");
-          steps["3-food"].classList.add("active");
-          state.currentStep = "3-food";
-        }
-        updateProgress(3);
-      } else if (state.currentStep === "3-ott") {
-  if (!state.detail) {
-    return showCustomAlert(typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요.");
-  }
-  goToMoviePage(state.detail, state.situation);
-} 
-      else if (state.currentStep === "3-food") {
-        if (!state.detail) return showCustomAlert(typeof t === 'function' ? t("alert_detail") : "음식을 선택해주세요.");
-        steps["3-food"].classList.add("hidden");
-        steps["3-food"].classList.remove("active");
-        steps[4].classList.remove("hidden");
-        steps[4].classList.add("active");
-        state.currentStep = 4;
-        updateProgress(4);
-      } else if (state.currentStep === 4) {
-  if (!state.selectedOtt) {
-    return showCustomAlert(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
-  }
+    // OTT 기준: 기준 선택 → 식사 상황 → OTT 선택 = 3단계
+    // 음식 기준: 기준 선택 → 식사 상황 → OTT 선택 = 3단계
+    const totalSteps = 3;
 
-  goToMoviePage(state.selectedOtt, state.situation, state.detail);
+    const percentage = (step / totalSteps) * 100;
+    progressFill.style.width = `${percentage}%`;
+  }
 }
-    });
-  }
 
-  // 이전 단계 버튼
-  if (prevBtn) {
-    prevBtn.addEventListener("click", () => {
-      if (state.currentStep === 2) {
-        steps[2].classList.add("hidden");
-        steps[2].classList.remove("active");
-        steps[1].classList.remove("hidden");
-        steps[1].classList.add("active");
-        state.currentStep = 1;
-        prevBtn.style.display = "none";
-        updateProgress(1);
-      } else if (state.currentStep === "3-ott") {
-        steps["3-ott"].classList.add("hidden");
-        steps["3-ott"].classList.remove("active");
-        steps[2].classList.remove("hidden");
-        steps[2].classList.add("active");
-        state.currentStep = 2;
-        updateProgress(2);
-      } else if (state.currentStep === "3-food") {
-        steps["3-food"].classList.add("hidden");
-        steps["3-food"].classList.remove("active");
-        steps[2].classList.remove("hidden");
-        steps[2].classList.add("active");
-        state.currentStep = 2;
-        updateProgress(2);
-      } else if (state.currentStep === 4) {
-        steps[4].classList.add("hidden");
-        steps[4].classList.remove("active");
-        steps["3-food"].classList.remove("hidden");
-        steps["3-food"].classList.add("active");
-        state.currentStep = "3-food";
-        updateProgress(3);
+// 💡 다국어 지원 결과 도출 함수
+  // 다음 단계 버튼
+if (nextBtn) {
+  nextBtn.addEventListener("click", () => {
+    if (state.currentStep === 1) {
+      if (!state.primary) {
+        return showCustomAlert(
+          typeof t === "function" ? t("alert_primary") : "기준을 선택해주세요."
+        );
       }
-    });
-  }
+
+      steps[1].classList.add("hidden");
+      steps[1].classList.remove("active");
+
+      steps[2].classList.remove("hidden");
+      steps[2].classList.add("active");
+
+      state.currentStep = 2;
+
+      if (prevBtn) {
+        prevBtn.style.display = "block";
+      }
+
+      updateProgress(2);
+      return;
+    }
+
+    if (state.currentStep === 2) {
+      if (!state.situation) {
+        return showCustomAlert(
+          typeof t === "function" ? t("alert_situation") : "상황을 선택해주세요."
+        );
+      }
+
+      steps[2].classList.add("hidden");
+      steps[2].classList.remove("active");
+
+      // OTT 기준: 바로 영화 목록으로 갈 OTT 선택 단계
+      if (state.primary === "ott") {
+        steps["3-ott"].classList.remove("hidden");
+        steps["3-ott"].classList.add("active");
+        state.currentStep = "3-ott";
+        updateProgress(3);
+        return;
+      }
+
+      // 음식 기준: 음식 종류 선택은 건너뛰고 바로 OTT 선택 단계
+      updateOttStepTitle();
+
+      steps[4].classList.remove("hidden");
+      steps[4].classList.add("active");
+      state.currentStep = 4;
+      updateProgress(3);
+      return;
+    }
+
+    if (state.currentStep === "3-ott") {
+      if (!state.detail) {
+        return showCustomAlert(
+          typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요."
+        );
+      }
+
+      goToMoviePage(state.detail, state.situation);
+      return;
+    }
+
+    // 현재 흐름에서는 사용하지 않지만, 혹시 남아 있는 3-food 진입을 대비
+    if (state.currentStep === "3-food") {
+      steps["3-food"].classList.add("hidden");
+      steps["3-food"].classList.remove("active");
+
+      updateOttStepTitle();
+
+      steps[4].classList.remove("hidden");
+      steps[4].classList.add("active");
+      state.currentStep = 4;
+      updateProgress(3);
+      return;
+    }
+
+    if (state.currentStep === 4) {
+      if (!state.selectedOtt) {
+        return showCustomAlert(
+          typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요."
+        );
+      }
+
+      // 음식 기준에서는 지도에서 실제 음식점을 고르므로 foodCategory는 비워서 보냄
+      goToMapPage(state.selectedOtt, state.situation, "");
+      return;
+    }
+  });
+}
+
+// 이전 단계 버튼
+if (prevBtn) {
+  prevBtn.addEventListener("click", () => {
+    if (state.currentStep === 2) {
+      steps[2].classList.add("hidden");
+      steps[2].classList.remove("active");
+
+      steps[1].classList.remove("hidden");
+      steps[1].classList.add("active");
+
+      state.currentStep = 1;
+      prevBtn.style.display = "none";
+      updateProgress(1);
+      return;
+    }
+
+    if (state.currentStep === "3-ott") {
+      steps["3-ott"].classList.add("hidden");
+      steps["3-ott"].classList.remove("active");
+
+      steps[2].classList.remove("hidden");
+      steps[2].classList.add("active");
+
+      state.currentStep = 2;
+      updateProgress(2);
+      return;
+    }
+
+    if (state.currentStep === "3-food") {
+      steps["3-food"].classList.add("hidden");
+      steps["3-food"].classList.remove("active");
+
+      steps[2].classList.remove("hidden");
+      steps[2].classList.add("active");
+
+      state.currentStep = 2;
+      updateProgress(2);
+      return;
+    }
+
+    if (state.currentStep === 4) {
+      steps[4].classList.add("hidden");
+      steps[4].classList.remove("active");
+
+      steps[2].classList.remove("hidden");
+      steps[2].classList.add("active");
+
+      state.currentStep = 2;
+      updateProgress(2);
+      return;
+    }
+  });
+}
 
   // 💡 다국어 지원 결과 도출 함수
   async function showResult() {
@@ -233,9 +312,20 @@ document.addEventListener("DOMContentLoaded", () => {
   function goToMoviePage(ottName, mealName, foodName = "") {
   const ottUrlMap = {
     "넷플릭스": "netflix",
+    "Netflix": "netflix",
+    "netflix": "netflix",
+
     "디즈니+": "disney",
+    "Disney+": "disney",
+    "disney": "disney",
+
     "티빙": "tving",
+    "TVING": "tving",
+    "tving": "tving",
+
     "웨이브": "wavve",
+    "wavve": "wavve",
+    "Wavve": "wavve",
   };
 
   const ottParam = ottUrlMap[ottName];
@@ -255,6 +345,41 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.location.href = url;
+}
+
+function goToMapPage(ottName, mealName, foodCategory = "") {
+  const ottUrlMap = {
+    "넷플릭스": "netflix",
+    "Netflix": "netflix",
+    "netflix": "netflix",
+
+    "디즈니+": "disney",
+    "Disney+": "disney",
+    "disney": "disney",
+
+    "티빙": "tving",
+    "TVING": "tving",
+    "tving": "tving",
+
+    "웨이브": "wavve",
+    "wavve": "wavve",
+    "Wavve": "wavve",
+  };
+
+  const ottParam = ottUrlMap[ottName];
+
+  if (!ottParam) {
+    showCustomAlert(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
+    return;
+  }
+
+  const mealParam = encodeURIComponent(mealName || "");
+  const foodCategoryParam = encodeURIComponent(foodCategory || "");
+
+  window.location.href =
+    `map.html?ott=${ottParam}` +
+    `&meal=${mealParam}` +
+    `&foodCategory=${foodCategoryParam}`;
 }
 
 
