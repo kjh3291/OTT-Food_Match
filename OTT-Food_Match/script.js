@@ -468,29 +468,30 @@ if (savedViewModal) {
     const recentCombos = savedCombos.slice(-4).reverse();
 
     if (savedMoreBtn) {
-  if (savedCombos.length > 4) {
-    savedMoreBtn.classList.remove("hidden");
-    savedMoreBtn.textContent = `저장 조합 더보기 (${savedCombos.length})`;
-  } else {
-    savedMoreBtn.classList.add("hidden");
-  }
-}
+      if (savedCombos.length > 4) {
+        savedMoreBtn.classList.remove("hidden");
+        const lang = typeof getLang === 'function' ? getLang() : "ko";
+        savedMoreBtn.textContent = lang === "ko" ? `저장 조합 더보기 (${savedCombos.length})` : (lang === "en" ? `View More Combos (${savedCombos.length})` : (lang === "zh" ? `查看更多组合 (${savedCombos.length})` : `もっと見る (${savedCombos.length})`));
+      } else {
+        savedMoreBtn.classList.add("hidden");
+      }
+    }
 
-if (recentCombos.length === 0) {
-  if (savedMoreBtn) {
-    savedMoreBtn.classList.add("hidden");
-  }
+    if (recentCombos.length === 0) {
+      if (savedMoreBtn) {
+        savedMoreBtn.classList.add("hidden");
+      }
 
-  savedComboList.innerHTML = `
-    <div class="saved-empty-card">
-      <div class="saved-empty-icon">🍿</div>
-      <h3>아직 저장한 조합이 없어요</h3>
-      <p>영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.</p>
-    </div>
-  `;
+      savedComboList.innerHTML = `
+        <div class="saved-empty-card">
+          <div class="saved-empty-icon">🍿</div>
+          <h3>${typeof t === 'function' ? t('savedEmptyTitle') : '아직 저장한 조합이 없어요'}</h3>
+          <p>${typeof t === 'function' ? t('savedEmptyDesc') : '영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.'}</p>
+        </div>
+      `;
 
-  return;
-}
+      return;
+    }
 
     savedComboList.innerHTML = recentCombos
   .map((combo) => {
@@ -501,19 +502,19 @@ if (recentCombos.length === 0) {
     return `
       <div 
         class="saved-mini-card"
-data-movie-id="${combo.movieId}"
-data-ott="${combo.ott}"
-data-meal="${combo.meal}"
-data-genre="${combo.genre}"
-data-food-name="${combo.foodName || ""}"
-data-food-category="${combo.foodCategory || "기타"}"
-data-reason="${combo.reason || ""}"
+        data-movie-id="${combo.movieId}"
+        data-ott="${combo.ott}"
+        data-meal="${combo.meal}"
+        data-genre="${combo.genre}"
+        data-food-name="${combo.foodName || ""}"
+        data-food-category="${combo.foodCategory || "기타"}"
+        data-reason="${combo.reason || ""}"
       >
         <div class="saved-mini-poster-box">
           ${
             posterUrl
               ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-mini-poster">`
-              : `<div class="saved-mini-no-poster">포스터 없음</div>`
+              : `<div class="saved-mini-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
           }
         </div>
 
@@ -526,8 +527,8 @@ data-reason="${combo.reason || ""}"
   })
   .join("");
 
-addSavedMiniCardEvents();
-  }
+  addSavedMiniCardEvents();
+}
 
     function openSavedManageModal() {
     if (!savedManageModal) return;
@@ -563,7 +564,7 @@ function closeSavedViewModalFn() {
     if (savedCombos.length === 0) {
       savedManageList.innerHTML = `
         <div class="saved-manage-empty">
-          <p>저장된 조합이 없습니다.</p>
+          <p>${typeof t === 'function' ? t('noSavedCombo') : '저장된 조합이 없습니다.'}</p>
         </div>
       `;
       return;
@@ -583,7 +584,7 @@ function closeSavedViewModalFn() {
               ${
                 posterUrl
                   ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-manage-poster">`
-                  : `<div class="saved-manage-no-poster">포스터 없음</div>`
+                  : `<div class="saved-manage-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
               }
             </div>
 
@@ -597,7 +598,7 @@ function closeSavedViewModalFn() {
               data-movie-id="${combo.movieId}"
               data-food-name="${combo.foodName}"
             >
-              저장 취소
+              ${typeof t === 'function' ? t('cancelSave') : '저장 취소'}
             </button>
           </div>
         `;
@@ -615,7 +616,7 @@ function closeSavedViewModalFn() {
   if (savedCombos.length === 0) {
     savedViewList.innerHTML = `
       <div class="saved-manage-empty">
-        <p>저장된 조합이 없습니다.</p>
+        <p>${typeof t === 'function' ? t('noSavedCombo') : '저장된 조합이 없습니다.'}</p>
       </div>
     `;
     return;
@@ -632,19 +633,19 @@ function closeSavedViewModalFn() {
       return `
         <div 
           class="saved-view-item"
-data-movie-id="${combo.movieId}"
-data-ott="${combo.ott}"
-data-meal="${combo.meal}"
-data-genre="${combo.genre}"
-data-food-name="${combo.foodName || ""}"
-data-food-category="${combo.foodCategory || "기타"}"
-data-reason="${combo.reason || ""}"
+          data-movie-id="${combo.movieId}"
+          data-ott="${combo.ott}"
+          data-meal="${combo.meal}"
+          data-genre="${combo.genre}"
+          data-food-name="${combo.foodName || ""}"
+          data-food-category="${combo.foodCategory || "기타"}"
+          data-reason="${combo.reason || ""}"
         >
           <div class="saved-view-poster-box">
             ${
               posterUrl
                 ? `<img src="${posterUrl}" alt="${combo.movieTitle} 포스터" class="saved-view-poster">`
-                : `<div class="saved-manage-no-poster">포스터 없음</div>`
+                : `<div class="saved-manage-no-poster">${typeof t === 'function' ? t('noPoster') : '포스터 없음'}</div>`
             }
           </div>
 
@@ -700,7 +701,7 @@ function addSavedViewItemEvents() {
 
         localStorage.setItem("savedCombos", JSON.stringify(filteredCombos));
 
-        showCustomAlert("저장한 조합이 삭제되었습니다.");
+        showCustomAlert(typeof t === 'function' ? t('comboDeleted') : "저장한 조합이 삭제되었습니다.");
 
         renderSavedCombosOnMain();
         renderSavedManageList();
@@ -719,52 +720,50 @@ function addSavedViewItemEvents() {
   }
 
   // ===============================
-// AI 추천 조합 임시 구현
-// 실제 AI 연결 전 JS 버전
-// ===============================
+  // AI 추천 조합 임시 구현 (다국어 포함)
+  // ===============================
 
-const aiMovieCandidates = [
-  { genre: "액션", movieHint: "빠른 전개의 액션 영화", ott: "netflix" },
-  { genre: "코미디", movieHint: "가볍게 웃기 좋은 코미디 영화", ott: "tving" },
-  { genre: "드라마", movieHint: "잔잔하게 몰입하기 좋은 드라마 영화", ott: "wavve" },
-  { genre: "로맨스", movieHint: "분위기 있게 보기 좋은 로맨스 영화", ott: "disney" },
-  { genre: "스릴러", movieHint: "긴장감 있는 스릴러 영화", ott: "netflix" },
-  { genre: "애니메이션", movieHint: "편하게 보기 좋은 애니메이션 영화", ott: "disney" },
-];
+  const aiMovieCandidates = [
+    { genre: "액션", movieHintKey: "aiHint_action", ott: "netflix" },
+    { genre: "코미디", movieHintKey: "aiHint_comedy", ott: "tving" },
+    { genre: "드라마", movieHintKey: "aiHint_drama", ott: "wavve" },
+    { genre: "로맨스", movieHintKey: "aiHint_romance", ott: "disney" },
+    { genre: "스릴러", movieHintKey: "aiHint_thriller", ott: "netflix" },
+    { genre: "애니메이션", movieHintKey: "aiHint_animation", ott: "disney" },
+  ];
 
-const aiFoodCandidates = [
-  "치킨",
-  "피자",
-  "떡볶이",
-  "햄버거",
-  "파스타",
-  "티라미수",
-  "새우버거",
-  "로제파스타",
-  "수제쿠키",
-  "치즈케이크",
-  "도넛",
-  "감자튀김",
-];
+  const aiFoodCandidates = {
+    ko: ["치킨", "피자", "떡볶이", "햄버거", "파스타", "티라미수", "새우버거", "로제파스타", "수제쿠키", "치즈케이크", "도넛", "감자튀김"],
+    en: ["Chicken", "Pizza", "Tteokbokki", "Burger", "Pasta", "Tiramisu", "Shrimp Burger", "Rose Pasta", "Cookies", "Cheesecake", "Donuts", "Fries"],
+    zh: ["炸鸡", "披萨", "辣炒年糕", "汉堡", "意面", "提拉米苏", "虾堡", "粉红酱意面", "曲奇", "芝士蛋糕", "甜甜圈", "炸薯条"],
+    ja: ["チキン", "ピザ", "トッポッキ", "ハンバーガー", "パスタ", "ティラミス", "エビバーガー", "ロゼパスタ", "クッキー", "チーズケーキ", "ドーナツ", "フライドポテト"]
+  };
 
 function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+function getGenreKey(genre) {
+  const map = { "전체": "all", "액션": "action", "코미디": "comedy", "드라마": "drama", "로맨스": "romance", "스릴러": "thriller", "애니메이션": "animation" };
+  return map[genre] || "all";
+}
+
 function getBasedOnSavedPick(savedCombos) {
+  const lang = typeof getLang === 'function' ? getLang() : "ko";
+
   if (!savedCombos || savedCombos.length === 0) {
     const randomMovie = getRandomItem(aiMovieCandidates);
-    const randomFood = getRandomItem(aiFoodCandidates);
+    const randomFood = getRandomItem(aiFoodCandidates[lang] || aiFoodCandidates["ko"]);
 
     return {
       type: "based",
-      badge: "취향 기반",
-      title: "저장 조합을 기다리는 추천",
-      movieHint: randomMovie.movieHint,
+      badge: typeof t === 'function' ? t('aiBadgeBased') : "취향 기반",
+      title: typeof t === 'function' ? t('aiTitleWait') : "저장 조합을 기다리는 추천",
+      movieHintKey: randomMovie.movieHintKey,
       genre: randomMovie.genre,
       ott: randomMovie.ott,
       foodName: randomFood,
-      reason: "아직 저장한 조합이 많지 않아, 누구나 편하게 즐길 수 있는 조합으로 추천했어요.",
+      reason: typeof t === 'function' ? t('aiReasonWait') : "아직 저장한 조합이 많지 않아, 누구나 편하게 즐길 수 있는 조합으로 추천했어요.",
     };
   }
 
@@ -787,43 +786,40 @@ function getBasedOnSavedPick(savedCombos) {
     aiMovieCandidates.find((item) => item.genre === pickedGenre) ||
     getRandomItem(aiMovieCandidates);
 
-  const foodByCategory = {
-    "패스트푸드": ["치킨", "햄버거", "새우버거", "감자튀김", "피자"],
-    "식사": ["떡볶이", "파스타", "로제파스타", "치킨"],
-    "디저트": ["티라미수", "수제쿠키", "치즈케이크", "도넛"],
-  };
+  const pickedFood = getRandomItem(aiFoodCandidates[lang] || aiFoodCandidates["ko"]);
 
-  const foodPool =
-    foodByCategory[recentCombo.foodCategory] ||
-    aiFoodCandidates;
-
-  const pickedFood = getRandomItem(foodPool);
+  let basedReason = "";
+  if (lang === "en") basedReason = `Based on your recent save "${recentCombo.movieTitle} + ${recentCombo.foodName}", we picked a similar vibe.`;
+  else if (lang === "zh") basedReason = `参考了您最近保存的“${recentCombo.movieTitle} + ${recentCombo.foodName}”，我们挑选了相似氛围的组合。`;
+  else if (lang === "ja") basedReason = `最近保存した「${recentCombo.movieTitle} + ${recentCombo.foodName}」を参考に、似た雰囲気を選びました。`;
+  else basedReason = `최근 저장한 “${recentCombo.movieTitle} + ${recentCombo.foodName}” 조합을 참고해서 비슷한 분위기로 골라봤어요.`;
 
   return {
     type: "based",
-    badge: "취향 기반",
-    title: "최근 저장 조합을 참고했어요",
-    movieHint: movieCandidate.movieHint,
+    badge: typeof t === 'function' ? t('aiBadgeBased') : "취향 기반",
+    title: typeof t === 'function' ? t('aiTitleRecent') : "최근 저장 조합을 참고했어요",
+    movieHintKey: movieCandidate.movieHintKey,
     genre: movieCandidate.genre,
     ott: recentCombo.ott || movieCandidate.ott,
     foodName: pickedFood,
-    reason: `최근 저장한 “${recentCombo.movieTitle} + ${recentCombo.foodName}” 조합을 참고해서 비슷한 분위기로 골라봤어요.`,
+    reason: basedReason,
   };
 }
 
 function getRandomAiPick() {
+  const lang = typeof getLang === 'function' ? getLang() : "ko";
   const movieCandidate = getRandomItem(aiMovieCandidates);
-  const foodName = getRandomItem(aiFoodCandidates);
+  const foodName = getRandomItem(aiFoodCandidates[lang] || aiFoodCandidates["ko"]);
 
   return {
     type: "random",
-    badge: "랜덤 추천",
-    title: "오늘은 이런 조합 어때요?",
-    movieHint: movieCandidate.movieHint,
+    badge: typeof t === 'function' ? t('aiBadgeRandom') : "랜덤 추천",
+    title: typeof t === 'function' ? t('aiTitleRandom') : "오늘은 이런 조합 어때요?",
+    movieHintKey: movieCandidate.movieHintKey,
     genre: movieCandidate.genre,
     ott: movieCandidate.ott,
     foodName,
-    reason: "평소와 다른 조합을 시도해볼 수 있도록 무작위로 골라봤어요.",
+    reason: typeof t === 'function' ? t('aiReasonRandom') : "평소와 다른 조합을 시도해볼 수 있도록 무작위로 골라봤어요.",
   };
 }
 
@@ -837,7 +833,6 @@ function makeAiPicks() {
   return [basedPick, randomPick1, randomPick2];
 }
 
-// 사용자 개인화 신호를 한 번에 모아주는 헬퍼
 function getUserSignals() {
   const read = (key) => {
     try { return JSON.parse(localStorage.getItem(key)) || []; }
@@ -845,8 +840,8 @@ function getUserSignals() {
   };
   return {
     savedCombos: read("savedCombos"),
-    recommendReactions: read("recommendReactions"), // ← 실제 키 확인 필요
-    matchHistory: read("matchHistory"),             // ← 실제 키 확인 필요
+    recommendReactions: read("recommendReactions"), 
+    matchHistory: read("matchHistory"),             
   };
 }
 
@@ -870,13 +865,16 @@ async function fetchAiPicksFromServer() {
   return data.recommendations;
 }
 
+let currentAiPicks = [];
+
 function renderAiPickCards(picks) {
   if (!aiPickList) return;
 
   aiPickList.innerHTML = picks
     .map((pick) => {
-      const badgeClass =
-        pick.type === "based" ? "ai-pick-badge" : "ai-pick-badge random";
+      const badgeClass = pick.type === "based" ? "ai-pick-badge" : "ai-pick-badge random";
+      const movieHintTrans = typeof t === 'function' ? t(pick.movieHintKey) : pick.movieHintKey;
+      const genreTrans = typeof t === 'function' ? t('tab_' + getGenreKey(pick.genre)) : pick.genre;
 
       return `
         <div
@@ -892,22 +890,22 @@ function renderAiPickCards(picks) {
           <h3>${pick.title}</h3>
 
           <div class="ai-pick-row">
-            <strong>🎬 추천 영화 분위기</strong>
-            <p>${pick.movieHint}</p>
+            <strong>${typeof t === 'function' ? t('aiRowMovie') : '🎬 추천 영화 분위기'}</strong>
+            <p>${movieHintTrans}</p>
           </div>
 
           <div class="ai-pick-row">
-            <strong>🎭 추천 장르</strong>
-            <p>${pick.genre}</p>
+            <strong>${typeof t === 'function' ? t('aiRowGenre') : '🎭 추천 장르'}</strong>
+            <p>${genreTrans}</p>
           </div>
 
           <div class="ai-pick-row">
-            <strong>🍽 추천 음식</strong>
-            <p>${pick.foodName}${pick.foodCategory ? ` <span class="ai-pick-cat">(${pick.foodCategory})</span>` : ""}</p>
+            <strong>${typeof t === 'function' ? t('aiRowFood') : '🍽 추천 음식'}</strong>
+            <p>${pick.foodName}</p>
           </div>
 
           <p class="ai-pick-reason">${pick.reason}</p>
-          <p class="ai-pick-click-guide">이 장르 영화 보러가기 →</p>
+          <p class="ai-pick-click-guide">${typeof t === 'function' ? t('aiClickGuide') : '이 장르 영화 보러가기 →'}</p>
         </div>
       `;
     })
@@ -946,30 +944,31 @@ async function renderAiPicks() {
   aiPickList.innerHTML = `
     <div class="saved-empty-card">
       <div class="saved-empty-icon">🤖</div>
-      <h3>AI가 조합을 고르는 중이에요</h3>
-      <p>저장한 조합을 참고해서 추천을 만들고 있어요. 잠시만 기다려주세요.</p>
+      <h3>${typeof t === 'function' ? t('aiPickLoadingTitle') : 'AI가 조합을 고르는 중이에요'}</h3>
+      <p>${typeof t === 'function' ? t('aiPickLoadingDesc') : '저장한 조합을 참고해서 추천을 만들고 있어요. 잠시만 기다려주세요.'}</p>
     </div>
   `;
 
   try {
     const aiPicks = await fetchAiPicksFromServer();
-    renderAiPickCards(aiPicks);
+    currentAiPicks = aiPicks;
+    renderAiPickCards(currentAiPicks);
   } catch (error) {
     console.error("AI 추천 API 오류:", error);
 
     aiPickList.innerHTML = `
       <div class="saved-empty-card ai-error-card">
         <div class="saved-empty-icon">⚠️</div>
-        <h3>AI 추천을 불러오지 못했어요</h3>
-        <p>잠시 후 다시 시도해주세요. 지금은 기본 추천 조합을 대신 보여드릴게요.</p>
+        <h3>${typeof t === 'function' ? t('aiPickErrorTitle') : 'AI 추천을 불러오지 못했어요'}</h3>
+        <p>${typeof t === 'function' ? t('aiPickErrorDesc') : '잠시 후 다시 시도해주세요. 지금은 기본 추천 조합을 대신 보여드릴게요.'}</p>
       </div>
     `;
 
-    showCustomAlert("AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.");
+    showCustomAlert(typeof t === 'function' ? t('aiPickErrorAlert') : "AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.");
 
     setTimeout(() => {
-      const fallbackPicks = makeAiPicks();
-      renderAiPickCards(fallbackPicks);
+      currentAiPicks = makeAiPicks();
+      renderAiPickCards(currentAiPicks);
     }, 1200);
   }
 }
@@ -998,6 +997,64 @@ async function renderAiPicks() {
   });
 }
 
+  // ===============================
+  // 언어 변경 시 화면 실시간 새로고침 (수정됨)
+  // ===============================
+  document.addEventListener("languageChanged", () => {
+    renderSavedCombosOnMain();
+    renderSavedManageList();
+    renderSavedViewList();
+    
+    if (currentAiPicks && currentAiPicks.length > 0) {
+      // 이미 생성된 AI 픽 목록의 언어만 새로 적용하여 리렌더링 (깜빡임 최소화)
+      const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+      currentAiPicks[0] = getBasedOnSavedPick(savedCombos);
+      renderAiPickCards(currentAiPicks);
+    }
+  });
+
   renderSavedCombosOnMain();
   renderAiPicks();
-}); 
+
+  // ===============================
+  // 설정 팝업 및 다크모드 동작 (즉각 텍스트 반응 수정됨)
+  // ===============================
+  const settingBtn = document.getElementById("settingBtn");
+  const settingPopup = document.getElementById("settingPopup");
+  const darkModeToggle = document.getElementById("darkModeToggle");
+
+  if (settingBtn && settingPopup) {
+    settingBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      settingPopup.classList.toggle("hidden");
+    });
+
+    settingPopup.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    document.addEventListener("click", () => {
+      settingPopup.classList.add("hidden");
+    });
+  }
+
+  if (darkModeToggle) {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+      
+      // 다크모드/라이트모드 변경 시 버튼 텍스트가 즉각 반영되도록 applyLanguage() 즉시 호출
+      if (typeof applyLanguage === "function") {
+        applyLanguage();
+      }
+      
+      document.dispatchEvent(new Event("languageChanged"));
+    });
+  }
+
+});
+

@@ -1789,3 +1789,149 @@ body.dark-mode .ai-error-card {
 body.dark-mode .ai-pick-click-guide {
   color: #ff9a7d !important;
 }
+
+/* =========================================
+   🌙 다크 모드 - 최종 결과 출력 영역 강제 보완 패치
+========================================= */
+
+/* 1. movie.html 결과 모달창의 강제 흰색 배경 덮어쓰기 */
+body.dark-mode .result-modal-content,
+body.dark-mode .modal-content {
+  background: #222222 !important;
+  color: #eeeeee !important;
+  border-color: #333333 !important;
+}
+
+/* 2. 모달창 내부의 회색 박스들 어둡게 처리 */
+body.dark-mode #resultCaptureArea > div {
+  background: #2a2a2a !important;
+  border-color: #333333 !important;
+}
+
+/* 3. 모달창 내부 인라인 스타일(어두운 회색 글씨 등) 강제 밝게 처리 */
+body.dark-mode #modalMovieTitle,
+body.dark-mode #modalFoodName {
+  color: #ffffff !important;
+}
+
+body.dark-mode #modalFoodReason {
+  color: #bbbbbb !important;
+}
+
+/* 4. index.html의 최종 추천 결과 카드 영역 보완 */
+body.dark-mode .result-card {
+  background: #222222 !important;
+  border-color: #333333 !important;
+}
+
+body.dark-mode .result-item {
+  background: #2a2a2a !important;
+  border-color: #333333 !important;
+}
+
+body.dark-mode .result-item strong {
+  color: #ff7a59 !important;
+}
+
+/* 5. Best Match Combo 영역 강조 색상 유지하며 어둡게 보정 */
+body.dark-mode .result-card.best-match {
+  background: rgba(255, 122, 89, 0.12) !important;
+  border: 1px solid #ff7a59 !important;
+}
+
+body.dark-mode .result-card.best-match p {
+  color: #eeeeee !important;
+}
+
+/* =========================================
+   🍿 '최근 저장한 조합' 비어있는 상태 중앙 정렬 패치
+========================================= */
+
+/* 1. 저장된 조합이 없을 때 나타나는 카드 전체를 가로 정중앙 배치 */
+.saved-empty-card {
+  width: 100% !important; /* 부모 컨테이너 너비를 채우도록 설정 */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important; /* 내부의 모든 요소를 가로 정중앙 정렬 */
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 32px 24px !important; /* 위아래 여백을 단정하게 정리 */
+}
+
+/* 2. 카드 내부의 이모티콘, 제목, 본문 텍스트 모두 가운데 정렬 강제 */
+.saved-empty-icon,
+.saved-empty-card h3,
+.saved-empty-card p {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* 3. 문구 간의 간격을 조절하여 옹기종기 모이도록 설정 */
+.saved-empty-card h3 {
+  margin-top: 12px !important;
+  margin-bottom: 6px !important;
+}
+
+.saved-empty-card p {
+  margin: 0 !important;
+  font-size: 0.95rem;
+}
+
+/* =========================================
+   ✨ 섹션 타이틀 중앙 정렬 및 우측 상단 버튼 패치
+   ('최근 저장한 조합', 'AI가 골라본 조합' 등)
+========================================= */
+
+/* 1. 타이틀 영역 전체를 중앙 정렬 및 버튼 기준점으로 설정 */
+.section-title-row {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important; /* 수정/새로고침 버튼의 기준점 */
+  width: 100% !important;
+  margin-bottom: 24px !important;
+}
+
+/* 2. 내부의 제목(h2)과 설명(p)을 감싸는 div를 가로 정중앙으로 모음 */
+.section-title-row > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.section-title-row h2,
+.section-title-row p {
+  text-align: center !important;
+  margin: 0 !important;
+}
+
+.section-title-row h2 {
+  margin-bottom: 6px !important;
+}
+
+/* 3. 수정 버튼 / 새로 추천 버튼을 우측 상단에 고정 */
+.saved-edit-btn {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  margin: 0 !important;
+}
+
+/* 4. 화면이 좁은 모바일 환경에서 글씨와 버튼이 겹치지 않도록 세로로 배치 */
+@media (max-width: 500px) {
+  .section-title-row {
+    flex-direction: column !important;
+    padding-top: 10px !important;
+  }
+  
+  .saved-edit-btn {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    margin-top: 16px !important;
+  }
+}
+
+

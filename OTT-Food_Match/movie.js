@@ -13,31 +13,16 @@ const mealMapEn = { "혼밥": "Eating Alone", "야식": "Late Night Snack", "친
 const mealMapZh = { "혼밥": "一人食", "야식": "夜宵", "친구와 함께": "朋友聚会", "연인과 함께": "恋人约会", "간단한 식사": "简单便餐", "든든한 식사": "丰盛正餐" };
 const mealMapJa = { "혼밥": "一人ご飯", "야식": "夜食", "친구와 함께": "友達と一緒に", "연인과 함께": "恋人と一緒に", "간단한 식사": "軽食", "든든한 식사": "がっつり食事" };
 
-const urlParams = new URLSearchParams(window.location.search);
-
-const ottKey = urlParams.get("ott");
-
-let selectedMeal = urlParams.get("meal")
-  ? decodeURIComponent(urlParams.get("meal"))
-  : "혼밥";
-
-let selectedGenre = urlParams.get("genre")
-  ? decodeURIComponent(urlParams.get("genre"))
-  : "전체";
-
-const selectedFood = urlParams.get("food")
-  ? decodeURIComponent(urlParams.get("food"))
-  : "";
-
-const selectedAiReason = urlParams.get("aiReason")
-  ? decodeURIComponent(urlParams.get("aiReason"))
-  : "";
-
+let selectedGenre = "전체";
 let currentMovies = [];
 
 let currentSort = "popularity";
 let visibleMovieCount = 20;
 const MOVIES_PER_LOAD = 20;
+
+const urlParams = new URLSearchParams(window.location.search);
+const ottKey = urlParams.get("ott");
+let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
 
 const moviePageTitle = document.getElementById("moviePageTitle");
 const moviePageInfo = document.getElementById("moviePageInfo");
@@ -59,7 +44,7 @@ if (!ottKey) {
   else if (lang === "zh") msg = "未找到 OTT 信息，请在主页重新选择 OTT 平台。";
   else if (lang === "ja") msg = "OTT情報がありません。メイン画面でOTTを再度選択してください。";
   alert(msg);
-  window.location.href = "index.html";
+  window.location.href = "index.html"; // 수정됨
 }
 
 function applyMovieLanguage() {
@@ -87,24 +72,11 @@ function applyMovieLanguage() {
   }
   
   if (moviePageInfo) {
-  if (lang === "ko") {
-    moviePageInfo.textContent = selectedFood
-      ? `식사 상황: ${mealDisplay} / AI 추천 음식: ${selectedFood} / ${selectedGenre} 장르 영화만 표시됩니다.`
-      : `식사 상황: ${mealDisplay} / 상단 장르 버튼을 선택하면 해당 장르의 영화만 표시됩니다.`;
-  } else if (lang === "en") {
-    moviePageInfo.textContent = selectedFood
-      ? `Meal Setting: ${mealDisplay} / AI Food Pick: ${selectedFood} / Showing ${selectedGenre} movies.`
-      : `Meal Setting: ${mealDisplay} / Select a genre button above to filter movies.`;
-  } else if (lang === "zh") {
-    moviePageInfo.textContent = selectedFood
-      ? `用餐场景: ${mealDisplay} / AI 推荐美食: ${selectedFood} / 正在显示 ${selectedGenre} 类型电影。`
-      : `用餐场景: ${mealDisplay} / 点击上方类型按钮可筛选相应电影。`;
-  } else if (lang === "ja") {
-    moviePageInfo.textContent = selectedFood
-      ? `食事の状況: ${mealDisplay} / AIおすすめ料理: ${selectedFood} / ${selectedGenre}ジャンルの映画を表示しています。`
-      : `食事の状況: ${mealDisplay} / 上のジャンルボタンを選択すると、該当する映画が表示されます。`;
+    if (lang === "ko") moviePageInfo.textContent = `식사 상황: ${mealDisplay} / 상단 장르 버튼을 선택하면 해당 장르의 영화만 표시됩니다.`;
+    else if (lang === "en") moviePageInfo.textContent = `Meal Setting: ${mealDisplay} / Select a genre button above to filter movies.`;
+    else if (lang === "zh") moviePageInfo.textContent = `用餐场景: ${mealDisplay} / 点击上方类型按钮可筛选相应电影。`;
+    else if (lang === "ja") moviePageInfo.textContent = `食事の状況: ${mealDisplay} / 上のジャンルボタンを選択すると、該当する映画が表示されます。`;
   }
-}
   
   if (selectedGenreTitle) {
     const genreKey = getGenreKey(selectedGenre);
@@ -112,6 +84,22 @@ function applyMovieLanguage() {
     else if (lang === "en") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} Movies`;
     else if (lang === "zh") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} 电影`;
     else if (lang === "ja") selectedGenreTitle.textContent = `${typeof t === 'function' ? t("tab_" + genreKey) : genreKey} 映画`;
+  }
+}
+
+function updateSortMenuText() {
+  const lang = typeof getLang === 'function' ? getLang() : 'ko';
+  
+  if (currentSort === "popularity") sortMenuBtn.textContent = typeof t === 'function' ? t('sortPop') : "인기순 ▾";
+  else if (currentSort === "rating") sortMenuBtn.textContent = typeof t === 'function' ? t('sortRate') : "평점순 ▾";
+  else if (currentSort === "latest") sortMenuBtn.textContent = typeof t === 'function' ? t('sortLate') : "최신순 ▾";
+  else if (currentSort === "title") sortMenuBtn.textContent = typeof t === 'function' ? t('sortName') : "이름순 ▾";
+
+  if(sortOptions.length >= 4) {
+    sortOptions[0].textContent = typeof t === 'function' ? t('sortOptPop') : "인기순";
+    sortOptions[1].textContent = typeof t === 'function' ? t('sortOptRate') : "평점순";
+    sortOptions[2].textContent = typeof t === 'function' ? t('sortOptLate') : "최신순";
+    sortOptions[3].textContent = typeof t === 'function' ? t('sortOptName') : "이름순";
   }
 }
 
@@ -129,16 +117,6 @@ genreTabs.forEach((tab) => {
     await loadMoviesByGenre(selectedGenre);
   });
 });
-
-function applyInitialGenreTab() {
-  genreTabs.forEach((tab) => {
-    if (tab.dataset.genre === selectedGenre) {
-      tab.classList.add("selected");
-    } else {
-      tab.classList.remove("selected");
-    }
-  });
-}
 
 async function loadMoviesByGenre(genre) {
   if (loadingText) {
@@ -159,67 +137,93 @@ async function loadMoviesByGenre(genre) {
 }
 
 async function fetchMoviesFromTMDB(genre) {
+  const apiKey = window.CONFIG?.TMDB_API_KEY;
+  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
+
+  if (!apiKey) return [];
+
+  const providerId = ottProviderMap[ottKey];
+  if (!providerId) return [];
+
+  const genreId = genreIdMap[genre];
+
   const lang = localStorage.getItem("lang") || "ko";
-
-  const tmdbLangMap = {
-    ko: "ko-KR",
-    en: "en-US",
-    zh: "zh-CN",
-    ja: "ja-JP",
-  };
-
+  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
   const tmdbLang = tmdbLangMap[lang] || "ko-KR";
+
   const maxPagesToFetch = 8;
   const allResults = [];
 
-  async function fetchMoviePage(page) {
-    const url =
-      `/api/movies` +
-      `?ott=${encodeURIComponent(ottKey)}` +
-      `&genre=${encodeURIComponent(genre)}` +
-      `&lang=${encodeURIComponent(tmdbLang)}` +
+  function buildMovieUrl(page) {
+    let url =
+      `${baseUrl}/discover/movie` +
+      `?api_key=${apiKey}` +
+      `&language=${tmdbLang}` +
+      `&region=KR` +
+      `&watch_region=KR` +
+      `&with_watch_providers=${providerId}` +
+      `&sort_by=popularity.desc` +
+      `&include_adult=false` +
       `&page=${page}`;
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      console.error("영화 목록 API 오류:", response.status, errorData);
-      return null;
+    if (genre !== "전체" && genreId) {
+      url += `&with_genres=${genreId}`;
     }
 
-    return await response.json();
+    return url;
   }
 
   try {
-    const firstData = await fetchMoviePage(1);
+    const firstResponse = await fetch(buildMovieUrl(1));
 
-    if (!firstData) {
+    if (!firstResponse.ok) {
+      console.error("TMDB 첫 페이지 요청 실패:", firstResponse.status);
       return [];
     }
 
-    allResults.push(...(firstData.movies || []));
+    const firstData = await firstResponse.json();
+    const totalPages = Math.min(firstData.total_pages || 1, maxPagesToFetch);
 
-    const totalPages = Math.min(firstData.totalPages || 1, maxPagesToFetch);
+    const firstMovies = firstData.results.map((movie) => ({
+      id: movie.id,
+      title: movie.title || movie.name || "No Title",
+      overview: movie.overview || "",
+      posterPath: movie.poster_path,
+      releaseDate: movie.release_date || "",
+      rating: movie.vote_average || 0,
+      popularity: movie.popularity || 0,
+      genre: genre,
+    }));
+
+    allResults.push(...firstMovies);
 
     for (let page = 2; page <= totalPages; page++) {
-      const data = await fetchMoviePage(page);
+      const response = await fetch(buildMovieUrl(page));
 
-      if (!data) continue;
+      if (!response.ok) {
+        console.error(`${page}페이지 요청 실패:`, response.status);
+        continue;
+      }
 
-      allResults.push(...(data.movies || []));
+      const data = await response.json();
+
+      const movies = data.results.map((movie) => ({
+        id: movie.id,
+        title: movie.title || movie.name || "No Title",
+        overview: movie.overview || "",
+        posterPath: movie.poster_path,
+        releaseDate: movie.release_date || "",
+        rating: movie.vote_average || 0,
+        popularity: movie.popularity || 0,
+        genre: genre,
+      }));
+
+      allResults.push(...movies);
     }
 
-    const uniqueMovies = removeDuplicateMovies(allResults);
-
-    if (uniqueMovies.length === 0 && genre !== "전체") {
-      console.warn(`${genre} 장르 결과가 없어 전체 영화로 다시 불러옵니다.`);
-      return await fetchMoviesFromTMDB("전체");
-    }
-
-    return uniqueMovies;
+    return removeDuplicateMovies(allResults);
   } catch (error) {
-    console.error("영화 목록 요청 중 오류 발생:", error);
+    console.error("TMDB API 요청 중 오류 발생:", error);
     return [];
   }
 }
@@ -299,8 +303,8 @@ function renderMovies(movies) {
 
         <div class="movie-info">
           <strong>${titleText}</strong>
-          <p>${typeof t === "function" ? t("releaseDate") : "개봉일"}: ${releaseText}</p>
-          <p>${typeof t === "function" ? t("rating") : "평점"}: ${ratingText}</p>
+          <p>${typeof t === "function" ? t("releaseDate") : "개봉일:"} ${releaseText}</p>
+          <p>${typeof t === "function" ? t("rating") : "평점:"} ${ratingText}</p>
         </div>
       </div>
     `;
@@ -314,40 +318,26 @@ function renderMovies(movies) {
       const mealParam = encodeURIComponent(selectedMeal);
       const genreParam = encodeURIComponent(selectedGenre);
 
-      let recommendUrl =
-  `recommend.html?movieId=${selectedMovie.id}` +
-  `&ott=${ottKey}` +
-  `&meal=${mealParam}` +
-  `&genre=${genreParam}`;
-
-if (selectedFood) {
-  const foodParam = encodeURIComponent(selectedFood);
-  const foodCategoryParam = encodeURIComponent("AI 추천");
-
-  const reasonText =
-    selectedAiReason ||
-    `${selectedMovie.title}의 분위기와 ${selectedMeal} 상황을 고려해 AI가 골라본 조합에서 추천한 음식입니다.`;
-
-  recommendUrl +=
-    `&mode=aiPick` +
-    `&foodName=${foodParam}` +
-    `&foodCategory=${foodCategoryParam}` +
-    `&reason=${encodeURIComponent(reasonText)}`;
-}
-
-window.location.href = recommendUrl;
+      window.location.href =
+        `recommend.html?movieId=${selectedMovie.id}` +
+        `&ott=${ottKey}` +
+        `&meal=${mealParam}` +
+        `&genre=${genreParam}`;
     });
   });
 
   if (loadMoreBtn) {
+    const lang = localStorage.getItem("lang") || "ko";
     if (visibleMovieCount < sortedMovies.length) {
       loadMoreBtn.classList.remove("hidden");
       loadMoreBtn.disabled = false;
-      loadMoreBtn.textContent = `더보기 (${visibleMovies.length}/${sortedMovies.length})`;
+      const moreTxt = lang === "ko" ? "더보기" : (lang === "en" ? "Load More" : (lang === "zh" ? "加载更多" : "もっと見る"));
+      loadMoreBtn.textContent = `${moreTxt} (${visibleMovies.length}/${sortedMovies.length})`;
     } else {
       loadMoreBtn.classList.remove("hidden");
       loadMoreBtn.disabled = true;
-      loadMoreBtn.textContent = `모든 영화를 확인했습니다 (${sortedMovies.length}개)`;
+      const allTxt = lang === "ko" ? "모든 영화를 확인했습니다" : (lang === "en" ? "All movies loaded" : (lang === "zh" ? "已加载所有电影" : "すべての映画を確認しました"));
+      loadMoreBtn.textContent = `${allTxt} (${sortedMovies.length})`;
     }
   }
 }
@@ -454,11 +444,12 @@ function recommendFood(genre) {
 }
 
 if (backToMainBtn) {
-  backToMainBtn.addEventListener("click", () => { window.location.href = "index.html"; });
+  backToMainBtn.addEventListener("click", () => { window.location.href = "index.html"; }); // 수정됨
 }
 
 document.addEventListener("languageChanged", () => {
   applyMovieLanguage();
+  updateSortMenuText();
   renderMovies(currentMovies);
 });
 
@@ -544,18 +535,14 @@ if (sortMenuBtn && sortMenu) {
 sortOptions.forEach((option) => {
   option.addEventListener("click", () => {
     currentSort = option.dataset.sort;
-
-    if (currentSort === "popularity") sortMenuBtn.textContent = "인기순 ▾";
-    if (currentSort === "rating") sortMenuBtn.textContent = "평점순 ▾";
-    if (currentSort === "latest") sortMenuBtn.textContent = "최신순 ▾";
-    if (currentSort === "title") sortMenuBtn.textContent = "이름순 ▾";
-
+    updateSortMenuText();
     sortMenu.classList.add("hidden");
     visibleMovieCount = MOVIES_PER_LOAD;
     renderMovies(currentMovies);
   });
 });
-applyInitialGenreTab();
+
 applyMovieLanguage();
+updateSortMenuText();
 loadMoviesByGenre(selectedGenre);
 
