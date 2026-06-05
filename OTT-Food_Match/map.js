@@ -6,32 +6,13 @@ import { foodCategories } from './food.js';
 const mapUrlParams = new URLSearchParams(window.location.search);
 const ottKey = mapUrlParams.get("ott") || "netflix";
 const selectedMeal = mapUrlParams.get("meal") ? decodeURIComponent(mapUrlParams.get("meal")) : "혼밥";
-
-// 💡 추천받은 음식 카테고리를 지도 사이드바 버튼 키워드에 맞게 변환
-function normalizeFoodCategoryForMap(category) {
-    if (!category) return "전체";
-    if (category.includes("마라")) return "마라탕";
-    if (category.includes("한식")) return "한식";
-    if (category.includes("일식")) return "일식";
-    if (category.includes("양식")) return "양식";
-    if (category.includes("중식")) return "중식";
-    if (category.includes("치킨") || category.includes("야식")) return "치킨";
-    if (category.includes("분식")) return "분식";
-    if (category.includes("패스트푸드")) return "패스트푸드";
-    if (category.includes("디저트") || category.includes("카페")) return "카페";
-
-    return "전체"; // 기본값
-}
+const passedMovieId = mapUrlParams.get("movieId");
 
 // ===============================
 // 2. 지도 초기화 및 기본 변수 설정
 // ===============================
 const mapContainer = document.getElementById('map');
-const mapOption = {
-    center: new kakao.maps.LatLng(37.566826, 126.9786567),
-    level: 3
-};
-
+const mapOption = { center: new kakao.maps.LatLng(37.566826, 126.9786567), level: 3 };
 const map = new kakao.maps.Map(mapContainer, mapOption);
 const ps = new kakao.maps.services.Places(map);
 const infowindow = new kakao.maps.InfoWindow({ zIndex: 3 });
@@ -41,16 +22,16 @@ let myLocationMarker = null;
 let isSearchMode = false;
 let currentSelectedPlace = null;
 
-// 💡 핵심: 기본값은 '전체', 하지만 주소창으로 넘어온 카테고리가 있으면 그걸로 덮어씁니다!
+// 💡 3. 초기 카테고리 설정 (가장 중요)
 let currentCategoryKeyword = "전체";
 const passedCategory = mapUrlParams.get("foodCategory");
 if (passedCategory) {
-    currentCategoryKeyword = normalizeFoodCategoryForMap(decodeURIComponent(passedCategory));
+    // 추천 페이지에서 넘어온 카테고리명(예: '한식', '치킨')을 그대로 유지!
+    currentCategoryKeyword = decodeURIComponent(passedCategory);
 }
 
-
 // ===============================
-// 3. 내 위치 가져오기 및 마커 표시
+// 4. 내 위치 가져오기 및 초기 검색
 // ===============================
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -64,31 +45,21 @@ if (navigator.geolocation) {
 function updateMyLocation(locPosition) {
     if (myLocationMarker) myLocationMarker.setMap(null);
     const content = '<div style="width:10px;height:10px;background-color:#6c5ce7;border:3px solid white;border-radius:50%;box-shadow:0 0 8px rgba(108,92,231,0.8);"></div>';
-    myLocationMarker = new kakao.maps.CustomOverlay({
-        position: locPosition,
-        content: content,
-        zIndex: 2,
-        xAnchor: 0.5,
-        yAnchor: 0.5
-    });
+    myLocationMarker = new kakao.maps.CustomOverlay({ position: locPosition, content: content, zIndex: 2, xAnchor: 0.5, yAnchor: 0.5 });
     myLocationMarker.setMap(map);
 }
 
-// ===============================
-// 4. 지도 이벤트 (드래그, 클릭)
-// ===============================
+// 지도 드래그/확대 후 멈출 때 자동 재검색
 kakao.maps.event.addListener(map, 'idle', function () {
     if (!isSearchMode) {
         removeMarkers();
         searchPlacesByCategory(map.getCenter());
     }
 });
-
 kakao.maps.event.addListener(map, 'click', () => infowindow.close());
 
-
 // ===============================
-// 5. 사이드바 카테고리 버튼 처리
+// 5. 사이드바 버튼 연동 로직
 // ===============================
 const categoryBtns = document.querySelectorAll('.category-btn');
 
@@ -104,11 +75,10 @@ function applyInitialCategoryButton() {
         }
     });
 
-    // 매칭되는 버튼이 없으면 무조건 '전체' 버튼 활성화
+    // 💡 치명적 버그 해결: 일치하는 버튼이 없더라도 currentCategoryKeyword를 '전체'로 덮어쓰지 않습니다!
     if (!matched) {
         const defaultBtn = document.querySelector('.category-btn[data-keyword="전체"]');
         if (defaultBtn) defaultBtn.classList.add('active');
-        currentCategoryKeyword = "전체";
     }
 }
 applyInitialCategoryButton();
@@ -125,30 +95,53 @@ categoryBtns.forEach(btn => {
     });
 });
 
-
 // ===============================
-// 6. 식당 검색 핵심 로직 (자동 & 수동)
+// 6. 식당 검색 (카카오맵 API 정밀 필터링 적용)
 // ===============================
 function searchPlacesByCategory(pos) {
     const options = { location: pos, radius: 1000, sort: kakao.maps.services.SortBy.DISTANCE };
 
     if (currentCategoryKeyword === '전체') {
-        // 전체 카테고리일 때 음식점(FD6) 전체 검색
         ps.categorySearch('FD6', (data, status) => {
             if (status === kakao.maps.services.Status.OK) {
                 data.forEach(place => displayPlaceMarker(place));
             }
         }, options);
     } else {
-        const categoryCode = currentCategoryKeyword === '카페' ? 'CE7' : 'FD6';
-        ps.keywordSearch(currentCategoryKeyword, (data, status) => {
+        let categoryCode = 'FD6';
+        let searchKeyword = currentCategoryKeyword;
+
+        // 디저트는 카페(CE7) 코드로 검색해야 잘 나옵니다.
+        if (currentCategoryKeyword.includes('디저트') || currentCategoryKeyword.includes('카페')) {
+            categoryCode = 'CE7';
+            searchKeyword = '카페';
+        }
+
+        ps.keywordSearch(searchKeyword, (data, status) => {
             if (status === kakao.maps.services.Status.OK) {
-                data.forEach(place => displayPlaceMarker(place));
+
+                // 💡 핵심 개선: 카카오맵의 넓은 검색 결과를 '현재 카테고리'에 맞게 한 번 더 정밀하게 걸러냅니다!
+                const filteredData = data.filter(place => {
+                    const cName = place.category_name || "";
+                    if (currentCategoryKeyword.includes('한식')) return cName.includes('한식');
+                    if (currentCategoryKeyword.includes('중식')) return cName.includes('중식');
+                    if (currentCategoryKeyword.includes('일식')) return cName.includes('일식') || cName.includes('돈까스') || cName.includes('초밥');
+                    if (currentCategoryKeyword.includes('양식')) return cName.includes('양식') || cName.includes('피자') || cName.includes('파스타');
+                    if (currentCategoryKeyword.includes('치킨')) return cName.includes('치킨') || cName.includes('통닭');
+                    if (currentCategoryKeyword.includes('패스트푸드')) return cName.includes('패스트푸드') || cName.includes('햄버거');
+                    return true;
+                });
+
+                // 필터링 후 남은 결과가 없으면 어쩔 수 없이 원본 데이터를 보여줍니다.
+                const finalData = filteredData.length > 0 ? filteredData : data;
+
+                finalData.forEach(place => displayPlaceMarker(place));
             }
         }, { ...options, category_group_code: categoryCode });
     }
 }
 
+// 수동 텍스트 검색
 function searchByManualKeyword() {
     const keyword = document.getElementById('keyword').value;
     if (!keyword.trim()) return alert('검색어를 입력해주세요!');
@@ -163,19 +156,15 @@ function searchByManualKeyword() {
     }, { location: map.getCenter(), sort: kakao.maps.services.SortBy.DISTANCE });
 }
 
-
 // ===============================
-// 7. 마커 및 식당 정보창 표시
+// 7. 마커 및 창 표시
 // ===============================
 function displayPlaceMarker(place) {
     const marker = new kakao.maps.Marker({ map: map, position: new kakao.maps.LatLng(place.y, place.x) });
-
     kakao.maps.event.addListener(marker, 'click', () => {
-        // 💡 마커 클릭 시 해당 식당을 지도 중앙으로 부드럽게 이동
         map.panTo(marker.getPosition());
         openInfoWindow(place, marker);
     });
-
     markers.push(marker);
 }
 
@@ -198,24 +187,21 @@ function openInfoWindow(place, marker) {
     infowindow.open(map, marker);
 }
 
-
 // ===============================
-// 8. 식당 선택 후 돌아가기 (데이터 보존 로직)
+// 8. 영화 선택으로 돌아가기
 // ===============================
 window.selectCurrentPlaceForMovie = function () {
     if (!currentSelectedPlace) return alert("식당 정보가 없습니다.");
 
-    // 💡 핵심: 기존 URL에 있던 movieId(선택했던 영화)가 사라지지 않도록 그대로 가져가서 조립합니다.
-    const movieIdParam = mapUrlParams.get("movieId") ? `&movieId=${mapUrlParams.get("movieId")}` : "";
+    // 이전에 선택했던 영화 ID를 그대로 살려서 파라미터로 붙입니다.
+    const movieIdParam = passedMovieId ? `&movieId=${encodeURIComponent(passedMovieId)}` : "";
 
     const url = `recommend.html?mode=mapPick&ott=${encodeURIComponent(ottKey)}&meal=${encodeURIComponent(selectedMeal)}${movieIdParam}&foodCategory=${encodeURIComponent(currentCategoryKeyword)}&placeName=${encodeURIComponent(currentSelectedPlace.place_name)}&placeCategory=${encodeURIComponent(currentSelectedPlace.category_name || currentCategoryKeyword)}`;
-
     window.location.href = url;
 };
 
-
 // ===============================
-// 9. 화면 내 검색 / 위치 버튼 이벤트 연동
+// 9. 화면 내 기타 UI 버튼 이벤트
 // ===============================
 document.getElementById('myLocationBtn')?.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -224,24 +210,19 @@ document.getElementById('myLocationBtn')?.addEventListener('click', () => {
         map.panTo(loc);
         updateMyLocation(loc);
         isSearchMode = false;
-
         const keywordInput = document.getElementById('keyword');
         if (keywordInput) keywordInput.value = '';
-
         removeMarkers();
         searchPlacesByCategory(loc);
     });
 });
-
 document.getElementById('searchBtn')?.addEventListener('click', searchByManualKeyword);
 document.getElementById('keyword')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchByManualKeyword(); });
 document.getElementById('cancelBtn')?.addEventListener('click', () => {
     infowindow.close();
     isSearchMode = false;
-
     const keywordInput = document.getElementById('keyword');
     if (keywordInput) keywordInput.value = '';
-
     removeMarkers();
     searchPlacesByCategory(map.getCenter());
 });
