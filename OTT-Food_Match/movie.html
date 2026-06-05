@@ -1,19 +1,21 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>영화 선택</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div id="movieLoadingOverlay" class="page-loading-overlay hidden">
-  <div class="page-loading-box">
-    <div class="page-loading-spinner"></div>
-    <h2>영화 목록을 불러오는 중입니다</h2>
-    <p>선택한 OTT와 장르에 맞는 영화를 찾고 있어요.</p>
+    <div class="page-loading-box">
+      <div class="page-loading-spinner"></div>
+      <h2>영화 목록을 불러오는 중입니다</h2>
+      <p>선택한 OTT와 장르에 맞는 영화를 찾고 있어요.</p>
+    </div>
   </div>
-</div>
   <div class="app movie-app">
     <header class="header movie-header">
       <div class="setting-area">
@@ -44,31 +46,33 @@
 
       <section class="card">
         <div class="movie-section-title">
-  <div class="movie-title-row">
-    <div>
-      <h2 id="selectedGenreTitle">전체 영화</h2>
-      <p id="clickPosterInfo">영화 포스터를 클릭하면 추천 상세 페이지로 이동합니다.</p>
-    </div>
+          <div class="movie-title-row"
+            style="display: flex; justify-content: center; align-items: center; position: relative;">
 
-    <div class="sort-area">
-      <button id="sortMenuBtn" class="sort-menu-btn">인기순 ▾</button>
+            <div style="text-align: center;">
+              <h2 id="selectedGenreTitle" style="margin: 0 0 8px 0;">전체 영화</h2>
+              <p id="clickPosterInfo" style="margin: 0; color: #666;">영화 포스터를 클릭하면 추천 상세 페이지로 이동합니다.</p>
+            </div>
 
-      <div id="sortMenu" class="sort-menu hidden">
-        <button class="sort-option" data-sort="popularity">인기순</button>
-        <button class="sort-option" data-sort="rating">평점순</button>
-        <button class="sort-option" data-sort="latest">최신순</button>
-        <button class="sort-option" data-sort="title">이름순</button>
-      </div>
-    </div>
-  </div>
-</div>
+            <div class="sort-area" style="position: absolute; right: 0;">
+              <button id="sortMenuBtn" class="sort-menu-btn">인기순 ▾</button>
 
-<div id="loadingText">영화 목록을 불러오는 중입니다...</div>
-<div id="movieList" class="movie-grid"></div>
+              <div id="sortMenu" class="sort-menu hidden">
+                <button class="sort-option" data-sort="popularity">인기순</button>
+                <button class="sort-option" data-sort="rating">평점순</button>
+                <button class="sort-option" data-sort="latest">최신순</button>
+                <button class="sort-option" data-sort="title">이름순</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<div class="load-more-area">
-  <button id="loadMoreBtn" class="primary-btn hidden">더보기</button>
-</div>
+        <div id="loadingText">영화 목록을 불러오는 중입니다...</div>
+        <div id="movieList" class="movie-grid"></div>
+
+        <div class="load-more-area">
+          <button id="loadMoreBtn" class="primary-btn hidden">더보기</button>
+        </div>
       </section>
 
       <div class="action-area">
@@ -86,21 +90,26 @@
         <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
         <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
       </div>
-      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
+      <button id="closeLangModal" class="secondary-btn"
+        style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
     </div>
   </div>
 
-  <div id="finalResultModal" class="modal-overlay hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
-    <div class="modal-content result-modal-content" style="max-width: 400px; width: 90%; background: #fff; padding: 20px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+  <div id="finalResultModal" class="modal-overlay hidden"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="modal-content result-modal-content"
+      style="max-width: 400px; width: 90%; background: #fff; padding: 20px; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
       <div id="resultCaptureArea" style="padding: 10px; border-radius: 12px; text-align: center;">
         <h2 id="modalResultTitle" style="color: #ff7a59; margin-bottom: 20px;">✨ 맞춤 추천 결과 ✨</h2>
-        
-        <div style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 12px;">
+
+        <div
+          style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 12px;">
           <h3 id="modalMovieHeader" style="margin-bottom: 12px; color: #ff7a59;">🎬 선택한 영화</h3>
-          <img id="modalMoviePoster" src="" alt="Poster" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px;">
+          <img id="modalMoviePoster" src="" alt="Poster"
+            style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px;">
           <strong id="modalMovieTitle" style="display: block; margin-top: 8px; font-size: 1.1rem;"></strong>
         </div>
-        
+
         <div style="background: #fcfcfc; padding: 16px; border-radius: 12px; border: 1px solid #eee;">
           <h3 id="modalFoodHeader" style="margin-bottom: 12px; color: #ff7a59;">🍽 추천 음식</h3>
           <div id="modalFoodEmoji" style="font-size: 3.5rem; margin: 10px 0;">🍕</div>
@@ -109,7 +118,8 @@
         </div>
       </div>
 
-      <div class="action-area" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;" data-html2canvas-ignore>
+      <div class="action-area" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;"
+        data-html2canvas-ignore>
         <button id="modalShareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
         <button id="closeFinalResultModal" class="secondary-btn" style="width: 100%;">닫기</button>
       </div>
@@ -120,4 +130,5 @@
   <script src="i18n.js"></script>
   <script src="movie.js"></script>
 </body>
+
 </html>

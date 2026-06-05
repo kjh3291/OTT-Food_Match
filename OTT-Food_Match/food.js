@@ -1,4 +1,4 @@
-const foodCategories = {
+export const foodCategories = {
   // ---------------------------------------------------------------
   // 🇰🇷 한식
   // ---------------------------------------------------------------
@@ -109,17 +109,17 @@ const foodCategories = {
 
 // 카테고리 이름 목록: ["한식", "중식", "일식", "양식", "치킨", "패스트푸드", "디저트"]
 const foodCategoryList = Object.keys(foodCategories);
- 
+
 // 평면화된 전체 목록: [{ name: "김치찌개", category: "한식" }, ...]
 const categorizedFoods = Object.entries(foodCategories).flatMap(
   ([category, names]) => names.map((name) => ({ name, category }))
 );
- 
+
 // 특정 카테고리의 음식 배열 반환 (없으면 빈 배열)
 function getFoodsByCategory(category) {
   return foodCategories[category] ? [...foodCategories[category]] : [];
 }
- 
+
 // 여러 카테고리를 한 번에 합쳐서 {name, category} 객체 배열로 반환
 function getFoodsByCategories(categories) {
   return categorizedFoods.filter((food) => categories.includes(food.category));
@@ -130,21 +130,21 @@ function getFoodsByCategories(categories) {
 //   - 기존 코드는 "식사" / "디저트" / "패스트푸드" 3분류를 사용하므로
 //     위 7개 카테고리에서 다시 합쳐 그대로 동작하도록 유지합니다.
 // =====================================================================
- 
+
 const meals = [
   ...foodCategories["한식"],
   ...foodCategories["중식"],
   ...foodCategories["일식"],
   ...foodCategories["양식"]
 ];
- 
+
 const desserts = [...foodCategories["디저트"]];
- 
+
 const fastfoods = [
   ...foodCategories["치킨"],
   ...foodCategories["패스트푸드"]
 ];
- 
+
 // 문자열 배열 → {name, category} 객체 배열 (기존 함수 유지)
 function convertFoods(foodArray, category) {
   return foodArray.map((food) => ({
@@ -152,4 +152,4 @@ function convertFoods(foodArray, category) {
     category: category
   }));
 }
- 
+

@@ -5,7 +5,7 @@
 //  - 카테고리: 한식 · 중식 · 일식 · 양식 · 치킨 · 패스트푸드 · 디저트
 //  - Gemini가 "이 목록 안에서만" 음식을 고르도록 후보로 넘길 때 사용
 // =====================================================================
- 
+
 export const FOOD_CATEGORIES = {
   "한식": [
     "김치찌개", "된장찌개", "순두부찌개", "부대찌개",
@@ -24,13 +24,13 @@ export const FOOD_CATEGORIES = {
     "김치전", "해물파전",
     "고등어구이", "육회"
   ],
- 
+
   "중식": [
     "짜장면", "짬뽕",
     "마라탕", "마라샹궈", "훠궈",
     "마파두부", "깐풍기"
   ],
- 
+
   "일식": [
     "오므라이스", "카레", "카레라이스",
     "덮밥", "규동", "가츠동", "텐동", "스테이크덮밥",
@@ -40,7 +40,7 @@ export const FOOD_CATEGORIES = {
     "샤브샤브",
     "일본라멘", "돈코츠라멘", "탄탄멘"
   ],
- 
+
   "양식": [
     "파스타", "토마토파스타", "크림파스타", "로제파스타", "알리오올리오",
     "리조또", "크림리조또", "토마토리조또",
@@ -50,12 +50,12 @@ export const FOOD_CATEGORIES = {
     // 동남아 요리 — 7개 카테고리에 정확히 안 맞아 임시로 양식에 배치
     "쌀국수", "팟타이", "나시고렝"
   ],
- 
+
   "치킨": [
     "치킨", "후라이드치킨", "양념치킨", "간장치킨", "마늘치킨", "파닭",
     "닭강정"
   ],
- 
+
   "패스트푸드": [
     "햄버거", "치즈버거", "치킨버거", "새우버거", "불고기버거",
     "감자튀김", "해시브라운", "치즈스틱", "어니언링",
@@ -67,7 +67,7 @@ export const FOOD_CATEGORIES = {
     "나초", "프레즐",
     "닭꼬치", "소떡소떡"
   ],
- 
+
   "디저트": [
     "케이크", "초코케이크", "치즈케이크", "티라미수",
     "생크림케이크", "과일케이크", "레드벨벳케이크",
@@ -91,12 +91,12 @@ export const FOOD_CATEGORIES = {
 
 // 카테고리 이름 목록
 export const FOOD_CATEGORY_LIST = Object.keys(FOOD_CATEGORIES);
- 
+
 // 평면화된 전체 목록: [{ name, category }, ...]
 export const CATEGORIZED_FOODS = Object.entries(FOOD_CATEGORIES).flatMap(
   ([category, names]) => names.map((name) => ({ name, category }))
 );
- 
+
 // 음식명 → 카테고리 빠른 조회 맵
 export const FOOD_NAME_TO_CATEGORY = CATEGORIZED_FOODS.reduce((acc, food) => {
   acc[food.name] = food.category;
@@ -120,23 +120,22 @@ export const GENRE_CATEGORY_MAP = {
 // 매칭되는 게 하나도 없으면 전체 7개 카테고리를 반환
 export function getCategoriesByGenres(genreNames = []) {
   const set = new Set();
- 
+
   genreNames
     .filter(Boolean)
     .forEach((genre) => {
       const cats = GENRE_CATEGORY_MAP[genre];
       if (cats) cats.forEach((c) => set.add(c));
     });
- 
+
   if (set.size === 0) {
     return [...FOOD_CATEGORY_LIST];
   }
- 
+
   return [...set];
 }
- 
+
 // 주어진 카테고리들에 속한 음식들을 {name, category} 배열로 반환
 export function getFoodsByCategories(categories = []) {
   return CATEGORIZED_FOODS.filter((food) => categories.includes(food.category));
 }
- 
