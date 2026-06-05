@@ -44,7 +44,7 @@ if (!ottKey) {
   else if (lang === "zh") msg = "未找到 OTT 信息，请在主页重新选择 OTT 平台。";
   else if (lang === "ja") msg = "OTT情報がありません。メイン画面でOTTを再度選択してください。";
   alert(msg);
-  window.location.href = "main.html";
+  window.location.href = "index.html"; // 수정됨
 }
 
 function applyMovieLanguage() {
@@ -444,7 +444,7 @@ function recommendFood(genre) {
 }
 
 if (backToMainBtn) {
-  backToMainBtn.addEventListener("click", () => { window.location.href = "main.html"; });
+  backToMainBtn.addEventListener("click", () => { window.location.href = "index.html"; }); // 수정됨
 }
 
 document.addEventListener("languageChanged", () => {
