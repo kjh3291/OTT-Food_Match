@@ -323,5 +323,71 @@ async function initRecommendPage() {
     renderRecommendDetail(currentMovie, currentFood, currentReason);
   }
 }
+// ===============================
+// 8. 설정 팝업, 다크모드, 다국어 모달 연동 (복구됨!)
+// ===============================
+const settingBtn = document.getElementById("settingBtn");
+const settingPopup = document.getElementById("settingPopup");
+const darkModeToggle = document.getElementById("darkModeToggle");
+const langMenuBtn = document.getElementById("langMenuBtn");
+const langModal = document.getElementById("langModal");
+const closeLangModal = document.getElementById("closeLangModal");
 
+// 1. 설정 팝업 열기/닫기
+if (settingBtn && settingPopup) {
+  settingBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    settingPopup.classList.toggle("hidden");
+  });
+
+  settingPopup.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  // 빈 바탕 클릭 시 팝업 닫기
+  document.addEventListener("click", () => {
+    settingPopup.classList.add("hidden");
+  });
+}
+
+// 2. 다크 모드 토글 연동
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  if (darkModeToggle) {
+    darkModeToggle.textContent = typeof getLang === 'function' && getLang() === "ko" ? "☀️ 라이트 모드"
+      : (typeof getLang === 'function' && getLang() === "en" ? "☀️ Light Mode"
+        : (typeof getLang === 'function' && getLang() === "zh" ? "☀️ 浅色模式" : "☀️ ライトモード"));
+  }
+}
+
+if (darkModeToggle) {
+  darkModeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+    document.dispatchEvent(new Event("languageChanged"));
+  });
+}
+
+// 3. 언어 설정 모달 띄우기
+if (langMenuBtn && langModal) {
+  langMenuBtn.addEventListener("click", () => {
+    settingPopup.classList.add("hidden"); // 설정 팝업 닫고
+    langModal.classList.remove("hidden"); // 언어 모달 열기
+  });
+}
+
+// 4. 언어 모달 닫기
+if (closeLangModal && langModal) {
+  closeLangModal.addEventListener("click", () => {
+    langModal.classList.add("hidden");
+  });
+}
+
+// 5. 언어 변경 시 화면 추천 텍스트 즉시 새로고침
+document.addEventListener("languageChanged", () => {
+  if (currentMovie && currentFood) {
+    currentReason = makeRecommendReason(currentMovie, currentFood);
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+  }
+});
 initRecommendPage();
