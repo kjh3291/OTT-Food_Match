@@ -1877,3 +1877,61 @@ body.dark-mode .result-card.best-match p {
   margin: 0 !important;
   font-size: 0.95rem;
 }
+
+/* =========================================
+   ✨ 섹션 타이틀 중앙 정렬 및 우측 상단 버튼 패치
+   ('최근 저장한 조합', 'AI가 골라본 조합' 등)
+========================================= */
+
+/* 1. 타이틀 영역 전체를 중앙 정렬 및 버튼 기준점으로 설정 */
+.section-title-row {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important; /* 수정/새로고침 버튼의 기준점 */
+  width: 100% !important;
+  margin-bottom: 24px !important;
+}
+
+/* 2. 내부의 제목(h2)과 설명(p)을 감싸는 div를 가로 정중앙으로 모음 */
+.section-title-row > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.section-title-row h2,
+.section-title-row p {
+  text-align: center !important;
+  margin: 0 !important;
+}
+
+.section-title-row h2 {
+  margin-bottom: 6px !important;
+}
+
+/* 3. 수정 버튼 / 새로 추천 버튼을 우측 상단에 고정 */
+.saved-edit-btn {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  margin: 0 !important;
+}
+
+/* 4. 화면이 좁은 모바일 환경에서 글씨와 버튼이 겹치지 않도록 세로로 배치 */
+@media (max-width: 500px) {
+  .section-title-row {
+    flex-direction: column !important;
+    padding-top: 10px !important;
+  }
+  
+  .saved-edit-btn {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    margin-top: 16px !important;
+  }
+}
+
+
