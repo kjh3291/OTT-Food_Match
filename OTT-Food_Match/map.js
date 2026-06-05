@@ -77,6 +77,8 @@ kakao.maps.event.addListener(map, 'click', function () {
 
 // 4. 우측 카테고리 버튼 이벤트 연동
 const categoryBtns = document.querySelectorAll('.category-btn');
+
+// 무한 루프가 발생하던 부분 수정됨
 function applyInitialCategoryButton() {
     categoryBtns.forEach((btn) => {
         if (btn.getAttribute('data-keyword') === currentCategoryKeyword) {
@@ -85,8 +87,9 @@ function applyInitialCategoryButton() {
             btn.classList.remove('active');
         }
     });
-    applyInitialCategoryButton();
 }
+applyInitialCategoryButton(); // 함수 바깥에서 1번만 정상적으로 실행되도록 수정됨
+
 categoryBtns.forEach(btn => {
     btn.addEventListener('click', function () {
         // 스타일 액티브 상태 변경
@@ -243,8 +246,6 @@ if (myLocationBtn) {
     });
 }
 
-<<<<<<< HEAD
-=======
 function selectCurrentPlaceForMovie() {
     if (!currentSelectedPlace) {
         alert("선택된 음식점 정보가 없습니다.");
@@ -267,4 +268,4 @@ function selectCurrentPlaceForMovie() {
 }
 
 window.selectCurrentPlaceForMovie = selectCurrentPlaceForMovie;
->>>>>>> 0c8734a7f7dbb5afbeacd45314389bf203f305ff
+
