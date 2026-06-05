@@ -1,23 +1,23 @@
 import { foodCategories } from './food.js';
 
 // ===============================
-// 1. URL 값 가져오기 (const를 let으로 변경하여 유동성 확보)
+// 1. URL 값 가져오기 (디코딩 에러 방지)
 // ===============================
 const urlParams = new URLSearchParams(window.location.search);
 let movieId = urlParams.get("movieId");
 const ottKey = urlParams.get("ott") || "netflix";
 
-let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
-let selectedGenre = urlParams.get("genre") ? decodeURIComponent(urlParams.get("genre")) : "전체";
+let selectedMeal = urlParams.get("meal") || "혼밥";
+let selectedGenre = urlParams.get("genre") || "전체";
 
 const pageMode = urlParams.get("mode") || "recommend";
-const savedFoodName = urlParams.get("foodName") ? decodeURIComponent(urlParams.get("foodName")) : "";
-const savedFoodCategory = urlParams.get("foodCategory") ? decodeURIComponent(urlParams.get("foodCategory")) : "기타";
-const savedReason = urlParams.get("reason") ? decodeURIComponent(urlParams.get("reason")) : "";
+const savedFoodName = urlParams.get("foodName") || "";
+const savedFoodCategory = urlParams.get("foodCategory") || "기타";
+const savedReason = urlParams.get("reason") || "";
 
 // 지도에서 넘어온 경우
-const mapPickPlaceName = urlParams.get("placeName") ? decodeURIComponent(urlParams.get("placeName")) : null;
-const mapPickPlaceCategory = urlParams.get("placeCategory") ? decodeURIComponent(urlParams.get("placeCategory")) : null;
+const mapPickPlaceName = urlParams.get("placeName") || null;
+const mapPickPlaceCategory = urlParams.get("placeCategory") || null;
 
 // ===============================
 // 2. 음식 데이터 준비 (구버전, 신버전 food.js 모두 호환되도록 병합)
@@ -121,8 +121,8 @@ function getGenreFromFoodCategory(category) {
   if (!category) return "전체";
   const cat = category.toLowerCase();
   if (cat.includes("디저트") || cat.includes("카페") || cat.includes("커피")) return "로맨스";
-  if (cat.includes("치킨") || cat.includes("패스트푸드") || cat.includes("야식") || cat.includes("고기")) return "액션";
-  if (cat.includes("분식") || cat.includes("마라") || cat.includes("중식")) return "코미디";
+  if (cat.includes("치킨") || cat.includes("패스트푸드") || cat.includes("야식") || cat.includes("고기") || cat.includes("마라")) return "액션";
+  if (cat.includes("분식") || cat.includes("중식")) return "코미디";
   if (cat.includes("한식") || cat.includes("일식") || cat.includes("양식") || cat.includes("초밥")) return "드라마";
   return "전체";
 }
@@ -145,8 +145,8 @@ async function fetchRandomMovie(genre) {
     }
 
     const randomMovie = data.movies[Math.floor(Math.random() * data.movies.length)];
-    movieId = randomMovie.id; // 나중에 저장 기능을 위해 ID 세팅
-    selectedGenre = genre; // UI에 표시될 장르 갱신
+    movieId = randomMovie.id;
+    selectedGenre = genre;
     return await fetchMovieDetailById(randomMovie.id);
   } catch (error) {
     console.error("랜덤 영화 추출 에러:", error);
@@ -231,21 +231,12 @@ function renderRecommendDetail(movie, food, reason) {
     recommendPageInfo.textContent = `식사 상황: ${selectedMeal} / 영화 장르: ${selectedGenre}`;
   }
 
-  // 💡 지도에서 선택한 식당 정보 렌더링
-  let mapPickHtml = "";
-  if (pageMode === "mapPick" && mapPickPlaceName) {
-    mapPickHtml = `
-      <div class="map-pick-info" style="margin-bottom: 25px; padding: 20px; border: 2px solid #6c5ce7; border-radius: 16px; background: rgba(108, 92, 231, 0.15);">
-        <h3 style="margin: 0 0 10px 0; color: #a29bfe;">📍 선택하신 식당</h3>
-        <p style="margin: 5px 0; font-size: 1.1rem;"><strong>식당 이름:</strong> ${mapPickPlaceName}</p>
-        <p style="margin: 5px 0; color: #ccc;"><strong>업종:</strong> ${mapPickPlaceCategory}</p>
-      </div>
-    `;
-  }
+  // 💡 모드에 따라 추천 텍스트를 "선택한 식당"으로 동적 변경!
+  const isMapPick = (pageMode === "mapPick");
+  const foodTitle = isMapPick ? "🍽 선택한 식당" : safeText("recFoodRec", "🍽 추천 음식");
 
   recommendDetailArea.innerHTML = `
     <div class="recommend-layout">
-      ${mapPickHtml}
       <div class="recommend-poster-box">
         ${posterUrl ? `<img src="${posterUrl}" alt="${movie.title}" class="recommend-poster">` : `<div class="no-poster">${safeText("noPoster", "포스터 없음")}</div>`}
       </div>
@@ -262,10 +253,13 @@ function renderRecommendDetail(movie, food, reason) {
         <p>${movie.overview || safeText("noOverview", "줄거리 정보가 없습니다.")}</p>
 
         <hr class="recommend-divider">
-        <h3 style="color: #ff715b;">🍽 추천 음식 (지도 선택)</h3>
-        <p style="font-size: 1.2rem; font-weight: bold; color: #fff;">${food.name}</p>
+        
+        <h3 style="color: #ff715b;">${foodTitle}</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; color: #ff715b; background: rgba(255, 113, 91, 0.1); padding: 10px; border-radius: 8px; display: inline-block;">
+            ${food.name}
+        </p>
 
-        <h3>💡 추천 사유</h3>
+        <h3 style="margin-top: 15px;">${safeText("recReason", "💡 추천 사유")}</h3>
         <p>${reason}</p>
       </div>
     </div>
@@ -275,7 +269,7 @@ function renderRecommendDetail(movie, food, reason) {
 }
 
 // ===============================
-// 10. 좋아요 / 싫어요 / 조합 저장 (유지)
+// 10. 좋아요 / 싫어요 / 조합 저장
 // ===============================
 function saveReaction(reactionType) {
   if (!currentMovie || !currentFood) return;
@@ -298,6 +292,7 @@ function saveCombo() {
   savedCombos.push(combo);
   localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
   alert("조합이 저장되었습니다.");
+  window.location.href = "index.html";
 }
 
 if (likeBtn) likeBtn.addEventListener("click", () => saveReaction("like"));
@@ -314,7 +309,7 @@ async function initRecommendPage() {
 
   if (pageMode === "mapPick") {
     // 💡 1. 지도에서 넘어왔을 경우: 식당 카테고리를 바탕으로 랜덤 영화 불러오기
-    showRecommendLoading("식당에 어울리는 영화를 찾는 중입니다...");
+    showRecommendLoading("선택하신 식당에 어울리는 영화를 찾는 중입니다...");
     const recommendedGenre = getGenreFromFoodCategory(mapPickPlaceCategory);
     movie = await fetchRandomMovie(recommendedGenre);
   } else {
@@ -339,9 +334,9 @@ async function initRecommendPage() {
 
   // 화면 렌더링 분기
   if (pageMode === "mapPick") {
-    // 식당 이름이 추천 음식으로 고정됨!
+    // 💡 핵심: 식당 이름이 추천 음식 영역에 들어갑니다!
     currentFood = { name: mapPickPlaceName || "추천 식당", category: mapPickPlaceCategory || "기타" };
-    currentReason = `선택하신 '${mapPickPlaceName}'(${mapPickPlaceCategory})의 분위기와 어울리는 [${selectedGenre}] 장르의 영화를 자동으로 찾아드렸습니다! 맛있는 식사와 함께 영화를 감상해보세요.`;
+    currentReason = `지도에서 직접 선택하신 식당 '${mapPickPlaceName}'(${mapPickPlaceCategory})의 분위기와 어울리는 [${selectedGenre}] 장르의 영화를 자동으로 찾아드렸습니다! 맛있는 식사와 함께 영화를 감상해보세요.`;
     renderRecommendDetail(currentMovie, currentFood, currentReason);
 
   } else if (pageMode === "saved" && savedFoodName) {
