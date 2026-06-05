@@ -36,7 +36,20 @@ const i18nData = {
     errorLoadMovie: "영화 정보를 불러오지 못했습니다.",
     savedComboTitle: "최근 저장한 조합", savedComboDesc: "마음에 든 조합을 다시 확인해보세요.", editSavedComboBtn: "수정",
     savedManageTitle: "저장한 조합 관리", savedViewTitle: "저장한 조합 전체보기", savedManageDoneBtn: "닫기", savedViewDoneBtn: "닫기",
-    savedEmptyTitle: "아직 저장한 조합이 없어요", savedEmptyDesc: "영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.", noPoster: "포스터 없음", cancelSave: "저장 취소", noSavedCombo: "저장된 조합이 없습니다.", comboDeleted: "저장한 조합이 삭제되었습니다."
+    savedEmptyTitle: "아직 저장한 조합이 없어요", savedEmptyDesc: "영화 상세 페이지에서 마음에 드는 조합을 저장하면 이곳에 표시됩니다.", noPoster: "포스터 없음", cancelSave: "저장 취소", noSavedCombo: "저장된 조합이 없습니다.", comboDeleted: "저장한 조합이 삭제되었습니다.",
+    
+    // 추가된 동적 텍스트 (AI 추천 및 세부 결과창)
+    aiPickLoadingTitle: "AI가 조합을 고르는 중이에요", aiPickLoadingDesc: "저장한 조합을 참고해서 추천을 만들고 있어요. 잠시만 기다려주세요.",
+    aiPickErrorTitle: "AI 추천을 불러오지 못했어요", aiPickErrorDesc: "잠시 후 다시 시도해주세요. 지금은 기본 추천 조합을 대신 보여드릴게요.", aiPickErrorAlert: "AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.",
+    aiBadgeBased: "취향 기반", aiBadgeRandom: "랜덤 추천",
+    aiTitleWait: "저장 조합을 기다리는 추천", aiReasonWait: "아직 저장한 조합이 많지 않아, 누구나 편하게 즐길 수 있는 조합으로 추천했어요.",
+    aiTitleRecent: "최근 저장 조합을 참고했어요", aiTitleRandom: "오늘은 이런 조합 어때요?", aiReasonRandom: "평소와 다른 조합을 시도해볼 수 있도록 무작위로 골라봤어요.",
+    aiRowMovie: "🎬 추천 영화 분위기", aiRowGenre: "🎭 추천 장르", aiRowFood: "🍽 추천 음식", aiClickGuide: "이 장르 영화 보러가기 →",
+    aiHint_action: "빠른 전개의 액션 영화", aiHint_comedy: "가볍게 웃기 좋은 코미디 영화", aiHint_drama: "잔잔하게 몰입하기 좋은 드라마 영화", aiHint_romance: "분위기 있게 보기 좋은 로맨스 영화", aiHint_thriller: "긴장감 있는 스릴러 영화", aiHint_animation: "편하게 보기 좋은 애니메이션 영화",
+    recDate: "개봉일:", recRating: "평점:", recRuntime: "상영 시간:", recGenreLabel: "영화 장르:", recMovieDesc: "🎬 영화 설명", recFoodRec: "🍽 추천 음식", recReason: "💡 추천 사유",
+    alert_like: "좋아요가 반영되었습니다.", alert_dislike: "싫어요가 반영되었습니다.", alert_already_saved: "이미 저장된 조합입니다.", alert_saved: "조합이 저장되었습니다.",
+    mins: "분", infoNone: "정보 없음",
+    sortPop: "인기순 ▾", sortRate: "평점순 ▾", sortLate: "최신순 ▾", sortName: "이름순 ▾", sortOptPop: "인기순", sortOptRate: "평점순", sortOptLate: "최신순", sortOptName: "이름순"
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
@@ -71,7 +84,19 @@ const i18nData = {
     errorLoadMovie: "Failed to load movie information.",
     savedComboTitle: "Recently Saved Combos", savedComboDesc: "Check out your favorite combos again.", editSavedComboBtn: "Edit",
     savedManageTitle: "Manage Saved Combos", savedViewTitle: "View All Saved Combos", savedManageDoneBtn: "Close", savedViewDoneBtn: "Close",
-    savedEmptyTitle: "No saved combos yet", savedEmptyDesc: "Save your favorite combos on the movie details page and they will appear here.", noPoster: "No Poster", cancelSave: "Unsave", noSavedCombo: "There are no saved combos.", comboDeleted: "Saved combo has been deleted."
+    savedEmptyTitle: "No saved combos yet", savedEmptyDesc: "Save your favorite combos on the movie details page and they will appear here.", noPoster: "No Poster", cancelSave: "Unsave", noSavedCombo: "There are no saved combos.", comboDeleted: "Saved combo has been deleted.",
+    
+    aiPickLoadingTitle: "AI is picking a combo", aiPickLoadingDesc: "Creating recommendations based on your saved combos. Please wait.",
+    aiPickErrorTitle: "Failed to load AI recommendations", aiPickErrorDesc: "Please try again later. Showing default recommendations for now.", aiPickErrorAlert: "AI connection unstable. Try again later.",
+    aiBadgeBased: "Taste Based", aiBadgeRandom: "Random Pick",
+    aiTitleWait: "Awaiting saved combos", aiReasonWait: "Not many saved combos yet, so we recommend a universally enjoyable combo.",
+    aiTitleRecent: "Based on recently saved combos", aiTitleRandom: "How about this combo today?", aiReasonRandom: "Picked randomly so you can try something different.",
+    aiRowMovie: "🎬 Movie Vibe", aiRowGenre: "🎭 Genre", aiRowFood: "🍽 Recommended Food", aiClickGuide: "Watch this genre →",
+    aiHint_action: "Fast-paced action", aiHint_comedy: "Lighthearted comedy", aiHint_drama: "Immersive emotional drama", aiHint_romance: "Atmospheric romantic movie", aiHint_thriller: "Tense thriller", aiHint_animation: "Easy-to-watch animation",
+    recDate: "Release:", recRating: "Rating:", recRuntime: "Runtime:", recGenreLabel: "Genre:", recMovieDesc: "🎬 Movie Description", recFoodRec: "🍽 Recommended Food", recReason: "💡 Reason",
+    alert_like: "Like recorded.", alert_dislike: "Dislike recorded.", alert_already_saved: "Already saved combo.", alert_saved: "Combo saved.",
+    mins: " min", infoNone: "No info",
+    sortPop: "Popular ▾", sortRate: "Rating ▾", sortLate: "Latest ▾", sortName: "Title ▾", sortOptPop: "Popular", sortOptRate: "Rating", sortOptLate: "Latest", sortOptName: "Title"
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
@@ -106,7 +131,19 @@ const i18nData = {
     errorLoadMovie: "无法加载电影信息。",
     savedComboTitle: "最近保存的组合", savedComboDesc: "再次查看您喜欢的组合。", editSavedComboBtn: "编辑",
     savedManageTitle: "管理保存的组合", savedViewTitle: "查看所有组合", savedManageDoneBtn: "关闭", savedViewDoneBtn: "关闭",
-    savedEmptyTitle: "暂无保存的组合", savedEmptyDesc: "在电影详情页保存您喜欢的组合，它们会显示在这里。", noPoster: "无海报", cancelSave: "取消保存", noSavedCombo: "没有保存的组合。", comboDeleted: "保存的组合已删除。"
+    savedEmptyTitle: "暂无保存的组合", savedEmptyDesc: "在电影详情页保存您喜欢的组合，它们会显示在这里。", noPoster: "无海报", cancelSave: "取消保存", noSavedCombo: "没有保存的组合。", comboDeleted: "保存的组合已删除。",
+    
+    aiPickLoadingTitle: "AI正在为您挑选组合", aiPickLoadingDesc: "正在参考您保存的组合生成推荐。请稍候。",
+    aiPickErrorTitle: "无法加载AI推荐", aiPickErrorDesc: "请稍后再试。现在将显示默认推荐组合。", aiPickErrorAlert: "AI连接不稳定。请稍后再试。",
+    aiBadgeBased: "基于口味", aiBadgeRandom: "随机推荐",
+    aiTitleWait: "等待保存组合的推荐", aiReasonWait: "因为保存的组合还不多，为您推荐大家都喜欢的组合。",
+    aiTitleRecent: "参考了最近保存的组合", aiTitleRandom: "今天尝试这个组合怎么样？", aiReasonRandom: "随机挑选，让您尝试与平时不同的组合。",
+    aiRowMovie: "🎬 推荐电影氛围", aiRowGenre: "🎭 推荐类型", aiRowFood: "🍽 推荐美食", aiClickGuide: "查看此类型电影 →",
+    aiHint_action: "快节奏动作片", aiHint_comedy: "轻松搞笑喜剧", aiHint_drama: "沉浸式温情剧情片", aiHint_romance: "唯美浪漫爱情片", aiHint_thriller: "紧张刺激的惊悚片", aiHint_animation: "轻松治愈的动画片",
+    recDate: "上映日期:", recRating: "评分:", recRuntime: "时长:", recGenreLabel: "电影类型:", recMovieDesc: "🎬 电影简介", recFoodRec: "🍽 推荐美食", recReason: "💡 推荐理由",
+    alert_like: "已点赞。", alert_dislike: "已点踩。", alert_already_saved: "已保存过该组合。", alert_saved: "组合已保存。",
+    mins: "分钟", infoNone: "暂无信息",
+    sortPop: "热门 ▾", sortRate: "评分 ▾", sortLate: "最新 ▾", sortName: "名称 ▾", sortOptPop: "热门", sortOptRate: "评分", sortOptLate: "最新", sortOptName: "名称"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
@@ -141,7 +178,19 @@ const i18nData = {
     errorLoadMovie: "映画情報を読み込めませんでした。",
     savedComboTitle: "最近保存したコンボ", savedComboDesc: "お気に入りのコンボをもう一度確認してみてください。", editSavedComboBtn: "編集",
     savedManageTitle: "保存したコンボの管理", savedViewTitle: "保存したコンボをすべて見る", savedManageDoneBtn: "閉じる", savedViewDoneBtn: "閉じる",
-    savedEmptyTitle: "まだ保存したコンボがありません", savedEmptyDesc: "映画の詳細ページでお気に入りのコンボを保存すると、ここに表示されます。", noPoster: "ポスターなし", cancelSave: "保存取消", noSavedCombo: "保存されたコンボはありません。", comboDeleted: "保存したコンボが削除されました。"
+    savedEmptyTitle: "まだ保存したコンボがありません", savedEmptyDesc: "映画の詳細ページでお気に入りのコンボを保存すると、ここに表示されます。", noPoster: "ポスターなし", cancelSave: "保存取消", noSavedCombo: "保存されたコンボはありません。", comboDeleted: "保存したコンボが削除されました。",
+    
+    aiPickLoadingTitle: "AIがコンボを選んでいます", aiPickLoadingDesc: "保存したコンボを参考におすすめを作成しています。少々お待ちください。",
+    aiPickErrorTitle: "AIのおすすめを読み込めませんでした", aiPickErrorDesc: "後でもう一度お試しください。現在はデフォルトのおすすめを表示しています。", aiPickErrorAlert: "AI接続が不安定です。後でもう一度お試しください。",
+    aiBadgeBased: "好みベース", aiBadgeRandom: "ランダムおすすめ",
+    aiTitleWait: "保存コンボ待ちのおすすめ", aiReasonWait: "まだ保存されたコンボが多くないため、誰でも楽しめるコンボをおすすめしました。",
+    aiTitleRecent: "最近保存したコンボを参考にしました", aiTitleRandom: "今日はこんなコンボいかがですか？", aiReasonRandom: "いつもと違うコンボを試せるよう、ランダムに選びました。",
+    aiRowMovie: "🎬 おすすめ映画の雰囲気", aiRowGenre: "🎭 おすすめジャンル", aiRowFood: "🍽 おすすめの食べ物", aiClickGuide: "このジャンルの映画を見る →",
+    aiHint_action: "テンポの速いアクション", aiHint_comedy: "気軽に笑えるコメディ", aiHint_drama: "静かに没入できるドラマ", aiHint_romance: "雰囲気の良いロマンス", aiHint_thriller: "緊張感のあるスリラー", aiHint_animation: "見やすいアニメ",
+    recDate: "公開日:", recRating: "評価:", recRuntime: "上映時間:", recGenreLabel: "映画ジャンル:", recMovieDesc: "🎬 映画の説明", recFoodRec: "🍽 おすすめの食べ物", recReason: "💡 おすすめの理由",
+    alert_like: "いいねを反映しました。", alert_dislike: "いまいちを反映しました。", alert_already_saved: "すでに保存されたコンボです。", alert_saved: "コンボが保存されました。",
+    mins: "分", infoNone: "情報なし",
+    sortPop: "人気順 ▾", sortRate: "評価順 ▾", sortLate: "最新順 ▾", sortName: "名前順 ▾", sortOptPop: "人気順", sortOptRate: "評価順", sortOptLate: "最新順", sortOptName: "名前順"
   }
 };
 
@@ -223,3 +272,4 @@ document.addEventListener("languageChanged", () => {
     }
   }
 });
+
