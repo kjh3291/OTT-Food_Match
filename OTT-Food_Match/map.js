@@ -6,7 +6,9 @@ const mapOption = {
 
 const map = new kakao.maps.Map(mapContainer, mapOption);
 const ps = new kakao.maps.services.Places(map);
-const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+
+// 정보창의 zIndex를 3으로 높여서 내 위치 마커(zIndex: 2)보다 항상 위에 오도록 설정합니다.
+const infowindow = new kakao.maps.InfoWindow({ zIndex: 3 });
 
 let markers = [];
 let myLocationMarker = null; // 내 위치 표시용 커스텀 오버레이
@@ -26,12 +28,15 @@ if (navigator.geolocation) {
 function updateMyLocation(locPosition) {
     if (myLocationMarker) myLocationMarker.setMap(null);
 
+    // 원하시는 크기로 조절 가능
     const content = '<div style="width: 10px; height: 10px; background-color: #007bff; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>';
 
     myLocationMarker = new kakao.maps.CustomOverlay({
         position: locPosition,
         content: content,
-        zIndex: 2
+        zIndex: 2,     // 내 위치 아이콘의 순서는 2로 유지합니다.
+        xAnchor: 0.5,  // 마커 중심을 실제 위치의 정중앙으로 맞춥니다.
+        yAnchor: 0.5
     });
     myLocationMarker.setMap(map);
 }
