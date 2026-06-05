@@ -1842,3 +1842,38 @@ body.dark-mode .result-card.best-match {
 body.dark-mode .result-card.best-match p {
   color: #eeeeee !important;
 }
+
+/* =========================================
+   🍿 '최근 저장한 조합' 비어있는 상태 중앙 정렬 패치
+========================================= */
+
+/* 1. 저장된 조합이 없을 때 나타나는 카드 전체를 가로 정중앙 배치 */
+.saved-empty-card {
+  width: 100% !important; /* 부모 컨테이너 너비를 채우도록 설정 */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important; /* 내부의 모든 요소를 가로 정중앙 정렬 */
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 32px 24px !important; /* 위아래 여백을 단정하게 정리 */
+}
+
+/* 2. 카드 내부의 이모티콘, 제목, 본문 텍스트 모두 가운데 정렬 강제 */
+.saved-empty-icon,
+.saved-empty-card h3,
+.saved-empty-card p {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* 3. 문구 간의 간격을 조절하여 옹기종기 모이도록 설정 */
+.saved-empty-card h3 {
+  margin-top: 12px !important;
+  margin-bottom: 6px !important;
+}
+
+.saved-empty-card p {
+  margin: 0 !important;
+  font-size: 0.95rem;
+}
