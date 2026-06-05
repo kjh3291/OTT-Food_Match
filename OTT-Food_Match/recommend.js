@@ -48,12 +48,82 @@ const recommendPageTitle = document.getElementById("recommendPageTitle");
 const recommendPageInfo = document.getElementById("recommendPageInfo");
 const recommendDetailArea = document.getElementById("recommendDetailArea");
 
+const recommendLoadingOverlay = document.getElementById("recommendLoadingOverlay");
+const recommendLoadingTitle = document.getElementById("recommendLoadingTitle");
+const recommendLoadingDesc = document.getElementById("recommendLoadingDesc");
+
+function showRecommendOverlayLoading(
+  title = "추천 정보를 불러오는 중입니다",
+  desc = "잠시만 기다려주세요."
+) {
+  if (recommendLoadingTitle) {
+    recommendLoadingTitle.textContent = title;
+  }
+
+  if (recommendLoadingDesc) {
+    recommendLoadingDesc.textContent = desc;
+  }
+
+  if (recommendLoadingOverlay) {
+    recommendLoadingOverlay.classList.remove("hidden");
+  }
+}
+
+function hideRecommendOverlayLoading() {
+  if (recommendLoadingOverlay) {
+    recommendLoadingOverlay.classList.add("hidden");
+  }
+}
+
+function showRecommendLoading(message = "추천 정보를 불러오는 중입니다...") {
+  showRecommendOverlayLoading(message, "잠시만 기다려주세요.");
+
+  if (recommendDetailArea) {
+    recommendDetailArea.innerHTML = `
+      <div class="saved-empty-card recommend-loading-card">
+        <div class="saved-empty-icon">🤖</div>
+        <h3>${message}</h3>
+        <p>잠시만 기다려주세요.</p>
+      </div>
+    `;
+  }
+}
+
 const likeBtn = document.getElementById("likeBtn");
 const dislikeBtn = document.getElementById("dislikeBtn");
 const saveComboBtn = document.getElementById("saveComboBtn");
 
 const backToMovieBtn = document.getElementById("backToMovieBtn");
 const backToMainBtn = document.getElementById("backToMainBtn");
+
+const reactionCard =
+  likeBtn?.closest(".card") ||
+  document.querySelector(".reaction-area")?.closest(".card");
+
+function hideReactionCard() {
+  if (reactionCard) {
+    reactionCard.style.display = "none";
+  }
+}
+
+
+function showReactionCard() {
+  if (reactionCard && pageMode !== "saved") {
+    reactionCard.style.display = "";
+  }
+}
+
+function hideBackToMovieButton() {
+  if (backToMovieBtn) {
+    backToMovieBtn.style.display = "none";
+  }
+}
+
+function showBackToMovieButton() {
+  if (backToMovieBtn && pageMode !== "saved") {
+    backToMovieBtn.style.display = "";
+  }
+}
 
 
 // ===============================
@@ -70,50 +140,46 @@ let currentReason = "";
 // ===============================
 
 async function fetchMovieDetail() {
-  const apiKey = window.CONFIG?.TMDB_API_KEY;
-  const baseUrl = window.CONFIG?.TMDB_BASE_URL || "https://api.themoviedb.org/3";
-
-  if (!apiKey) {
-    alert("TMDB API Key가 없습니다. config.js를 확인해주세요.");
-    return null;
-  }
-
   if (!movieId) {
     alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요.");
-    window.location.href = "index.html"; // 수정됨
+    window.location.href = "index.html";
     return null;
   }
 
-  const lang = typeof getLang === 'function' ? getLang() : "ko";
-  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
+  const lang = localStorage.getItem("lang") || "ko";
+
+  const tmdbLangMap = {
+    ko: "ko-KR",
+    en: "en-US",
+    zh: "zh-CN",
+    ja: "ja-JP",
+  };
+
   const tmdbLang = tmdbLangMap[lang] || "ko-KR";
 
   const url =
-    `${baseUrl}/movie/${movieId}` +
-    `?api_key=${apiKey}` +
-    `&language=${tmdbLang}`;
+    `/api/movie-detail` +
+    `?movieId=${encodeURIComponent(movieId)}` +
+    `&lang=${encodeURIComponent(tmdbLang)}`;
 
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error("영화 상세 정보 요청 실패:", response.status);
-      alert("영화 상세 정보를 불러오지 못했습니다.");
+      const errorData = await response.json().catch(() => null);
+      console.error("영화 상세 API 오류:", response.status, errorData);
+      alert(errorData?.message || "영화 상세 정보를 불러오지 못했습니다.");
       return null;
     }
 
-    const movie = await response.json();
+    const data = await response.json();
 
-    return {
-      id: movie.id,
-      title: movie.title || "제목 없음",
-      overview: movie.overview || "",
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date || "",
-      rating: movie.vote_average,
-      runtime: movie.runtime || 0,
-      genres: movie.genres ? movie.genres.map((genre) => genre.name) : [],
-    };
+    if (!data.movie) {
+      alert("영화 상세 응답 형식이 올바르지 않습니다.");
+      return null;
+    }
+
+    return data.movie;
   } catch (error) {
     console.error("영화 상세 API 요청 중 오류:", error);
     alert("API 요청 중 오류가 발생했습니다.");
@@ -237,10 +303,18 @@ function getTranslatedGenre(genre) {
   return key && typeof t === 'function' ? t(key) : genre;
 }
 
-function updateRecommendPageInfo() {
-  if (recommendPageInfo) {
-    recommendPageInfo.textContent = typeof t === 'function' ? `${t('infoLabel2')}: ${getTranslatedMeal(selectedMeal)} / ${t('infoLabel1')}: ${getTranslatedGenre(selectedGenre)}` : `식사 상황: ${selectedMeal} / 장르: ${selectedGenre}`;
+function safeText(key, fallback) {
+  if (typeof t !== "function") {
+    return fallback;
   }
+
+  const translated = t(key);
+
+  if (!translated || translated === key) {
+    return fallback;
+  }
+
+  return translated;
 }
 
 // ===============================
@@ -253,7 +327,10 @@ function renderRecommendDetail(movie, food, reason) {
     : "";
 
   recommendPageTitle.textContent = movie.title;
-  updateRecommendPageInfo();
+
+if (recommendPageInfo) {
+  recommendPageInfo.textContent = `식사 상황: ${selectedMeal} / 영화 장르: ${selectedGenre}`;
+}
 
   recommendDetailArea.innerHTML = `
     <div class="recommend-layout">
@@ -261,38 +338,43 @@ function renderRecommendDetail(movie, food, reason) {
         ${
           posterUrl
             ? `<img src="${posterUrl}" alt="${movie.title} 포스터" class="recommend-poster">`
-            : `<div class="no-poster">${typeof t === 'function' ? t('infoNone') : "포스터 없음"}</div>`
-        }
+            : `<div class="no-poster">${safeText("noPoster", "포스터 없음")}</div>`  
+          }
       </div>
 
       <div class="recommend-content-box">
         <h2>${movie.title}</h2>
-        <p><strong>${typeof t === 'function' ? t('recDate') : '개봉일:'}</strong> ${movie.releaseDate || (typeof t === 'function' ? t('infoNone') : "정보 없음")}</p>
-        <p><strong>${typeof t === 'function' ? t('recRating') : '평점:'}</strong> ${
-          movie.rating ? movie.rating.toFixed(1) : (typeof t === 'function' ? t('infoNone') : "정보 없음")
-        }</p>
-        <p><strong>${typeof t === 'function' ? t('recRuntime') : '상영 시간:'}</strong> ${
-          movie.runtime ? movie.runtime + (typeof t === 'function' ? t('mins') : "분") : (typeof t === 'function' ? t('infoNone') : "정보 없음")
-        }</p>
-        <p><strong>${typeof t === 'function' ? t('recGenreLabel') : '영화 장르:'}</strong> ${
-          movie.genres.length > 0 ? movie.genres.join(", ") : getTranslatedGenre(selectedGenre)
-        }</p>
+        <p><strong>${safeText("recDate", "개봉일:")}</strong> ${movie.releaseDate || safeText("infoNone", "정보 없음")}</p>
+
+<p><strong>${safeText("recRating", "평점:")}</strong> ${
+  movie.rating ? movie.rating.toFixed(1) : safeText("infoNone", "정보 없음")
+}</p>
+
+<p><strong>${safeText("recRuntime", "상영 시간:")}</strong> ${
+  movie.runtime ? movie.runtime + safeText("mins", "분") : safeText("infoNone", "정보 없음")
+}</p>
+
+<p><strong>${safeText("recGenreLabel", "영화 장르:")}</strong> ${
+  movie.genres.length > 0 ? movie.genres.join(", ") : getTranslatedGenre(selectedGenre)
+}</p>
 
         <hr class="recommend-divider">
 
-        <h3>${typeof t === 'function' ? t('recMovieDesc') : '🎬 영화 설명'}</h3>
-        <p>${movie.overview || (typeof t === 'function' ? t('infoNone') : "줄거리 정보가 없습니다.")}</p>
+        <h3>${safeText("recMovieDesc", "🎬 영화 설명")}</h3>
+        <p>${movie.overview || safeText("noOverview", "줄거리 정보가 없습니다.")}</p>
 
         <hr class="recommend-divider">
 
-        <h3>${typeof t === 'function' ? t('recFoodRec') : '🍽 추천 음식'}</h3>
+        <h3>${safeText("recFoodRec", "🍽 추천 음식")}</h3>
         <p><strong>${food.name}</strong></p>
 
-        <h3>${typeof t === 'function' ? t('recReason') : '💡 추천 사유'}</h3>
+        <h3>${safeText("recReason", "💡 추천 사유")}</h3>
         <p>${reason}</p>
       </div>
     </div>
   `;
+
+    hideRecommendOverlayLoading();
 }
 
 
@@ -369,14 +451,16 @@ function saveCombo() {
   );
 
   if (isAlreadySaved) {
-    alert(typeof t === 'function' ? t('alert_already_saved') : "이미 저장된 조합입니다.");
-    return;
-  }
+  alert(typeof t === 'function' ? t('alert_already_saved') : "이미 저장된 조합입니다.");
+  window.location.href = "index.html";
+  return;
+}
 
   savedCombos.push(combo);
-  localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
+localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
 
-  alert(typeof t === 'function' ? t('alert_saved') : "조합이 저장되었습니다.");
+alert(typeof t === 'function' ? t('alert_saved') : "조합이 저장되었습니다.");
+window.location.href = "index.html";
 }
 
 
@@ -474,11 +558,23 @@ if (darkModeToggle) {
 // ===============================
 
 async function initRecommendPage() {
+  if (pageMode === "saved") {
+    showRecommendLoading("저장된 조합을 불러오는 중입니다...");
+  } else {
+    showRecommendLoading("추천 정보를 불러오는 중입니다...");
+  }
+
   const movie = await fetchMovieDetail();
 
-  if (!movie) {
+    if (!movie) {
+    hideRecommendOverlayLoading();
+
     recommendDetailArea.innerHTML = `
-      <p>${typeof t === "function" ? t("errorLoadMovie") : "영화 정보를 불러오지 못했습니다."}</p>
+      <div class="saved-empty-card">
+        <div class="saved-empty-icon">⚠️</div>
+        <h3>${typeof t === "function" ? t("errorLoadMovie") : "영화 정보를 불러오지 못했습니다."}</h3>
+        <p>영화 목록에서 다시 선택해주세요.</p>
+      </div>
     `;
     return;
   }
@@ -486,24 +582,28 @@ async function initRecommendPage() {
   currentMovie = movie;
 
   if (pageMode === "saved" && savedFoodName) {
-    currentFood = {
-      name: savedFoodName,
-      category: savedFoodCategory || "기타",
-    };
-    currentReason = savedReason;
-    
-    // 만약 언어 변경이 발생하면 현재 언어로 다시 조합
-    currentReason = makeRecommendReason(currentMovie, currentFood);
-    
-    renderRecommendDetail(currentMovie, currentFood, currentReason);
-    return;
-  }
+  hideReactionCard();
+  hideBackToMovieButton();
 
-  const recommendation = makeFoodRecommendation(movie);
-  currentFood = recommendation.food;
-  currentReason = recommendation.reason;
+  currentFood = {
+    name: savedFoodName,
+    category: savedFoodCategory || "기타",
+  };
+
+  currentReason = savedReason || "저장된 추천 사유가 없습니다.";
 
   renderRecommendDetail(currentMovie, currentFood, currentReason);
+  return;
+}
+
+showReactionCard();
+showBackToMovieButton();
+
+const recommendation = makeFoodRecommendation(movie);
+currentFood = recommendation.food;
+currentReason = recommendation.reason;
+
+renderRecommendDetail(currentMovie, currentFood, currentReason);
 }
 
 initRecommendPage();
