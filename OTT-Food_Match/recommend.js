@@ -48,6 +48,47 @@ const recommendPageTitle = document.getElementById("recommendPageTitle");
 const recommendPageInfo = document.getElementById("recommendPageInfo");
 const recommendDetailArea = document.getElementById("recommendDetailArea");
 
+const recommendLoadingOverlay = document.getElementById("recommendLoadingOverlay");
+const recommendLoadingTitle = document.getElementById("recommendLoadingTitle");
+const recommendLoadingDesc = document.getElementById("recommendLoadingDesc");
+
+function showRecommendOverlayLoading(
+  title = "추천 정보를 불러오는 중입니다",
+  desc = "잠시만 기다려주세요."
+) {
+  if (recommendLoadingTitle) {
+    recommendLoadingTitle.textContent = title;
+  }
+
+  if (recommendLoadingDesc) {
+    recommendLoadingDesc.textContent = desc;
+  }
+
+  if (recommendLoadingOverlay) {
+    recommendLoadingOverlay.classList.remove("hidden");
+  }
+}
+
+function hideRecommendOverlayLoading() {
+  if (recommendLoadingOverlay) {
+    recommendLoadingOverlay.classList.add("hidden");
+  }
+}
+
+function showRecommendLoading(message = "추천 정보를 불러오는 중입니다...") {
+  showRecommendOverlayLoading(message, "잠시만 기다려주세요.");
+
+  if (recommendDetailArea) {
+    recommendDetailArea.innerHTML = `
+      <div class="saved-empty-card recommend-loading-card">
+        <div class="saved-empty-icon">🤖</div>
+        <h3>${message}</h3>
+        <p>잠시만 기다려주세요.</p>
+      </div>
+    `;
+  }
+}
+
 const likeBtn = document.getElementById("likeBtn");
 const dislikeBtn = document.getElementById("dislikeBtn");
 const saveComboBtn = document.getElementById("saveComboBtn");
@@ -293,6 +334,7 @@ function renderRecommendDetail(movie, food, reason) {
       </div>
     </div>
   `;
+    hideRecommendOverlayLoading();
 }
 
 
@@ -474,11 +516,23 @@ if (darkModeToggle) {
 // ===============================
 
 async function initRecommendPage() {
+  if (pageMode === "saved") {
+    showRecommendLoading("저장된 조합을 불러오는 중입니다...");
+  } else {
+    showRecommendLoading("추천 정보를 불러오는 중입니다...");
+  }
+
   const movie = await fetchMovieDetail();
 
-  if (!movie) {
+    if (!movie) {
+    hideRecommendOverlayLoading();
+
     recommendDetailArea.innerHTML = `
-      <p>${typeof t === "function" ? t("errorLoadMovie") : "영화 정보를 불러오지 못했습니다."}</p>
+      <div class="saved-empty-card">
+        <div class="saved-empty-icon">⚠️</div>
+        <h3>${typeof t === "function" ? t("errorLoadMovie") : "영화 정보를 불러오지 못했습니다."}</h3>
+        <p>영화 목록에서 다시 선택해주세요.</p>
+      </div>
     `;
     return;
   }
