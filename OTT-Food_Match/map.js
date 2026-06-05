@@ -70,6 +70,9 @@ if (searchBtn && keywordInput) {
 // 취소 버튼 클릭 이벤트 추가
 if (cancelBtn) {
     cancelBtn.addEventListener('click', function () {
+        // 💡 [추가] 취소 시 열려있는 정보창 닫기
+        infowindow.close();
+
         // 1. 검색어 초기화
         keywordInput.value = '';
 
@@ -110,7 +113,7 @@ function searchByKeyword() {
             // 지도의 중심을 가장 가까운 식당으로 '부드럽게(panTo)' 이동시킵니다.
             map.panTo(moveLatLon);
 
-            // 💡 [핵심] panTo 애니메이션이 정보창에 의해 끊기지 않도록 0.3초(300ms) 뒤에 정보창을 엽니다.
+            // panTo 애니메이션이 정보창에 의해 끊기지 않도록 0.3초(300ms) 뒤에 정보창을 엽니다.
             setTimeout(() => {
                 openInfoWindow(nearestPlace, markers[0]);
             }, 300);
@@ -219,6 +222,9 @@ if (myLocationBtn) {
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
                 const locPosition = new kakao.maps.LatLng(lat, lng);
+
+                // 💡 [핵심 추가] 내 위치로 이동할 때 열려있는 정보창(말풍선)을 닫습니다.
+                infowindow.close();
 
                 // 1. 지도 중심을 내 위치로 '부드럽게' 이동
                 map.panTo(locPosition);
