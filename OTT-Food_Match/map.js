@@ -28,7 +28,7 @@ const infowindow = new kakao.maps.InfoWindow({ zIndex: 3 });
 let markers = [];
 let myLocationMarker = null;
 let isSearchMode = false;
-let currentCategoryKeyword = normalizeFoodCategoryForMap(selectedFoodCategory);
+let currentCategoryKeyword = "전체";
 let currentSelectedPlace = null;
 
 // 1. 초기 실행: 내 위치 가져오기
