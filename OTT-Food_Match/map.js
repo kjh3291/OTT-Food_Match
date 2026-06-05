@@ -1,3 +1,25 @@
+const mapUrlParams = new URLSearchParams(window.location.search);
+
+const ottKey = mapUrlParams.get("ott") || "netflix";
+
+const selectedMeal = mapUrlParams.get("meal")
+  ? decodeURIComponent(mapUrlParams.get("meal"))
+  : "혼밥";
+
+const selectedFoodCategory = mapUrlParams.get("foodCategory")
+  ? decodeURIComponent(mapUrlParams.get("foodCategory"))
+  : "한식";
+
+function normalizeFoodCategoryForMap(category) {
+  const map = {
+    "치킨/피자": "치킨",
+    "분식(떡볶이 등)": "분식",
+    "한식(국밥/찌개)": "한식",
+    "양식(파스타 등)": "양식",
+  };
+
+  return map[category] || category || "한식";
+}
 
 const mapContainer = document.getElementById('map');
 const mapOption = {
@@ -12,7 +34,8 @@ const infowindow = new kakao.maps.InfoWindow({ zIndex: 3 });
 let markers = [];
 let myLocationMarker = null;
 let isSearchMode = false;
-let currentCategoryKeyword = '한식'; // 초기 기본 카테고리는 '한식'
+let currentCategoryKeyword = normalizeFoodCategoryForMap(selectedFoodCategory);
+let currentSelectedPlace = null;
 
 // 1. 초기 실행: 내 위치 가져오기
 if (navigator.geolocation) {
@@ -54,6 +77,16 @@ kakao.maps.event.addListener(map, 'click', function () {
 
 // 4. 우측 카테고리 버튼 이벤트 연동
 const categoryBtns = document.querySelectorAll('.category-btn');
+function applyInitialCategoryButton() {
+    categoryBtns.forEach((btn) => {
+        if (btn.getAttribute('data-keyword') === currentCategoryKeyword) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    applyInitialCategoryButton();
+}
 categoryBtns.forEach(btn => {
     btn.addEventListener('click', function () {
         // 스타일 액티브 상태 변경
@@ -142,19 +175,40 @@ function removeMarkers() {
 
 // 말풍선(정보창) 다크 테마 적용
 function openInfoWindow(place, marker) {
-    const menus = getDynamicMenus(place.category_name);
-    let menuHtml = '<strong>추천 메뉴</strong><br>';
-    menus.forEach(menu => { menuHtml += `${menu.name} - ${menu.price.toLocaleString()}원<br>`; });
+    currentSelectedPlace = place;
 
-    // 다크/네온 스타일의 정보창
+    const menus = getDynamicMenus(place.category_name || currentCategoryKeyword);
+    let menuHtml = '<strong>추천 메뉴</strong><br>';
+    menus.forEach(menu => {
+        menuHtml += `${menu.name} - ${menu.price.toLocaleString()}원<br>`;
+    });
+
     const content = `
         <div style="padding:15px; background:rgba(20,20,30,0.95); color:#fff; font-size:14px; width:230px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
             <strong style="font-size:16px; color:#a29bfe;">${place.place_name}</strong><br>
-            <span style="color:#aaa; font-size:12px;">${place.category_name}</span>
+            <span style="color:#aaa; font-size:12px;">${place.category_name || currentCategoryKeyword}</span>
             <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:10px 0;">
-            <div style="color:#ddd; line-height: 1.5;">${menuHtml}</div>
+            <div style="color:#ddd; line-height:1.5;">${menuHtml}</div>
+
+            <button 
+                onclick="selectCurrentPlaceForMovie()"
+                style="
+                    width:100%;
+                    margin-top:12px;
+                    padding:10px;
+                    border:none;
+                    border-radius:8px;
+                    background:#ff715b;
+                    color:white;
+                    font-weight:bold;
+                    cursor:pointer;
+                "
+            >
+                선택하기
+            </button>
         </div>
     `;
+
     infowindow.setContent(content);
     infowindow.open(map, marker);
 }
@@ -189,3 +243,28 @@ if (myLocationBtn) {
     });
 }
 
+<<<<<<< HEAD
+=======
+function selectCurrentPlaceForMovie() {
+    if (!currentSelectedPlace) {
+        alert("선택된 음식점 정보가 없습니다.");
+        return;
+    }
+
+    const placeName = currentSelectedPlace.place_name || "";
+    const placeCategory = currentSelectedPlace.category_name || currentCategoryKeyword;
+    const foodCategory = currentCategoryKeyword || selectedFoodCategory || "음식";
+
+    const url =
+        `recommend.html?mode=mapPick` +
+        `&ott=${encodeURIComponent(ottKey)}` +
+        `&meal=${encodeURIComponent(selectedMeal)}` +
+        `&foodCategory=${encodeURIComponent(foodCategory)}` +
+        `&placeName=${encodeURIComponent(placeName)}` +
+        `&placeCategory=${encodeURIComponent(placeCategory)}`;
+
+    window.location.href = url;
+}
+
+window.selectCurrentPlaceForMovie = selectCurrentPlaceForMovie;
+>>>>>>> 0c8734a7f7dbb5afbeacd45314389bf203f305ff
