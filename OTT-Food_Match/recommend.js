@@ -178,11 +178,24 @@ function updatePreferenceWeights(reactionType) {
 
   localStorage.setItem("preferenceWeights", JSON.stringify(weights));
 }
+ 
+function getUserSignals() {
+  const read = (key) => {
+    try {
+      return JSON.parse(localStorage.getItem(key)) || [];
+    } catch {
+      return [];
+    }
+  };
+
+  return {
+    savedCombos: read("savedCombos"),
+    recommendReactions: read("recommendReactions"),
+    matchHistory: read("matchHistory"),
+  };
+}
 
 async function fetchAiFoodRecommendation(movie) {
-  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
-  const recommendReactions =
-    JSON.parse(localStorage.getItem("recommendReactions")) || [];
   const preferenceWeights = getPreferenceWeights();
 
   const response = await fetch("/api/food-recommend", {
@@ -194,9 +207,8 @@ async function fetchAiFoodRecommendation(movie) {
       movie,
       meal: selectedMeal,
       selectedGenre,
-      savedCombos,
-      recommendReactions,
       preferenceWeights,
+      ...getUserSignals(),
     }),
   });
 
@@ -225,6 +237,7 @@ async function fetchAiMatchReason(movie, food) {
       selectedGenre,
       foodName: food.name,
       foodCategory: food.category,
+      ...getUserSignals(),
     }),
   });
 
