@@ -1,4 +1,5 @@
 import { foodCategories } from './food.js';
+import { KAKAO_MAP_API_KEY } from './env.local'
 
 const mapUrlParams = new URLSearchParams(window.location.search);
 const ottKey = mapUrlParams.get("ott") || "netflix";
