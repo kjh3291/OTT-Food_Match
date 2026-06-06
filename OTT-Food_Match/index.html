@@ -1,16 +1,19 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OTT 푸드 매칭 추천</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <div class="app">
     <header class="header">
       <div class="setting-area">
         <button id="settingBtn" class="setting-btn">⚙ 설정</button>
+        <button id="googleLoginBtn" class="login-btn">구글 로그인</button>
         <div id="settingPopup" class="setting-popup hidden">
           <h3 id="settingTitle">설정</h3>
           <button id="darkModeToggle" class="setting-option-btn">🌙 다크 모드</button>
@@ -18,9 +21,10 @@
         </div>
       </div>
 
+
       <h1 id="mainTitle">🍿 뭐 볼까, 뭐 먹을까</h1>
       <p id="mainDesc">OTT와 음식 조합을 한 번에 추천해주는 서비스</p>
-      
+
       <div class="progress-bar" id="progressBar">
         <div class="progress-fill" id="progressFill"></div>
       </div>
@@ -30,7 +34,8 @@
       <section class="card step-section active" id="step1">
         <h2 id="step1Title">1. 어떤 것을 먼저 고르시겠어요?</h2>
         <div class="option-group vertical-group">
-          <button id="step1Opt1" class="option-btn big-btn" data-key="primary" data-value="ott">📺 볼 콘텐츠(OTT) 기준</button>
+          <button id="step1Opt1" class="option-btn big-btn" data-key="primary" data-value="ott">📺 볼 콘텐츠(OTT)
+            기준</button>
           <button id="step1Opt2" class="option-btn big-btn" data-key="primary" data-value="food">🍕 먹을 음식 메뉴 기준</button>
         </div>
       </section>
@@ -48,29 +53,29 @@
       </section>
 
       <section class="card step-section hidden" id="step3-ott">
-  <h2 id="step3OttTitle">3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
-  <div class="ott-logo-grid">
-    <button class="option-btn ott-logo-card" data-key="detail" data-value="넷플릭스">
-      <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
-      <span id="ott_netflix">넷플릭스</span>
-    </button>
+        <h2 id="step3OttTitle">3. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
+        <div class="ott-logo-grid">
+          <button class="option-btn ott-logo-card" data-key="detail" data-value="넷플릭스">
+            <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
+            <span id="ott_netflix">넷플릭스</span>
+          </button>
 
-    <button class="option-btn ott-logo-card" data-key="detail" data-value="디즈니+">
-      <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
-      <span id="ott_disney">디즈니+</span>
-    </button>
+          <button class="option-btn ott-logo-card" data-key="detail" data-value="디즈니+">
+            <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
+            <span id="ott_disney">디즈니+</span>
+          </button>
 
-    <button class="option-btn ott-logo-card" data-key="detail" data-value="티빙">
-      <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
-      <span id="ott_tving">티빙</span>
-    </button>
+          <button class="option-btn ott-logo-card" data-key="detail" data-value="티빙">
+            <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
+            <span id="ott_tving">티빙</span>
+          </button>
 
-    <button class="option-btn ott-logo-card" data-key="detail" data-value="웨이브">
-      <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
-      <span id="ott_wavve">웨이브</span>
-    </button>
-  </div>
-</section>
+          <button class="option-btn ott-logo-card" data-key="detail" data-value="웨이브">
+            <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
+            <span id="ott_wavve">웨이브</span>
+          </button>
+        </div>
+      </section>
 
       <section class="card step-section hidden" id="step3-food">
         <h2 id="step3FoodTitle">3. 어떤 종류의 음식이 끌리시나요?</h2>
@@ -83,29 +88,29 @@
       </section>
 
       <section class="card step-section hidden" id="step4-ott">
-  <h2 id="step4OttTitle">4. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
-  <div class="ott-logo-grid">
-    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="넷플릭스">
-      <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
-      <span>Netflix</span>
-    </button>
+        <h2 id="step4OttTitle">4. 이용 중인 OTT 플랫폼을 알려주세요.</h2>
+        <div class="ott-logo-grid">
+          <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="넷플릭스">
+            <img src="images/netflix.png" alt="넷플릭스 로고" class="ott-icon-img">
+            <span>Netflix</span>
+          </button>
 
-    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="디즈니+">
-      <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
-      <span>Disney+</span>
-    </button>
+          <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="디즈니+">
+            <img src="images/disney.png" alt="디즈니 플러스 로고" class="ott-icon-img">
+            <span>Disney+</span>
+          </button>
 
-    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="티빙">
-      <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
-      <span>TVING</span>
-    </button>
+          <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="티빙">
+            <img src="images/tving.png" alt="티빙 로고" class="ott-icon-img">
+            <span>TVING</span>
+          </button>
 
-    <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="웨이브">
-      <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
-      <span>wavve</span>
-    </button>
-  </div>
-</section>
+          <button class="option-btn ott-logo-card" data-key="selectedOtt" data-value="웨이브">
+            <img src="images/wavve.png" alt="웨이브 로고" class="ott-icon-img">
+            <span>wavve</span>
+          </button>
+        </div>
+      </section>
 
       <div class="action-area hidden" id="navArea">
         <button id="prevBtn" class="secondary-btn">이전 단계</button>
@@ -118,64 +123,64 @@
         <p id="loadingDesc" style="color: #666; font-size: 0.9rem;">잠시만 기다려주세요 🍿</p>
       </section>
 
-        <section id="resultSection" class="result-section hidden">
-          <h2 id="resultTitle">✨ 맞춤 추천 결과 ✨</h2>
-          <div class="result-card">
-            <h3 id="resContentTitle">🎬 추천 콘텐츠</h3>
-            <div id="contentResult"></div>
+      <section id="resultSection" class="result-section hidden">
+        <h2 id="resultTitle">✨ 맞춤 추천 결과 ✨</h2>
+        <div class="result-card">
+          <h3 id="resContentTitle">🎬 추천 콘텐츠</h3>
+          <div id="contentResult"></div>
+        </div>
+        <div class="result-card">
+          <h3 id="resFoodTitle">🍕 추천 음식</h3>
+          <div id="foodResult"></div>
+        </div>
+        <div class="result-card best-match">
+          <h3 id="resComboTitle">💡 Best Match Combo</h3>
+          <p id="bestMatchText"></p>
+        </div>
+        <div class="action-area" style="flex-direction: column; gap: 8px; margin-top: 16px;">
+          <button id="shareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
+          <button id="resetBtn" class="secondary-btn" style="width: 100%;">처음부터 다시하기</button>
+        </div>
+      </section>
+
+      <section class="card saved-combo-section" id="savedComboSection">
+        <div class="section-title-row">
+          <div>
+            <h2 id="savedComboTitle">최근 저장한 조합</h2>
+            <p id="savedComboDesc">마음에 든 조합을 다시 확인해보세요.</p>
           </div>
-          <div class="result-card">
-            <h3 id="resFoodTitle">🍕 추천 음식</h3>
-            <div id="foodResult"></div>
+          <button id="editSavedComboBtn" class="saved-edit-btn">수정</button>
+        </div>
+
+        <div id="savedComboList" class="saved-combo-list"></div>
+
+        <div class="saved-more-area">
+          <button id="savedMoreBtn" class="secondary-btn saved-more-btn hidden">
+            저장 조합 더보기
+          </button>
+        </div>
+      </section>
+
+      <section class="card ai-pick-section" id="aiPickSection">
+        <div class="section-title-row">
+          <div>
+            <h2 id="aiPickTitle">AI가 골라본 조합</h2>
+            <p id="aiPickDesc">저장한 취향과 랜덤 추천을 섞어 3가지를 보여드려요.</p>
           </div>
-          <div class="result-card best-match">
-            <h3 id="resComboTitle">💡 Best Match Combo</h3>
-            <p id="bestMatchText"></p>
+
+          <button id="refreshAiPickBtn" class="saved-edit-btn">새로 추천</button>
+        </div>
+
+        <div id="aiPickList" class="ai-pick-list">
+          <div class="saved-empty-card">
+            <div class="saved-empty-icon">🤖</div>
+            <h3>추천 조합을 준비 중이에요</h3>
+            <p>저장한 조합이 있으면 더 취향에 맞게 추천할 수 있어요.</p>
           </div>
-          <div class="action-area" style="flex-direction: column; gap: 8px; margin-top: 16px;">
-            <button id="shareBtn" class="primary-btn" style="width: 100%;">결과 공유하기 🔗</button>
-            <button id="resetBtn" class="secondary-btn" style="width: 100%;">처음부터 다시하기</button>
-          </div>
-          </section>
-
-<section class="card saved-combo-section" id="savedComboSection">
-  <div class="section-title-row">
-    <div>
-      <h2 id="savedComboTitle">최근 저장한 조합</h2>
-      <p id="savedComboDesc">마음에 든 조합을 다시 확인해보세요.</p>
-    </div>
-    <button id="editSavedComboBtn" class="saved-edit-btn">수정</button>
+        </div>
+      </section>
+    </main>
   </div>
-
-  <div id="savedComboList" class="saved-combo-list"></div>
-
-  <div class="saved-more-area">
-    <button id="savedMoreBtn" class="secondary-btn saved-more-btn hidden">
-      저장 조합 더보기
-    </button>
-  </div>
-</section>
-
-        <section class="card ai-pick-section" id="aiPickSection">
-  <div class="section-title-row">
-    <div>
-      <h2 id="aiPickTitle">AI가 골라본 조합</h2>
-      <p id="aiPickDesc">저장한 취향과 랜덤 추천을 섞어 3가지를 보여드려요.</p>
-    </div>
-
-    <button id="refreshAiPickBtn" class="saved-edit-btn">새로 추천</button>
-  </div>
-
-  <div id="aiPickList" class="ai-pick-list">
-    <div class="saved-empty-card">
-      <div class="saved-empty-icon">🤖</div>
-      <h3>추천 조합을 준비 중이에요</h3>
-      <p>저장한 조합이 있으면 더 취향에 맞게 추천할 수 있어요.</p>
-    </div>
-  </div>
-</section>
-            </main>
-    </div>
 
   <div id="langModal" class="modal-overlay">
     <div class="modal-content">
@@ -244,5 +249,5 @@
   <script src="i18n.js"></script>
   <script src="script.js"></script>
 </body>
-</html>
 
+</html>
