@@ -2,15 +2,14 @@
   "name": "ott-food-match",
   "version": "1.0.0",
   "scripts": {
-    "test": "jest --testPathPattern='OTT-Food_Match_test'",
+    "test": "jest",
     "coverage": "jest --coverage"
   },
   "jest": {
-  "testMatch": ["**/*.test.js"],
-  "collectCoverageFrom": [
-    "*.js",
-    "!*.test.js"
-    ]
+    "testEnvironment": "node",
+    "setupFiles": ["./jest.setup.js"],
+    "testMatch": ["**/*.test.js"],
+    "collectCoverageFrom": ["*.js", "!*.test.js", "!jest.setup.js"]
   },
   "devDependencies": {
     "jest": "^29.0.0"
