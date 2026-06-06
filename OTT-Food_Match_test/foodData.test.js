@@ -35,3 +35,8 @@ describe('getFoodsByCategories', () => {
 });
 
 
+describe('convertFoods', () => {
+  test('문자열 배열을 객체 배열로 변환', () => {
+    expect(convertFoods(['짜장면'], '중식')).toEqual([{ name: '짜장면', category: '중식' }]);
+  });
+});
