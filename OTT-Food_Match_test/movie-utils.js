@@ -34,4 +34,4 @@ function recommendFood(genre) {
   return foodRules[genre] || foodRules["전체"];
 }
 
-
+module.exports = { getGenreKey, removeDuplicateMovies, sortMovies, recommendFood };
