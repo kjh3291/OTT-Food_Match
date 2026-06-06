@@ -10,3 +10,14 @@ function removeDuplicateMovies(movies) {
   return Array.from(movieMap.values());
 }
 
+// 원본은 전역 currentSort에 의존하므로, 테스트 가능하도록 정렬 기준을 인자로 받게 변경
+function sortMovies(movies, currentSort = "popularity") {
+  const sorted = [...movies];
+  if (currentSort === "popularity") sorted.sort((a, b) => b.popularity - a.popularity);
+  else if (currentSort === "rating") sorted.sort((a, b) => b.rating - a.rating);
+  else if (currentSort === "latest") sorted.sort((a, b) =>
+    new Date(b.releaseDate || "0000-00-00") - new Date(a.releaseDate || "0000-00-00"));
+  else if (currentSort === "title") sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
+  return sorted;
+}
+
