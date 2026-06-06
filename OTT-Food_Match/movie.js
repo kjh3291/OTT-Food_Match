@@ -13,16 +13,35 @@ const mealMapEn = { "혼밥": "Eating Alone", "야식": "Late Night Snack", "친
 const mealMapZh = { "혼밥": "一人食", "야식": "夜宵", "친구와 함께": "朋友聚会", "연인과 함께": "恋人约会", "간단한 식사": "简单便餐", "든든한 식사": "丰盛正餐" };
 const mealMapJa = { "혼밥": "一人ご飯", "야식": "夜食", "친구와 함께": "友達と一緒に", "연인과 함께": "恋人と一緒に", "간단한 식사": "軽食", "든든한 식사": "がっつり食事" };
 
-let selectedGenre = "전체";
+const urlParams = new URLSearchParams(window.location.search);
+
+const ottKey = urlParams.get("ott");
+
+let selectedMeal = urlParams.get("meal")
+  ? decodeURIComponent(urlParams.get("meal"))
+  : "혼밥";
+
+let selectedGenre = urlParams.get("genre")
+  ? decodeURIComponent(urlParams.get("genre"))
+  : "전체";
+
+const selectedFood = urlParams.get("food")
+  ? decodeURIComponent(urlParams.get("food"))
+  : "";
+
+const selectedFoodCategory = urlParams.get("foodCategory")
+  ? decodeURIComponent(urlParams.get("foodCategory"))
+  : "AI 추천";
+
+const selectedAiReason = urlParams.get("aiReason")
+  ? decodeURIComponent(urlParams.get("aiReason"))
+  : "";
+
 let currentMovies = [];
 
 let currentSort = "popularity";
 let visibleMovieCount = 20;
 const MOVIES_PER_LOAD = 20;
-
-const urlParams = new URLSearchParams(window.location.search);
-const ottKey = urlParams.get("ott");
-let selectedMeal = urlParams.get("meal") ? decodeURIComponent(urlParams.get("meal")) : "혼밥";
 
 const moviePageTitle = document.getElementById("moviePageTitle");
 const moviePageInfo = document.getElementById("moviePageInfo");
@@ -81,11 +100,24 @@ function applyMovieLanguage() {
   }
 
   if (moviePageInfo) {
-    if (lang === "ko") moviePageInfo.textContent = `식사 상황: ${mealDisplay} / 상단 장르 버튼을 선택하면 해당 장르의 영화만 표시됩니다.`;
-    else if (lang === "en") moviePageInfo.textContent = `Meal Setting: ${mealDisplay} / Select a genre button above to filter movies.`;
-    else if (lang === "zh") moviePageInfo.textContent = `用餐场景: ${mealDisplay} / 点击上方类型按钮可筛选相应电影。`;
-    else if (lang === "ja") moviePageInfo.textContent = `食事の状況: ${mealDisplay} / 上のジャンルボタンを選択すると、該当する映画が表示されます。`;
+  if (lang === "ko") {
+    moviePageInfo.textContent = selectedFood
+      ? `식사 상황: ${mealDisplay} / AI 추천 음식: ${selectedFood} / ${selectedGenre} 장르 영화만 표시됩니다.`
+      : `식사 상황: ${mealDisplay} / 상단 장르 버튼을 선택하면 해당 장르의 영화만 표시됩니다.`;
+  } else if (lang === "en") {
+    moviePageInfo.textContent = selectedFood
+      ? `Meal Setting: ${mealDisplay} / AI Food Pick: ${selectedFood} / Showing ${selectedGenre} movies.`
+      : `Meal Setting: ${mealDisplay} / Select a genre button above to filter movies.`;
+  } else if (lang === "zh") {
+    moviePageInfo.textContent = selectedFood
+      ? `用餐场景: ${mealDisplay} / AI 推荐美食: ${selectedFood} / 正在显示 ${selectedGenre} 类型电影。`
+      : `用餐场景: ${mealDisplay} / 点击上方类型按钮可筛选相应电影。`;
+  } else if (lang === "ja") {
+    moviePageInfo.textContent = selectedFood
+      ? `食事の状況: ${mealDisplay} / AIおすすめ料理: ${selectedFood} / ${selectedGenre}ジャンルの映画を表示しています。`
+      : `食事の状況: ${mealDisplay} / 上のジャンルボタンを選択すると、該当する映画が表示されます。`;
   }
+}
 
   if (selectedGenreTitle) {
     const genreKey = getGenreKey(selectedGenre);
@@ -131,6 +163,19 @@ genreTabs.forEach((tab) => {
     await loadMoviesByGenre(selectedGenre);
   });
 });
+
+function applyInitialGenreTab() {
+  genreTabs.forEach((tab) => {
+    const tabGenre = (tab.dataset.genre || "").trim();
+    const currentGenre = (selectedGenre || "전체").trim();
+
+    if (tabGenre === currentGenre) {
+      tab.classList.add("selected");
+    } else {
+      tab.classList.remove("selected");
+    }
+  });
+}
 
 async function loadMoviesByGenre(genre) {
   showMovieLoading();
@@ -291,7 +336,28 @@ function renderMovies(movies) {
       const mealParam = encodeURIComponent(selectedMeal);
       const genreParam = encodeURIComponent(selectedGenre);
 
-      window.location.href = `recommend.html?movieId=${selectedMovie.id}&ott=${ottKey}&meal=${mealParam}&genre=${genreParam}`;
+      let recommendUrl =
+  `recommend.html?movieId=${selectedMovie.id}` +
+  `&ott=${ottKey}` +
+  `&meal=${mealParam}` +
+  `&genre=${genreParam}`;
+
+if (selectedFood) {
+  const foodParam = encodeURIComponent(selectedFood);
+  const foodCategoryParam = encodeURIComponent(selectedFoodCategory || "AI 추천");
+
+  const reasonText =
+    selectedAiReason ||
+    `${selectedMovie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${selectedFood}와 잘 어울리는 조합입니다.`;
+
+  recommendUrl +=
+    `&mode=aiPick` +
+    `&foodName=${foodParam}` +
+    `&foodCategory=${foodCategoryParam}` +
+    `&reason=${encodeURIComponent(reasonText)}`;
+}
+
+window.location.href = recommendUrl;
     });
   });
 
@@ -417,6 +483,7 @@ if (backToMainBtn) {
 }
 
 document.addEventListener("languageChanged", () => {
+  applyInitialGenreTab();
   applyMovieLanguage();
   updateSortMenuText();
   renderMovies(currentMovies);
@@ -540,7 +607,7 @@ sortOptions.forEach((option) => {
 });
 
 // 초기 실행
+applyInitialGenreTab();
 applyMovieLanguage();
 updateSortMenuText();
 loadMoviesByGenre(selectedGenre);
-

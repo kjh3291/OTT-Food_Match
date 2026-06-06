@@ -1,4 +1,6 @@
 import { foodCategories } from './food.js';
+import { auth, db } from './firebase.js';
+import { collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ===============================
 // 1. URL 값 가져오기
@@ -269,15 +271,56 @@ function saveReaction(reactionType) {
   alert(reactionType === "like" ? "좋아요가 반영되었습니다." : "싫어요가 반영되었습니다.");
 }
 
-function saveCombo() {
+async function saveCombo() {
   if (!currentMovie || !currentFood) return;
-  const combo = { movieId: currentMovie.id, movieTitle: currentMovie.title, posterPath: currentMovie.posterPath, ott: ottKey, meal: selectedMeal, genre: selectedGenre, foodName: currentFood.name, foodCategory: currentFood.category, reason: currentReason, savedAt: new Date().toISOString() };
-  const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
-  if (savedCombos.some(item => item.movieId === combo.movieId && item.foodName === combo.foodName)) { alert("이미 저장된 조합입니다."); return; }
-  savedCombos.push(combo);
-  localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
-  alert("조합이 저장되었습니다.");
-  window.location.href = "index.html";
+
+  const user = auth.currentUser;
+  if (!user) {
+    alert("로그인이 필요한 기능입니다. 메인 화면에서 먼저 로그인해주세요!");
+    return;
+  }
+  const combo = {
+    userId: user.uid, // ⭐️ 내 계정 식별자
+    movieId: currentMovie.id,
+    movieTitle: currentMovie.title,
+    posterPath: currentMovie.posterPath,
+    ott: ottKey,
+    meal: selectedMeal,
+    genre: selectedGenre,
+    foodName: currentFood.name,
+    foodCategory: currentFood.category,
+    reason: currentReason,
+    savedAt: new Date().toISOString()
+  };
+  try {
+    // 1. DB에서 중복 저장 여부 확인
+    const q = query(collection(db, "savedCombos"),
+      where("userId", "==", user.uid),
+      where("movieId", "==", combo.movieId),
+      where("foodName", "==", combo.foodName)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      alert("이미 저장된 조합입니다.");
+      return;
+    }
+
+    // 2. DB에 최종 저장
+    await addDoc(collection(db, "savedCombos"), combo);
+
+    // 3. 브라우저 로컬 캐시 업데이트
+    const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+    savedCombos.push(combo);
+    localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
+
+    alert("조합이 내 계정에 안전하게 저장되었습니다!");
+    window.location.href = "index.html";
+
+  } catch (error) {
+    console.error("저장 오류:", error);
+    alert("저장에 실패했습니다.");
+  }
 }
 
 if (likeBtn) likeBtn.addEventListener("click", () => saveReaction("like"));
@@ -311,10 +354,33 @@ async function initRecommendPage() {
     currentReason = `선택하신 '${mapPickPlaceName}'의 음식과 ${movie.title} 영화는 최고의 조합이 될 것입니다! 맛있게 드시면서 즐거운 감상 되시길 바랍니다.`;
     renderRecommendDetail(currentMovie, currentFood, currentReason);
   } else if (pageMode === "saved" && savedFoodName) {
-    hideReactionCard(); hideBackToMovieButton();
-    currentFood = { name: savedFoodName, category: savedFoodCategory || "기타" };
+    hideReactionCard();
+    hideBackToMovieButton();
+
+    currentFood = {
+      name: savedFoodName,
+      category: savedFoodCategory || "기타"
+    };
+
     currentReason = savedReason || "저장된 추천 사유가 없습니다.";
+
     renderRecommendDetail(currentMovie, currentFood, currentReason);
+
+  } else if (pageMode === "aiPick" && savedFoodName) {
+    showReactionCard();
+    showBackToMovieButton();
+
+    currentFood = {
+      name: savedFoodName,
+      category: savedFoodCategory || "AI 추천"
+    };
+
+    currentReason =
+      savedReason ||
+      `${currentMovie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${savedFoodName}와 잘 어울리는 조합입니다.`;
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+
   } else {
     showReactionCard(); showBackToMovieButton();
     const recommendation = makeFoodRecommendation(movie);
@@ -386,7 +452,10 @@ if (closeLangModal && langModal) {
 // 5. 언어 변경 시 화면 추천 텍스트 즉시 새로고침
 document.addEventListener("languageChanged", () => {
   if (currentMovie && currentFood) {
-    currentReason = makeRecommendReason(currentMovie, currentFood);
+    if (pageMode === "recommend") {
+      currentReason = makeRecommendReason(currentMovie, currentFood);
+    }
+
     renderRecommendDetail(currentMovie, currentFood, currentReason);
   }
 });
