@@ -606,12 +606,8 @@ sortOptions.forEach((option) => {
   });
 });
 
-<<<<<<< HEAD
-applyInitialGenreTab();
-=======
 // 초기 실행
->>>>>>> origin/main
+applyInitialGenreTab();
 applyMovieLanguage();
 updateSortMenuText();
 loadMoviesByGenre(selectedGenre);
-

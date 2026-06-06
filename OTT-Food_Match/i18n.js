@@ -16,7 +16,7 @@ const i18nData = {
     meal_honbab: "혼밥", meal_yasik: "야식", meal_friends: "친구와 함께", meal_couple: "연인과 함께", meal_light: "간단한 식사", meal_heavy: "든든한 식사",
     step3OttTitle: "3. 이용 중인 OTT 플랫폼을 알려주세요.", step3FoodTitle: "3. 어떤 종류의 음식이 끌리시나요?", step4OttTitle: "4. 이용 중인 OTT 플랫폼을 알려주세요.",
     food_chicken_pizza: "치킨/피자", food_bunsik: "분식(떡볶이 등)", food_korean: "한식(국밥/찌개)", food_western: "양식(파스타 등)",
-    ott_netflix: "넷플릭스", ott_disney: "디즈니+", ott_tving: "티빙", ott_wavve: "웨이브",
+    ott_netflix: "Netflix", ott_disney: "Disney+", ott_tving: "TVING", ott_wavve: "wavve",
     loadingTitle: "맞춤 조합을 찾는 중입니다...", loadingDesc: "잠시만 기다려주세요 🍿",
     resultTitle: "✨ 맞춤 추천 결과 ✨", resContentTitle: "🎬 추천 콘텐츠", resFoodTitle: "🍕 추천 음식", resComboTitle: "💡 Best Match Combo",
     shareBtn: "결과 공유하기 🔗", resetBtn: "처음부터 다시하기",
