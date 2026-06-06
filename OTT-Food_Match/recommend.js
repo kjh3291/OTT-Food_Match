@@ -354,10 +354,33 @@ async function initRecommendPage() {
     currentReason = `선택하신 '${mapPickPlaceName}'의 음식과 ${movie.title} 영화는 최고의 조합이 될 것입니다! 맛있게 드시면서 즐거운 감상 되시길 바랍니다.`;
     renderRecommendDetail(currentMovie, currentFood, currentReason);
   } else if (pageMode === "saved" && savedFoodName) {
-    hideReactionCard(); hideBackToMovieButton();
-    currentFood = { name: savedFoodName, category: savedFoodCategory || "기타" };
+    hideReactionCard();
+    hideBackToMovieButton();
+
+    currentFood = {
+      name: savedFoodName,
+      category: savedFoodCategory || "기타"
+    };
+
     currentReason = savedReason || "저장된 추천 사유가 없습니다.";
+
     renderRecommendDetail(currentMovie, currentFood, currentReason);
+
+  } else if (pageMode === "aiPick" && savedFoodName) {
+    showReactionCard();
+    showBackToMovieButton();
+
+    currentFood = {
+      name: savedFoodName,
+      category: savedFoodCategory || "AI 추천"
+    };
+
+    currentReason =
+      savedReason ||
+      `${currentMovie.title}의 분위기와 ${selectedMeal} 상황을 고려했을 때, ${savedFoodName}와 잘 어울리는 조합입니다.`;
+
+    renderRecommendDetail(currentMovie, currentFood, currentReason);
+
   } else {
     showReactionCard(); showBackToMovieButton();
     const recommendation = makeFoodRecommendation(movie);
@@ -429,7 +452,10 @@ if (closeLangModal && langModal) {
 // 5. 언어 변경 시 화면 추천 텍스트 즉시 새로고침
 document.addEventListener("languageChanged", () => {
   if (currentMovie && currentFood) {
-    currentReason = makeRecommendReason(currentMovie, currentFood);
+    if (pageMode === "recommend") {
+      currentReason = makeRecommendReason(currentMovie, currentFood);
+    }
+
     renderRecommendDetail(currentMovie, currentFood, currentReason);
   }
 });

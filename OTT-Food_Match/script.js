@@ -380,31 +380,131 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentAiPicks = [];
 
   function renderAiPickCards(picks) {
-    if (!aiPickList) return;
-    aiPickList.innerHTML = picks.map((pick) => {
-      const badgeClass = pick.type === "based" ? "ai-pick-badge" : "ai-pick-badge random";
-      const movieHintTrans = typeof t === 'function' ? t(pick.movieHintKey) : pick.movieHintKey;
-      const genreTrans = typeof t === 'function' ? t('tab_' + getGenreKey(pick.genre)) : pick.genre;
-      return `<div class="ai-pick-card ai-genre-card" data-ott="${pick.ott || "netflix"}" data-genre="${pick.genre || "전체"}" data-food-name="${pick.foodName || ""}" data-food-category="${pick.foodCategory || "기타"}" data-reason="${pick.reason || ""}"><span class="${badgeClass}">${pick.badge}</span><h3>${pick.title}</h3><div class="ai-pick-row"><strong>${typeof t === 'function' ? t('aiRowMovie') : '🎬 추천 영화 분위기'}</strong><p>${movieHintTrans}</p></div><div class="ai-pick-row"><strong>${typeof t === 'function' ? t('aiRowGenre') : '🎭 추천 장르'}</strong><p>${genreTrans}</p></div><div class="ai-pick-row"><strong>${typeof t === 'function' ? t('aiRowFood') : '🍽 추천 음식'}</strong><p>${pick.foodName}</p></div><p class="ai-pick-reason">${pick.reason}</p><p class="ai-pick-click-guide">${typeof t === 'function' ? t('aiClickGuide') : '이 장르 영화 보러가기 →'}</p></div>`;
-    }).join("");
-    addAiGenreCardEvents();
-  }
+  if (!aiPickList) return;
+
+  aiPickList.innerHTML = picks.map((pick) => {
+    const safeGenre = pick.genre || "코미디";
+    const safeFoodName = pick.foodName || "치킨";
+    const safeFoodCategory = pick.foodCategory || "AI 추천";
+    const safeOtt = pick.ott || "netflix";
+
+    const safeReason =
+      pick.reason ||
+      `${safeGenre} 장르의 분위기와 잘 어울리는 ${safeFoodName} 조합입니다.`;
+
+    const rawMovieHint =
+  pick.movieHint ||
+  pick.movieMood ||
+  pick.movieHintKey ||
+  "";
+
+let safeMovieHint = "";
+
+if (rawMovieHint && typeof t === "function") {
+  const translatedHint = t(rawMovieHint);
+  safeMovieHint =
+    translatedHint && translatedHint !== rawMovieHint
+      ? translatedHint
+      : `${safeGenre} 장르의 분위기 있는 영화`;
+} else {
+  safeMovieHint = rawMovieHint || `${safeGenre} 장르의 분위기 있는 영화`;
+}
+
+    const safeTitle =
+      pick.title ||
+      (pick.type === "based" ? "취향을 참고한 추천" : "오늘의 랜덤 추천");
+
+    const safeBadge =
+      pick.badge ||
+      (pick.type === "based" ? "취향 기반" : "랜덤 추천");
+
+    const badgeClass =
+      pick.type === "based" ? "ai-pick-badge" : "ai-pick-badge random";
+
+    const genreTrans =
+      typeof t === "function"
+        ? t("tab_" + getGenreKey(safeGenre))
+        : safeGenre;
+
+    const movieText =
+      typeof t === "function" ? t("aiRowMovie") : "🎬 추천 영화 분위기";
+
+    const genreText =
+      typeof t === "function" ? t("aiRowGenre") : "🎭 추천 장르";
+
+    const foodText =
+      typeof t === "function" ? t("aiRowFood") : "🍽 추천 음식";
+
+    const clickGuide =
+      typeof t === "function" ? t("aiClickGuide") : "이 장르 영화 보러가기 →";
+
+    return `
+      <div
+        class="ai-pick-card ai-genre-card"
+        data-ott="${safeOtt}"
+        data-genre="${safeGenre}"
+        data-food-name="${safeFoodName}"
+        data-food-category="${safeFoodCategory}"
+        data-reason="${safeReason}"
+      >
+        <span class="${badgeClass}">${safeBadge}</span>
+
+        <h3>${safeTitle}</h3>
+
+        <div class="ai-pick-row">
+          <strong>${movieText}</strong>
+          <p>${safeMovieHint}</p>
+        </div>
+
+        <div class="ai-pick-row">
+          <strong>${genreText}</strong>
+          <p>${genreTrans}</p>
+        </div>
+
+        <div class="ai-pick-row">
+          <strong>${foodText}</strong>
+          <p>${safeFoodName} <span class="ai-pick-cat">(${safeFoodCategory})</span></p>
+        </div>
+
+        <p class="ai-pick-reason">${safeReason}</p>
+        <p class="ai-pick-click-guide">${clickGuide}</p>
+      </div>
+    `;
+  }).join("");
+
+  addAiGenreCardEvents();
+}
 
   function addAiGenreCardEvents() {
-    document.querySelectorAll(".ai-genre-card").forEach((card) => {
-      card.addEventListener("click", () => {
-        const ott = card.dataset.ott || "netflix";
-        const genre = encodeURIComponent(card.dataset.genre || "전체");
-        const foodParam = encodeURIComponent(card.dataset.foodName || "");
-        const foodCategoryParam = encodeURIComponent(card.dataset.foodCategory || "기타");
-        const reasonParam = encodeURIComponent(card.dataset.reason || "");
-        const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
-        const recentCombo = savedCombos[savedCombos.length - 1];
-        const meal = encodeURIComponent(recentCombo?.meal || "혼밥");
-        window.location.href = `movie.html?ott=${ott}&meal=${meal}&genre=${genre}&food=${foodParam}&foodCategory=${foodCategoryParam}&aiReason=${reasonParam}`;
-      });
+  document.querySelectorAll(".ai-genre-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const ott = card.dataset.ott || "netflix";
+
+      const genre = encodeURIComponent(card.dataset.genre || "코미디");
+      const foodParam = encodeURIComponent(card.dataset.foodName || "치킨");
+      const foodCategoryParam = encodeURIComponent(
+        card.dataset.foodCategory || "AI 추천"
+      );
+
+      const reasonParam = encodeURIComponent(
+        card.dataset.reason ||
+          "AI가 영화 분위기와 식사 상황을 고려해 고른 조합입니다."
+      );
+
+      const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
+      const recentCombo = savedCombos[savedCombos.length - 1];
+      const meal = encodeURIComponent(recentCombo?.meal || "혼밥");
+
+      window.location.href =
+        `movie.html?ott=${ott}` +
+        `&meal=${meal}` +
+        `&genre=${genre}` +
+        `&food=${foodParam}` +
+        `&foodCategory=${foodCategoryParam}` +
+        `&aiReason=${reasonParam}`;
     });
-  }
+  });
+}
 
   async function renderAiPicks() {
     if (!aiPickList) return;
