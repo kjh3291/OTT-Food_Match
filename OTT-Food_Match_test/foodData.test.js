@@ -23,3 +23,15 @@ describe('getFoodsByCategory', () => {
   });
 });
 
+describe('getFoodsByCategories', () => {
+  test('여러 카테고리를 합쳐 {name,category} 객체로 반환한다', () => {
+    const r = getFoodsByCategories(['중식', '치킨']);
+    r.forEach(f => expect(['중식', '치킨']).toContain(f.category));
+    expect(r.length).toBeGreaterThan(0);
+  });
+  test('없는 카테고리면 빈 배열', () => {
+    expect(getFoodsByCategories(['없음'])).toEqual([]);
+  });
+});
+
+
