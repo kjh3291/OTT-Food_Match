@@ -21,3 +21,17 @@ function sortMovies(movies, currentSort = "popularity") {
   return sorted;
 }
 
+function recommendFood(genre) {
+  const foodRules = {
+    "전체": { ko: { name: "치킨 + 콜라" } },
+    "스릴러": { ko: { name: "피자 + 콜라" } },
+    "코미디": { ko: { name: "떡볶이 + 튀김" } },
+    "드라마": { ko: { name: "우동" } },
+    "로맨스": { ko: { name: "파스타 + 샐러드" } },
+    "액션": { ko: { name: "치킨 + 감자튀김" } },
+    "애니메이션": { ko: { name: "햄버거 세트" } }
+  };
+  return foodRules[genre] || foodRules["전체"];
+}
+
+
