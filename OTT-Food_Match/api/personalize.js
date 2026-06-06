@@ -19,6 +19,7 @@ function countTop(items, max = 5) {
     .slice(0, max);
 }
 
+
 /**
  * 사용자 신호로부터 취향 프로필을 만든다.
  * @param {Object} params

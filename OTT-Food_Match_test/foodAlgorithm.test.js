@@ -1,13 +1,10 @@
 /**
- * test_foodAlgorithm.js
+ * foodAlgorithm.test.js
  * food-algorithm.js 에 대한 Jest Unit Test
  */
 
 const { convertFoods, recommend } = require('./food-algorithm');
 
-// ─────────────────────────────────────────────
-// convertFoods
-// ─────────────────────────────────────────────
 describe('convertFoods', () => {
   test('음식 배열을 {name, category} 객체 배열로 변환한다', () => {
     const result = convertFoods(['김치찌개', '된장찌개'], '식사');
@@ -35,14 +32,11 @@ describe('convertFoods', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// recommend
-// ─────────────────────────────────────────────
 describe('recommend', () => {
   const foods = [
     { name: '김치찌개', category: '식사' },
     { name: '된장찌개', category: '식사' },
-    { name: '비빔밥',   category: '식사' },
+    { name: '비빔밥', category: '식사' },
   ];
 
   test('음식 목록에서 항목 하나를 반환한다', () => {
