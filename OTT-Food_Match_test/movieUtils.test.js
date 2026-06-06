@@ -45,4 +45,13 @@ describe('sortMovies', () => {
   });
 });
 
-
+describe('recommendFood', () => {
+  test('장르별 추천 음식', () => {
+    expect(recommendFood('액션').ko.name).toBe('치킨 + 감자튀김');
+    expect(recommendFood('드라마').ko.name).toBe('우동');
+  });
+  test('없는 장르는 전체 추천으로 폴백', () => {
+    expect(recommendFood('없음')).toEqual(recommendFood('전체'));
+    expect(recommendFood('없음').ko.name).toBe('치킨 + 콜라');
+  });
+});
