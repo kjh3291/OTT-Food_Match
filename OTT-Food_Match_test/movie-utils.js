@@ -1,99 +1,37 @@
 // movie-utils.js — movie.js에서 DOM/fetch/localStorage를 제외한 순수 함수만 복사
-
 function getGenreKey(genre) {
-  const map = {
-    "전체": "all",
-    "액션": "action",
-    "코미디": "comedy",
-    "드라마": "drama",
-    "로맨스": "romance",
-    "스릴러": "thriller",
-    "애니메이션": "animation",
-  };
-
+  const map = { "전체": "all", "액션": "action", "코미디": "comedy", "드라마": "drama", "로맨스": "romance", "스릴러": "thriller", "애니메이션": "animation" };
   return map[genre] || "all";
 }
 
 function removeDuplicateMovies(movies) {
   const movieMap = new Map();
-
-  movies.forEach((movie) => {
-    if (!movieMap.has(movie.id)) {
-      movieMap.set(movie.id, movie);
-    }
-  });
-
+  movies.forEach((movie) => { if (!movieMap.has(movie.id)) movieMap.set(movie.id, movie); });
   return Array.from(movieMap.values());
 }
 
-// 원본은 전역 currentSort에 의존하므로,
-// 테스트 가능하도록 정렬 기준을 인자로 받게 변경
+// 원본은 전역 currentSort에 의존하므로, 테스트 가능하도록 정렬 기준을 인자로 받게 변경
 function sortMovies(movies, currentSort = "popularity") {
   const sorted = [...movies];
-
-  if (currentSort === "popularity") {
-    sorted.sort((a, b) => b.popularity - a.popularity);
-  } else if (currentSort === "rating") {
-    sorted.sort((a, b) => b.rating - a.rating);
-  } else if (currentSort === "latest") {
-    sorted.sort((a, b) => {
-      const dateA = a.releaseDate || "0000-00-00";
-      const dateB = b.releaseDate || "0000-00-00";
-
-      return new Date(dateB) - new Date(dateA);
-    });
-  } else if (currentSort === "title") {
-    sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
-  }
-
+  if (currentSort === "popularity") sorted.sort((a, b) => b.popularity - a.popularity);
+  else if (currentSort === "rating") sorted.sort((a, b) => b.rating - a.rating);
+  else if (currentSort === "latest") sorted.sort((a, b) =>
+    new Date(b.releaseDate || "0000-00-00") - new Date(a.releaseDate || "0000-00-00"));
+  else if (currentSort === "title") sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
   return sorted;
 }
 
 function recommendFood(genre) {
   const foodRules = {
-    "전체": {
-      ko: {
-        name: "치킨 + 콜라",
-      },
-    },
-    "스릴러": {
-      ko: {
-        name: "피자 + 콜라",
-      },
-    },
-    "코미디": {
-      ko: {
-        name: "떡볶이 + 튀김",
-      },
-    },
-    "드라마": {
-      ko: {
-        name: "우동",
-      },
-    },
-    "로맨스": {
-      ko: {
-        name: "파스타 + 샐러드",
-      },
-    },
-    "액션": {
-      ko: {
-        name: "치킨 + 감자튀김",
-      },
-    },
-    "애니메이션": {
-      ko: {
-        name: "햄버거 세트",
-      },
-    },
+    "전체": { ko: { name: "치킨 + 콜라" } },
+    "스릴러": { ko: { name: "피자 + 콜라" } },
+    "코미디": { ko: { name: "떡볶이 + 튀김" } },
+    "드라마": { ko: { name: "우동" } },
+    "로맨스": { ko: { name: "파스타 + 샐러드" } },
+    "액션": { ko: { name: "치킨 + 감자튀김" } },
+    "애니메이션": { ko: { name: "햄버거 세트" } }
   };
-
   return foodRules[genre] || foodRules["전체"];
 }
 
-module.exports = {
-  getGenreKey,
-  removeDuplicateMovies,
-  sortMovies,
-  recommendFood,
-};
+module.exports = { getGenreKey, removeDuplicateMovies, sortMovies, recommendFood };
