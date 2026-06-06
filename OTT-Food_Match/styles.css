@@ -479,7 +479,8 @@ body {
 .setting-area {
   position: relative;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
 }
 
@@ -700,7 +701,10 @@ body.dark-mode .no-poster {
 ================================ */
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
@@ -725,7 +729,7 @@ body.dark-mode .no-poster {
   width: 90%;
   max-width: 320px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transform: translateY(20px);
   transition: transform 0.3s ease;
 }
@@ -764,11 +768,25 @@ body.dark-mode .no-poster {
 }
 
 /* 다크모드 대응 */
-body.dark-mode .modal-content { background: #222; color: #e0e0e0; }
-body.dark-mode .lang-select-btn { background: #333; border-color: #444; color: #e0e0e0; }
-body.dark-mode .lang-select-btn:hover { background: #444; }
+body.dark-mode .modal-content {
+  background: #222;
+  color: #e0e0e0;
+}
+
+body.dark-mode .lang-select-btn {
+  background: #333;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .lang-select-btn:hover {
+  background: #444;
+}
+
 body.dark-mode .lang-select-btn.active-lang {
-  border-color: #ff7a59; color: #ff7a59; background: rgba(255, 122, 89, 0.15);
+  border-color: #ff7a59;
+  color: #ff7a59;
+  background: rgba(255, 122, 89, 0.15);
 }
 
 /* =========================================
@@ -842,9 +860,9 @@ body.dark-mode .option-btn.selected span {
 }
 
 /* 4. 각종 카드 내부의 제목과 설명을 중앙 정렬 */
-.card h2, 
-.card p, 
-.movie-section-title h2, 
+.card h2,
+.card p,
+.movie-section-title h2,
 .movie-section-title p {
   text-align: center !important;
 }
@@ -1803,7 +1821,7 @@ body.dark-mode .modal-content {
 }
 
 /* 2. 모달창 내부의 회색 박스들 어둡게 처리 */
-body.dark-mode #resultCaptureArea > div {
+body.dark-mode #resultCaptureArea>div {
   background: #2a2a2a !important;
   border-color: #333333 !important;
 }
@@ -1849,13 +1867,16 @@ body.dark-mode .result-card.best-match p {
 
 /* 1. 저장된 조합이 없을 때 나타나는 카드 전체를 가로 정중앙 배치 */
 .saved-empty-card {
-  width: 100% !important; /* 부모 컨테이너 너비를 채우도록 설정 */
+  width: 100% !important;
+  /* 부모 컨테이너 너비를 채우도록 설정 */
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important; /* 내부의 모든 요소를 가로 정중앙 정렬 */
+  align-items: center !important;
+  /* 내부의 모든 요소를 가로 정중앙 정렬 */
   justify-content: center !important;
   text-align: center !important;
-  padding: 32px 24px !important; /* 위아래 여백을 단정하게 정리 */
+  padding: 32px 24px !important;
+  /* 위아래 여백을 단정하게 정리 */
 }
 
 /* 2. 카드 내부의 이모티콘, 제목, 본문 텍스트 모두 가운데 정렬 강제 */
@@ -1888,13 +1909,14 @@ body.dark-mode .result-card.best-match p {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  position: relative !important; /* 수정/새로고침 버튼의 기준점 */
+  position: relative !important;
+  /* 수정/새로고침 버튼의 기준점 */
   width: 100% !important;
   margin-bottom: 24px !important;
 }
 
 /* 2. 내부의 제목(h2)과 설명(p)을 감싸는 div를 가로 정중앙으로 모음 */
-.section-title-row > div {
+.section-title-row>div {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -1925,7 +1947,7 @@ body.dark-mode .result-card.best-match p {
     flex-direction: column !important;
     padding-top: 10px !important;
   }
-  
+
   .saved-edit-btn {
     position: relative !important;
     right: auto !important;
@@ -2010,4 +2032,23 @@ body.dark-mode .page-loading-box h2 {
 
 body.dark-mode .page-loading-box p {
   color: #cccccc;
+}
+
+.login-btn {
+  border: none;
+  background: #ffffff;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 999px;
+  /* 설정 버튼과 동일한 둥근 캡슐 모양 */
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: 0.2s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  background: #f0f0f0;
 }
