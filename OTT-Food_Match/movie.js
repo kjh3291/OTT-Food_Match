@@ -96,7 +96,6 @@ function applyMovieLanguage() {
   }
 }
 
-// 💡 다국어 텍스트 매핑 객체를 만들어 확실하게 언어를 처리하도록 수정
 const sortTextMap = {
   popularity: { ko: "인기순", en: "Popularity", zh: "按人气", ja: "人気順" },
   rating: { ko: "평점순", en: "Rating", zh: "按评分", ja: "評価順" },
@@ -107,11 +106,9 @@ const sortTextMap = {
 function updateSortMenuText() {
   const lang = localStorage.getItem("lang") || "ko";
 
-  // 현재 선택된 정렬 방식의 텍스트를 언어에 맞게 가져오기
   const currentText = sortTextMap[currentSort][lang] || sortTextMap[currentSort]["ko"];
   if (sortMenuBtn) sortMenuBtn.textContent = currentText + " ▾";
 
-  // 드롭다운 메뉴 안의 텍스트도 현재 언어에 맞게 업데이트
   if (sortOptions.length >= 4) {
     sortOptions[0].textContent = sortTextMap["popularity"][lang] || "인기순";
     sortOptions[1].textContent = sortTextMap["rating"][lang] || "평점순";
@@ -425,13 +422,48 @@ document.addEventListener("languageChanged", () => {
   renderMovies(currentMovies);
 });
 
+// ===============================
+// 💡 다크 모드 및 설정 팝업 로직 복구
+// ===============================
 const settingBtn = document.getElementById("settingBtn");
 const settingPopup = document.getElementById("settingPopup");
+const darkModeToggle = document.getElementById("darkModeToggle");
+
+// 설정 팝업 열기/닫기
 if (settingBtn && settingPopup) {
-  settingBtn.addEventListener("click", (e) => { e.stopPropagation(); settingPopup.classList.toggle("hidden"); });
-  document.addEventListener("click", () => { if (settingPopup) settingPopup.classList.add("hidden"); });
+  settingBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingPopup.classList.toggle("hidden");
+  });
+  settingPopup.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+  document.addEventListener("click", () => {
+    settingPopup.classList.add("hidden");
+  });
 }
 
+// 💡 다크모드 초기화 및 클릭 이벤트 추가!
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+}
+
+if (darkModeToggle) {
+  darkModeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+    
+    // 다국어 텍스트 업데이트 트리거 발송
+    if (typeof applyLanguage === "function") {
+      applyLanguage();
+    }
+    document.dispatchEvent(new Event("languageChanged"));
+  });
+}
+
+// ===============================
+// 기타 모달(기록, 정렬) 로직 유지
+// ===============================
 const historyBtn = document.getElementById("historyBtn");
 const historyModal = document.getElementById("historyModal");
 const closeHistoryBtn = document.getElementById("closeHistoryBtn");
@@ -482,14 +514,6 @@ if (clearHistoryBtn) {
   });
 }
 
-if (loadMoreBtn) {
-  loadMoreBtn.addEventListener("click", () => {
-    visibleMovieCount += MOVIES_PER_LOAD;
-    renderMovies(currentMovies);
-  });
-}
-
-// 💡 여기가 문제였던 클릭 이벤트 부분입니다! updateSortMenuText()를 올바르게 호출합니다.
 if (sortMenuBtn && sortMenu) {
   sortMenuBtn.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -507,14 +531,16 @@ if (sortMenuBtn && sortMenu) {
 
 sortOptions.forEach((option) => {
   option.addEventListener("click", () => {
-    currentSort = option.dataset.sort; // 데이터(popularity) 갱신
-    updateSortMenuText(); // 💡 한국어 번역 함수를 즉시 호출!
-    sortMenu.classList.add("hidden"); // 메뉴 닫기
+    currentSort = option.dataset.sort;
+    updateSortMenuText();
+    sortMenu.classList.add("hidden");
     visibleMovieCount = MOVIES_PER_LOAD;
-    renderMovies(currentMovies); // 갱신된 정렬로 영화 목록 다시 그리기
+    renderMovies(currentMovies);
   });
 });
 
+// 초기 실행
 applyMovieLanguage();
 updateSortMenuText();
 loadMoviesByGenre(selectedGenre);
+
