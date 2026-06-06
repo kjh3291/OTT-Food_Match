@@ -20,4 +20,4 @@ function matchesCategory(categoryName, keyword) {
   return true; // 그 외 키워드는 모두 통과
 }
 
-
+module.exports = { getSearchConfig, matchesCategory };
