@@ -9,4 +9,18 @@ const foodCategories = {
   "치킨": ["치킨", "후라이드치킨", "양념치킨", "간장치킨", "마늘치킨", "파닭", "닭강정"]
 };
 
+const categorizedFoods = Object.entries(foodCategories).flatMap(
+  ([category, names]) => names.map((name) => ({ name, category }))
+);
 
+function getFoodsByCategory(category) {
+  return foodCategories[category] ? [...foodCategories[category]] : [];
+}
+function getFoodsByCategories(categories) {
+  return categorizedFoods.filter((food) => categories.includes(food.category));
+}
+function convertFoods(foodArray, category) {
+  return foodArray.map((food) => ({ name: food, category }));
+}
+
+module.exports = { foodCategories, categorizedFoods, getFoodsByCategory, getFoodsByCategories, convertFoods };
