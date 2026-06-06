@@ -2034,6 +2034,7 @@ body.dark-mode .page-loading-box p {
   color: #cccccc;
 }
 
+<<<<<<< HEAD
 .login-btn {
   border: none;
   background: #ffffff;
@@ -2051,4 +2052,39 @@ body.dark-mode .page-loading-box p {
 .login-btn:hover {
   transform: translateY(-1px);
   background: #f0f0f0;
+=======
+/* =========================================
+   ✨ '최근 저장한 조합' 가로 스크롤(슬라이더) 패치
+========================================= */
+
+.saved-combo-list {
+  display: flex !important;
+  gap: 16px;
+  flex-wrap: nowrap !important; /* 카드가 다음 줄로 넘어가지 않도록 강제 */
+  justify-content: flex-start !important; /* 왼쪽에서부터 나열되도록 변경 */
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  padding-bottom: 12px; /* 스크롤바와 카드 사이의 간격 */
+  scroll-snap-type: x mandatory; /* 스와이프 시 카드 단위로 착착 붙도록 스냅 적용 */
+  -webkit-overflow-scrolling: touch; /* 모바일에서 부드러운 스크롤 */
+}
+
+.saved-mini-card {
+  flex: 0 0 auto !important; /* 화면이 좁아져도 카드가 찌그러지지 않게 고정 */
+  scroll-snap-align: start; /* 스크롤 시 카드의 시작점에 멈추도록 설정 */
+}
+
+/* 스크롤바를 UI에 어울리게 얇고 깔끔하게 디자인 */
+.saved-combo-list::-webkit-scrollbar {
+  height: 6px;
+}
+.saved-combo-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.saved-combo-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+body.dark-mode .saved-combo-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+>>>>>>> origin/main
 }
