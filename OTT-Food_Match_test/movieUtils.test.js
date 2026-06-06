@@ -10,3 +10,13 @@ describe('getGenreKey', () => {
   });
 });
 
+describe('removeDuplicateMovies', () => {
+  test('id가 같은 영화는 하나만 남긴다', () => {
+    const r = removeDuplicateMovies([{ id: 1 }, { id: 1 }, { id: 2 }]);
+    expect(r).toHaveLength(2);
+  });
+  test('빈 배열은 빈 배열', () => {
+    expect(removeDuplicateMovies([])).toEqual([]);
+  });
+});
+
