@@ -9,3 +9,17 @@ describe('foodCategories 데이터', () => {
   });
 });
 
+describe('getFoodsByCategory', () => {
+  test('존재하는 카테고리의 음식 배열을 반환한다', () => {
+    expect(getFoodsByCategory('치킨')).toContain('양념치킨');
+  });
+  test('없는 카테고리는 빈 배열을 반환한다', () => {
+    expect(getFoodsByCategory('우주식')).toEqual([]);
+  });
+  test('원본을 복사해 반환한다(참조 분리)', () => {
+    const a = getFoodsByCategory('중식');
+    a.push('변조');
+    expect(getFoodsByCategory('중식')).not.toContain('변조');
+  });
+});
+
