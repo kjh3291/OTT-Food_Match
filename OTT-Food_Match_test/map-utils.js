@@ -9,4 +9,15 @@ function getSearchConfig(keyword) {
   return { categoryCode, searchKeyword };
 }
 
+function matchesCategory(categoryName, keyword) {
+  const cName = categoryName || "";
+  if (keyword.includes('한식')) return cName.includes('한식');
+  if (keyword.includes('중식')) return cName.includes('중식');
+  if (keyword.includes('일식')) return cName.includes('일식') || cName.includes('돈까스') || cName.includes('초밥');
+  if (keyword.includes('양식')) return cName.includes('양식') || cName.includes('피자') || cName.includes('파스타');
+  if (keyword.includes('치킨')) return cName.includes('치킨') || cName.includes('통닭');
+  if (keyword.includes('패스트푸드')) return cName.includes('패스트푸드') || cName.includes('햄버거');
+  return true; // 그 외 키워드는 모두 통과
+}
+
 
