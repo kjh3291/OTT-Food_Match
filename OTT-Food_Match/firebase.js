@@ -27,16 +27,21 @@ const provider = new GoogleAuthProvider();
 
 // 4. HTML에서 구글 로그인 버튼 가져오기
 const loginBtn = document.getElementById('googleLoginBtn');
+provider.setCustomParameters({
+    prompt: 'select_account'
+});
 
 // 5. 사용자 로그인 상태 감지 (화면이 켜지거나 로그인 상태가 바뀔 때 자동 실행됨)
+// 상태 감지 함수 수정
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // 로그인에 성공했거나 이미 로그인된 상태일 때
+        // 로그인 상태일 때
         loginBtn.textContent = '로그아웃';
-        console.log("현재 로그인된 사용자:", user.displayName, user.email);
+        console.log("🟢 현재 로그인된 사용자:", user.displayName, user.email);
     } else {
-        // 로그아웃 상태일 때
+        // 💡 로그아웃 상태일 때 콘솔에도 확실하게 표시해 줍니다!
         loginBtn.textContent = '구글 로그인';
+        console.log("🔴 완전히 로그아웃 되었습니다. 현재 로그인된 계정 없음.");
     }
 });
 
@@ -55,7 +60,7 @@ if (loginBtn) {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
 
-                // 💡 핵심 해결책: 구글 로그인 창이 닫힐 수 있도록 0.5초(500ms) 여유를 줍니다!
+                // 구글 로그인 창이 닫힐 수 있도록 0.5초(500ms) 딜레이 설정
                 setTimeout(() => {
                     alert(`${user.displayName}님 환영합니다! 🎉`);
                 }, 500);
