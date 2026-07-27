@@ -1,5 +1,6 @@
 import { foodCategories } from './food.js';
 import { auth, db } from './firebase.js';
+import { showToast, initDarkMode, initSettingsPopup, getTmdbLang } from './common.js';
 import { collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ===============================
@@ -75,9 +76,7 @@ let currentReason = "";
 // 4. 영화 가져오기 로직 
 // ===============================
 async function fetchMovieDetailById(id) {
-  const lang = localStorage.getItem("lang") || "ko";
-  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
-  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
+  const tmdbLang = getTmdbLang();
   const url = `/api/movie-detail?movieId=${encodeURIComponent(id)}&lang=${encodeURIComponent(tmdbLang)}`;
 
   try {
@@ -101,9 +100,7 @@ function getGenreFromFoodCategory(category) {
 }
 
 async function fetchRandomMovie(genre) {
-  const lang = localStorage.getItem("lang") || "ko";
-  const tmdbLangMap = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
-  const tmdbLang = tmdbLangMap[lang] || "ko-KR";
+  const tmdbLang = getTmdbLang();
 
   try {
     const listUrl = `/api/movies?ott=${encodeURIComponent(ottKey)}&genre=${encodeURIComponent(genre)}&lang=${encodeURIComponent(tmdbLang)}&page=1`;
@@ -268,7 +265,7 @@ function saveReaction(reactionType) {
   if (existingIndex >= 0) reactions[existingIndex] = reaction;
   else reactions.push(reaction);
   localStorage.setItem("recommendReactions", JSON.stringify(reactions));
-  alert(reactionType === "like" ? "좋아요가 반영되었습니다." : "싫어요가 반영되었습니다.");
+  showToast(reactionType === "like" ? (typeof t === "function" ? t("alert_like") : "좋아요가 반영되었습니다.") : (typeof t === "function" ? t("alert_dislike") : "싫어요가 반영되었습니다."));
 }
 
 async function saveCombo() {
@@ -276,11 +273,11 @@ async function saveCombo() {
 
   const user = auth.currentUser;
   if (!user) {
-    alert("로그인이 필요한 기능입니다. 메인 화면에서 먼저 로그인해주세요!");
+    showToast(typeof t === "function" ? t("alert_login") : "로그인이 필요한 기능입니다. 메인 화면에서 먼저 로그인해주세요!");
     return;
   }
   const combo = {
-    userId: user.uid, // ⭐️ 내 계정 식별자
+    userId: user.uid,
     movieId: currentMovie.id,
     movieTitle: currentMovie.title,
     posterPath: currentMovie.posterPath,
@@ -293,7 +290,6 @@ async function saveCombo() {
     savedAt: new Date().toISOString()
   };
   try {
-    // 1. DB에서 중복 저장 여부 확인
     const q = query(collection(db, "savedCombos"),
       where("userId", "==", user.uid),
       where("movieId", "==", combo.movieId),
@@ -302,24 +298,22 @@ async function saveCombo() {
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      alert("이미 저장된 조합입니다.");
+      showToast(typeof t === "function" ? t("alert_already_saved") : "이미 저장된 조합입니다.");
       return;
     }
 
-    // 2. DB에 최종 저장
     await addDoc(collection(db, "savedCombos"), combo);
 
-    // 3. 브라우저 로컬 캐시 업데이트
     const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
     savedCombos.push(combo);
     localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
 
-    alert("조합이 내 계정에 안전하게 저장되었습니다!");
-    window.location.href = "index.html";
+    showToast(typeof t === "function" ? t("alert_saved") : "조합이 저장되었습니다!");
+    setTimeout(() => { window.location.href = "index.html"; }, 1500);
 
   } catch (error) {
     console.error("저장 오류:", error);
-    alert("저장에 실패했습니다.");
+    showToast("저장에 실패했습니다.");
   }
 }
 
@@ -337,7 +331,7 @@ async function initRecommendPage() {
     else movie = await fetchRandomMovie(getGenreFromFoodCategory(mapPickPlaceCategory));
   } else {
     showRecommendLoading("추천 정보를 불러오는 중입니다...");
-    if (!movieId) { alert("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요."); window.location.href = "index.html"; return; }
+    if (!movieId) { showToast("영화 정보가 없습니다. 영화 목록에서 다시 선택해주세요."); setTimeout(() => { window.location.href = "index.html"; }, 2000); return; }
     movie = await fetchMovieDetailById(movieId);
   }
 
@@ -389,67 +383,10 @@ async function initRecommendPage() {
     renderRecommendDetail(currentMovie, currentFood, currentReason);
   }
 }
-// ===============================
-// 8. 설정 팝업, 다크모드, 다국어 모달 연동 (복구됨!)
-// ===============================
-const settingBtn = document.getElementById("settingBtn");
-const settingPopup = document.getElementById("settingPopup");
-const darkModeToggle = document.getElementById("darkModeToggle");
-const langMenuBtn = document.getElementById("langMenuBtn");
-const langModal = document.getElementById("langModal");
-const closeLangModal = document.getElementById("closeLangModal");
+initSettingsPopup();
+initDarkMode();
 
-// 1. 설정 팝업 열기/닫기
-if (settingBtn && settingPopup) {
-  settingBtn.addEventListener("click", (event) => {
-    event.stopPropagation();
-    settingPopup.classList.toggle("hidden");
-  });
-
-  settingPopup.addEventListener("click", (event) => {
-    event.stopPropagation();
-  });
-
-  // 빈 바탕 클릭 시 팝업 닫기
-  document.addEventListener("click", () => {
-    settingPopup.classList.add("hidden");
-  });
-}
-
-// 2. 다크 모드 토글 연동
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark-mode");
-  if (darkModeToggle) {
-    darkModeToggle.textContent = typeof getLang === 'function' && getLang() === "ko" ? "☀️ 라이트 모드"
-      : (typeof getLang === 'function' && getLang() === "en" ? "☀️ Light Mode"
-        : (typeof getLang === 'function' && getLang() === "zh" ? "☀️ 浅色模式" : "☀️ ライトモード"));
-  }
-}
-
-if (darkModeToggle) {
-  darkModeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
-    document.dispatchEvent(new Event("languageChanged"));
-  });
-}
-
-// 3. 언어 설정 모달 띄우기
-if (langMenuBtn && langModal) {
-  langMenuBtn.addEventListener("click", () => {
-    settingPopup.classList.add("hidden"); // 설정 팝업 닫고
-    langModal.classList.remove("hidden"); // 언어 모달 열기
-  });
-}
-
-// 4. 언어 모달 닫기
-if (closeLangModal && langModal) {
-  closeLangModal.addEventListener("click", () => {
-    langModal.classList.add("hidden");
-  });
-}
-
-// 5. 언어 변경 시 화면 추천 텍스트 즉시 새로고침
+// 언어 변경 시 화면 추천 텍스트 즉시 새로고침
 document.addEventListener("languageChanged", () => {
   if (currentMovie && currentFood) {
     if (pageMode === "recommend") {

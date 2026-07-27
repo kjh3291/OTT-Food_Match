@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>추천 상세</title>
+  <meta name="description" content="OTT 영화와 어울리는 음식 조합을 추천해드립니다." />
+  <title>추천 상세 | OTT 푸드 매칭</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-
   <div id="recommendLoadingOverlay" class="page-loading-overlay hidden">
     <div class="page-loading-box">
       <div class="page-loading-spinner"></div>
@@ -17,6 +17,7 @@
       <p id="recommendLoadingDesc">잠시만 기다려주세요.</p>
     </div>
   </div>
+
   <div class="app recommend-app">
     <header class="header">
       <div class="setting-area">
@@ -41,12 +42,10 @@
 
       <section class="card">
         <h2 id="reactionTitle">이 추천은 어땠나요?</h2>
-
         <div class="reaction-area">
           <button id="likeBtn" class="primary-btn">👍 좋아요</button>
           <button id="dislikeBtn" class="secondary-btn">👎 싫어요</button>
         </div>
-
         <div class="action-area">
           <button id="saveComboBtn" class="primary-btn">💾 조합 저장</button>
         </div>
@@ -68,13 +67,13 @@
         <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
         <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
       </div>
-      <div id="langModal" class="modal-overlay hidden">
-      </div>
+      <button id="closeLangModal" class="secondary-btn" style="margin-top: 20px; width: 100%; border-radius: 12px;">닫기</button>
+    </div>
+  </div>
 
-      <script src="i18n.js"></script>
-      <script type="module" src="firebase.js"></script>
-      <script type="module" src="recommend.js"></script>
-</body>
+  <script src="i18n.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="recommend.js"></script>
 </body>
 
 </html>

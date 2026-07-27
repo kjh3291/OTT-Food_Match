@@ -1,6 +1,4 @@
-// firebase.js
-
-// 1. Firebase 코어 및 인증(Auth) 기능 불러오기
+import { showToast } from './common.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
     getAuth,
@@ -50,13 +48,10 @@ if (loginBtn) {
         try {
             if (auth.currentUser) {
                 await signOut(auth);
-                alert("성공적으로 로그아웃 되었습니다.");
+                showToast("성공적으로 로그아웃 되었습니다.");
             } else {
                 const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                setTimeout(() => {
-                    alert(`${user.displayName}님 환영합니다! 🎉`);
-                }, 500);
+                showToast(`${result.user.displayName}님 환영합니다! 🎉`);
             }
         } catch (error) {
             console.error("로그인/로그아웃 진행 중 에러 발생:", error);

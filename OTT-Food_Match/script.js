@@ -1,5 +1,5 @@
-// 💡 맨 위: Firebase 도구 가져오기
 import { auth, db } from './firebase.js';
+import { showToast, initDarkMode, initSettingsPopup } from './common.js';
 import { collection, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
@@ -20,17 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("nextBtn");
   const progressBar = document.getElementById("progressBar");
   const progressFill = document.getElementById("progressFill");
-
-  const ottStepTitle = document.getElementById("ottStepTitle");
-
-  function updateOttStepTitle() {
-    if (!ottStepTitle) return;
-    if (state.primary === "food") {
-      ottStepTitle.textContent = "3. 이용 중인 OTT 플랫폼을 알려주세요.";
-    } else {
-      ottStepTitle.textContent = "3. 이용 중인 OTT 플랫폼을 알려주세요.";
-    }
-  }
 
   // 버튼 이벤트 등록
   document.querySelectorAll(".option-btn").forEach((button) => {
@@ -69,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     nextBtn.addEventListener("click", () => {
       if (state.currentStep === 1) {
         if (!state.primary) {
-          return showCustomAlert(typeof t === "function" ? t("alert_primary") : "기준을 선택해주세요.");
+          return showToast(typeof t === "function" ? t("alert_primary") : "기준을 선택해주세요.");
         }
         steps[1].classList.add("hidden");
         steps[1].classList.remove("active");
@@ -83,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (state.currentStep === 2) {
         if (!state.situation) {
-          return showCustomAlert(typeof t === "function" ? t("alert_situation") : "상황을 선택해주세요.");
+          return showToast(typeof t === "function" ? t("alert_situation") : "상황을 선택해주세요.");
         }
         steps[2].classList.add("hidden");
         steps[2].classList.remove("active");
@@ -96,26 +85,27 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        updateOttStepTitle();
-        steps[4].classList.remove("hidden");
-        steps[4].classList.add("active");
-        state.currentStep = 4;
+        steps["3-food"].classList.remove("hidden");
+        steps["3-food"].classList.add("active");
+        state.currentStep = "3-food";
         updateProgress(3);
         return;
       }
 
       if (state.currentStep === "3-ott") {
         if (!state.detail) {
-          return showCustomAlert(typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요.");
+          return showToast(typeof t === "function" ? t("alert_detail") : "OTT를 선택해주세요.");
         }
         goToMoviePage(state.detail, state.situation);
         return;
       }
 
       if (state.currentStep === "3-food") {
+        if (!state.detail) {
+          return showToast(typeof t === "function" ? t("alert_detail") : "음식 종류를 선택해주세요.");
+        }
         steps["3-food"].classList.add("hidden");
         steps["3-food"].classList.remove("active");
-        updateOttStepTitle();
         steps[4].classList.remove("hidden");
         steps[4].classList.add("active");
         state.currentStep = 4;
@@ -125,9 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (state.currentStep === 4) {
         if (!state.selectedOtt) {
-          return showCustomAlert(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
+          return showToast(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
         }
-        goToMapPage(state.selectedOtt, state.situation, "");
+        goToMapPage(state.selectedOtt, state.situation, state.detail);
         return;
       }
     });
@@ -147,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (state.currentStep === "3-ott" || state.currentStep === "3-food" || state.currentStep === 4) {
+      if (state.currentStep === "3-ott" || state.currentStep === "3-food") {
         steps[state.currentStep].classList.add("hidden");
         steps[state.currentStep].classList.remove("active");
         steps[2].classList.remove("hidden");
@@ -156,28 +146,24 @@ document.addEventListener("DOMContentLoaded", () => {
         updateProgress(2);
         return;
       }
+
+      if (state.currentStep === 4) {
+        steps[4].classList.add("hidden");
+        steps[4].classList.remove("active");
+        steps["3-food"].classList.remove("hidden");
+        steps["3-food"].classList.add("active");
+        state.currentStep = "3-food";
+        updateProgress(3);
+        return;
+      }
     });
   }
 
-  function showCustomAlert(message) {
-    let toastContainer = document.getElementById("toast-container");
-    if (!toastContainer) {
-      toastContainer = document.createElement("div");
-      toastContainer.id = "toast-container";
-      document.body.appendChild(toastContainer);
-    }
-    const toast = document.createElement("div");
-    toast.className = "custom-toast";
-    toast.innerHTML = `<span>⚠️</span> ${message}`;
-    toastContainer.appendChild(toast);
-    setTimeout(() => toast.classList.add("show"), 10);
-    setTimeout(() => { toast.classList.remove("show"); setTimeout(() => toast.remove(), 300); }, 2500);
-  }
 
   function goToMoviePage(ottName, mealName, foodName = "") {
     const ottUrlMap = { "넷플릭스": "netflix", "Netflix": "netflix", "netflix": "netflix", "디즈니+": "disney", "Disney+": "disney", "disney": "disney", "티빙": "tving", "TVING": "tving", "tving": "tving", "웨이브": "wavve", "wavve": "wavve", "Wavve": "wavve" };
     const ottParam = ottUrlMap[ottName];
-    if (!ottParam) return showCustomAlert(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
+    if (!ottParam) return showToast(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
     const mealParam = encodeURIComponent(mealName || "");
     const foodParam = encodeURIComponent(foodName || "");
     let url = `movie.html?ott=${ottParam}&meal=${mealParam}`;
@@ -188,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function goToMapPage(ottName, mealName, foodCategory = "") {
     const ottUrlMap = { "넷플릭스": "netflix", "Netflix": "netflix", "netflix": "netflix", "디즈니+": "disney", "Disney+": "disney", "disney": "disney", "티빙": "tving", "TVING": "tving", "tving": "tving", "웨이브": "wavve", "wavve": "wavve", "Wavve": "wavve" };
     const ottParam = ottUrlMap[ottName];
-    if (!ottParam) return showCustomAlert(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
+    if (!ottParam) return showToast(typeof t === "function" ? t("alert_ott") : "올바른 OTT를 선택해주세요.");
     const mealParam = encodeURIComponent(mealName || "");
     const foodCategoryParam = encodeURIComponent(foodCategory || "");
     window.location.href = `map.html?ott=${ottParam}&meal=${mealParam}&foodCategory=${foodCategoryParam}`;
@@ -318,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return !(combo.movieId === movieId && combo.foodName === foodName);
         });
         localStorage.setItem("savedCombos", JSON.stringify(filteredCombos));
-        showCustomAlert(typeof t === 'function' ? t('comboDeleted') : "저장한 조합이 삭제되었습니다.");
+        showToast(typeof t === 'function' ? t('comboDeleted') : "저장한 조합이 삭제되었습니다.");
         renderSavedCombosOnMain();
         renderSavedManageList();
       });
@@ -516,7 +502,7 @@ if (rawMovieHint && typeof t === "function") {
     } catch (error) {
       console.error("AI 추천 API 오류:", error);
       aiPickList.innerHTML = `<div class="saved-empty-card ai-error-card"><div class="saved-empty-icon">⚠️</div><h3>${typeof t === 'function' ? t('aiPickErrorTitle') : 'AI 추천을 불러오지 못했어요'}</h3><p>${typeof t === 'function' ? t('aiPickErrorDesc') : '잠시 후 다시 시도해주세요. 지금은 기본 추천 조합을 대신 보여드릴게요.'}</p></div>`;
-      showCustomAlert(typeof t === 'function' ? t('aiPickErrorAlert') : "AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.");
+      showToast(typeof t === 'function' ? t('aiPickErrorAlert') : "AI 추천 연결이 불안정해요. 잠시 후 다시 시도해주세요.");
       setTimeout(() => { currentAiPicks = makeAiPicks(); renderAiPickCards(currentAiPicks); }, 1200);
     }
   }
@@ -550,25 +536,8 @@ if (rawMovieHint && typeof t === "function") {
   renderSavedCombosOnMain();
   renderAiPicks();
 
-  const settingBtn = document.getElementById("settingBtn");
-  const settingPopup = document.getElementById("settingPopup");
-  const darkModeToggle = document.getElementById("darkModeToggle");
-
-  if (settingBtn && settingPopup) {
-    settingBtn.addEventListener("click", (event) => { event.stopPropagation(); settingPopup.classList.toggle("hidden"); });
-    settingPopup.addEventListener("click", (event) => { event.stopPropagation(); });
-    document.addEventListener("click", () => { settingPopup.classList.add("hidden"); });
-  }
-
-  if (darkModeToggle) {
-    if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark-mode");
-    darkModeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-      localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
-      if (typeof applyLanguage === "function") applyLanguage();
-      document.dispatchEvent(new Event("languageChanged"));
-    });
-  }
+  initSettingsPopup();
+  initDarkMode();
 
   // ===============================
   // 💡 DB에서 내 조합 불러와서 로컬에 동기화하는 함수 (이전에 누락되었던 핵심 로직!)
