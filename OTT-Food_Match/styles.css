@@ -2119,3 +2119,91 @@ body.dark-mode .page-loading-box p {
 body.dark-mode .saved-combo-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
 }
+/* =============================== */
+/* 마이페이지 */
+/* =============================== */
+.mypage-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mypage-stat-card {
+  background: rgba(255, 113, 91, 0.08);
+  border-radius: 14px;
+  padding: 16px 10px;
+  text-align: center;
+}
+
+.mypage-stat-icon { font-size: 22px; margin-bottom: 6px; }
+.mypage-stat-num { font-size: 26px; font-weight: 700; color: #ff715b; }
+.mypage-stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+
+.mypage-fav-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.mypage-fav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.mypage-fav-label { color: #666; }
+.mypage-fav-value { font-weight: 600; color: #333; }
+
+.mypage-combo-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 8px;
+}
+
+.mypage-combo-item:last-child { border-bottom: none; }
+.mypage-combo-item:hover { background: rgba(255, 113, 91, 0.05); }
+
+.mypage-combo-poster {
+  width: 52px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #eee;
+}
+
+.mypage-combo-poster img { width: 100%; height: 100%; object-fit: cover; }
+.mypage-combo-no-poster {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: #f0f0f0;
+}
+
+.mypage-combo-info { flex: 1; }
+.mypage-combo-info strong { font-size: 14px; display: block; margin-bottom: 4px; }
+.mypage-combo-info p { margin: 2px 0; font-size: 13px; color: #555; }
+.mypage-combo-meta { font-size: 11px !important; color: #aaa !important; }
+.mypage-combo-arrow { font-size: 20px; color: #ccc; flex-shrink: 0; }
+
+/* 다크모드 */
+.dark-mode .mypage-stat-card { background: rgba(255, 113, 91, 0.12); }
+.dark-mode .mypage-fav-row { border-top-color: #333; }
+.dark-mode .mypage-fav-label { color: #aaa; }
+.dark-mode .mypage-fav-value { color: #eee; }
+.dark-mode .mypage-combo-item { border-bottom-color: #333; }
+.dark-mode .mypage-combo-item:hover { background: rgba(255, 113, 91, 0.08); }
+.dark-mode .mypage-combo-no-poster { background: #333; }
+.dark-mode .mypage-combo-info p { color: #aaa; }

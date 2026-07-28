@@ -33,12 +33,13 @@ provider.setCustomParameters({
 
 // 5. 사용자 로그인 상태 감지
 onAuthStateChanged(auth, (user) => {
+    const mypageBtn = document.getElementById('mypageBtn');
     if (user) {
         if (loginBtn) loginBtn.textContent = '로그아웃';
-        console.log("🟢 현재 로그인된 사용자:", user.displayName, user.email);
+        if (mypageBtn) mypageBtn.classList.remove('hidden');
     } else {
         if (loginBtn) loginBtn.textContent = '구글 로그인';
-        console.log("🔴 완전히 로그아웃 되었습니다. 현재 로그인된 계정 없음.");
+        if (mypageBtn) mypageBtn.classList.add('hidden');
     }
 });
 

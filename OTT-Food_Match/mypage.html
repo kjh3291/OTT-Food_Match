@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="내 저장 조합과 취향 통계를 확인하세요." />
+  <title>마이페이지 | OTT 푸드 매칭</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="header movie-header">
+      <div class="setting-area">
+        <button id="settingBtn" class="setting-btn">⚙ 설정</button>
+        <div id="settingPopup" class="setting-popup hidden">
+          <h3>설정</h3>
+          <button id="darkModeToggle" class="setting-option-btn">🌙 다크 모드</button>
+          <button id="langMenuBtn" class="setting-option-btn">🌐 언어 설정</button>
+        </div>
+      </div>
+      <h1>마이페이지</h1>
+      <p>내 취향과 저장 기록을 확인하세요.</p>
+    </header>
+
+    <main>
+      <div id="mypageLoginRequired" class="card" style="text-align:center; padding: 40px; display:none;">
+        <p style="font-size:2rem;">🔐</p>
+        <h3 style="margin: 12px 0 8px;">로그인이 필요해요</h3>
+        <p style="color:#888; margin-bottom:20px;">마이페이지는 로그인 후 이용할 수 있어요.</p>
+        <button onclick="window.location.href='index.html'" class="primary-btn">메인으로 이동</button>
+      </div>
+
+      <div id="mypageContent" style="display:none;">
+        <!-- 프로필 카드 -->
+        <section class="card" id="profileCard">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <img id="profilePhoto" src="" alt="프로필" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:none;" />
+            <div id="profilePhotoFallback" style="width:60px;height:60px;border-radius:50%;background:#ff715b;display:flex;align-items:center;justify-content:center;font-size:28px;">👤</div>
+            <div style="flex:1;">
+              <h2 id="profileName" style="margin:0 0 4px;">사용자</h2>
+              <p id="profileEmail" style="margin:0;color:#888;font-size:13px;"></p>
+            </div>
+            <button id="logoutBtn" class="secondary-btn" style="white-space:nowrap;">로그아웃</button>
+          </div>
+        </section>
+
+        <!-- 통계 카드 -->
+        <section class="card">
+          <h2 style="margin-bottom:16px;">📊 내 취향 통계</h2>
+          <div class="mypage-stats-grid">
+            <div class="mypage-stat-card">
+              <div class="mypage-stat-icon">💾</div>
+              <div id="statSaved" class="mypage-stat-num">0</div>
+              <div class="mypage-stat-label">저장 조합</div>
+            </div>
+            <div class="mypage-stat-card">
+              <div class="mypage-stat-icon">👍</div>
+              <div id="statLike" class="mypage-stat-num">0</div>
+              <div class="mypage-stat-label">좋아요</div>
+            </div>
+            <div class="mypage-stat-card">
+              <div class="mypage-stat-icon">👎</div>
+              <div id="statDislike" class="mypage-stat-num">0</div>
+              <div class="mypage-stat-label">싫어요</div>
+            </div>
+          </div>
+
+          <div class="mypage-fav-row">
+            <div class="mypage-fav-item">
+              <span class="mypage-fav-label">🎬 자주 보는 OTT</span>
+              <span id="favOtt" class="mypage-fav-value">—</span>
+            </div>
+            <div class="mypage-fav-item">
+              <span class="mypage-fav-label">🍽 최애 음식</span>
+              <span id="favFood" class="mypage-fav-value">—</span>
+            </div>
+            <div class="mypage-fav-item">
+              <span class="mypage-fav-label">🎭 선호 장르</span>
+              <span id="favGenre" class="mypage-fav-value">—</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 저장 조합 목록 -->
+        <section class="card">
+          <h2 style="margin-bottom:16px;">🗂 저장한 조합</h2>
+          <div id="mypageComboList"></div>
+        </section>
+      </div>
+
+      <div class="action-area">
+        <button onclick="window.location.href='index.html'" class="secondary-btn">메인으로 돌아가기</button>
+      </div>
+    </main>
+  </div>
+
+  <div id="langModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 style="margin-bottom:10px;">언어 설정</h3>
+      <div class="lang-options">
+        <button class="lang-select-btn" data-lang="ko">🇰🇷 한국어</button>
+        <button class="lang-select-btn" data-lang="en">🇺🇸 English</button>
+        <button class="lang-select-btn" data-lang="zh">🇨🇳 简体中文</button>
+        <button class="lang-select-btn" data-lang="ja">🇯🇵 日本語</button>
+      </div>
+      <button id="closeLangModal" class="secondary-btn" style="margin-top:20px;width:100%;border-radius:12px;">닫기</button>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="mypage.js"></script>
+</body>
+
+</html>
