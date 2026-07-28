@@ -843,6 +843,37 @@ body.dark-mode .option-btn.selected span {
   gap: 10px;
 }
 
+.movie-search-area {
+  margin-top: 14px;
+}
+
+.movie-search-input {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 24px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.movie-search-input:focus {
+  border-color: #ff715b;
+  background: #fff;
+}
+
+.dark-mode .movie-search-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #f0f0f0;
+}
+
+.dark-mode .movie-search-input:focus {
+  border-color: #ff715b;
+}
+
 /* 2. 메인 화면의 선택 버튼(혼밥, 야식 등)들을 중앙 정렬 */
 .option-group {
   display: flex;

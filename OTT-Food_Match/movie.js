@@ -58,6 +58,7 @@ const sortMenuBtn = document.getElementById("sortMenuBtn");
 const sortMenu = document.getElementById("sortMenu");
 const sortOptions = document.querySelectorAll(".sort-option");
 const loadMoreBtn = document.getElementById("loadMoreBtn");
+const movieSearchInput = document.getElementById("movieSearchInput");
 
 function showMovieLoading() {
   if (movieLoadingOverlay) movieLoadingOverlay.classList.remove("hidden");
@@ -189,6 +190,7 @@ async function loadMoviesByGenre(genre) {
 
   if (movieList) movieList.innerHTML = "";
   if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
+  if (movieSearchInput) movieSearchInput.value = "";
 
   visibleMovieCount = MOVIES_PER_LOAD;
 
@@ -416,6 +418,15 @@ sortOptions.forEach((option) => {
     renderMovies(currentMovies);
   });
 });
+
+if (movieSearchInput) {
+  movieSearchInput.addEventListener("input", () => {
+    const q = movieSearchInput.value.trim().toLowerCase();
+    const filtered = q ? currentMovies.filter(m => m.title.toLowerCase().includes(q)) : currentMovies;
+    visibleMovieCount = MOVIES_PER_LOAD;
+    renderMovies(filtered);
+  });
+}
 
 // 초기 실행
 applyInitialGenreTab();
