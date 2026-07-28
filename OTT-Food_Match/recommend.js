@@ -302,10 +302,10 @@ async function saveCombo() {
       return;
     }
 
-    await addDoc(collection(db, "savedCombos"), combo);
+    const docRef = await addDoc(collection(db, "savedCombos"), combo);
 
     const savedCombos = JSON.parse(localStorage.getItem("savedCombos")) || [];
-    savedCombos.push(combo);
+    savedCombos.push({ ...combo, docId: docRef.id });
     localStorage.setItem("savedCombos", JSON.stringify(savedCombos));
 
     showToast(typeof t === "function" ? t("alert_saved") : "조합이 저장되었습니다!");
