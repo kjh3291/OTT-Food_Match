@@ -39,6 +39,10 @@ export function initSettingsPopup() {
   document.addEventListener("click", () => popup.classList.add("hidden"));
 }
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+}
+
 export function getTmdbLang() {
   const map = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
   return map[localStorage.getItem("lang") || "ko"] || "ko-KR";
