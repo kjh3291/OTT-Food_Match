@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!state.selectedOtt) {
           return showToast(typeof t === "function" ? t("alert_ott") : "OTT를 선택해주세요.");
         }
-        goToMoviePage(state.selectedOtt, state.situation, state.detail);
+        goToMapPage(state.selectedOtt, state.situation, state.detail);
         return;
       }
     });

@@ -375,6 +375,13 @@ window.location.href = recommendUrl;
 }
 
 
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener("click", () => {
+    visibleMovieCount += MOVIES_PER_LOAD;
+    renderMovies(currentMovies);
+  });
+}
+
 if (backToMainBtn) {
   backToMainBtn.addEventListener("click", () => { window.location.href = "index.html"; });
 }
@@ -383,7 +390,7 @@ document.addEventListener("languageChanged", () => {
   applyInitialGenreTab();
   applyMovieLanguage();
   updateSortMenuText();
-  renderMovies(currentMovies);
+  loadMoviesByGenre(selectedGenre || "전체");
 });
 
 initSettingsPopup();
