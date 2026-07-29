@@ -1,4 +1,4 @@
-const CACHE = 'ott-food-v1';
+const CACHE = 'ott-food-v2';
 const STATIC = [
   '/',
   '/index.html',

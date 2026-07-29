@@ -202,14 +202,9 @@ async function loadMoviesByGenre(genre) {
     if (loadingText) loadingText.classList.add("hidden");
 
     if (movieList) {
-      movieList.innerHTML = `
-        <div class="result-card">
-          <p><strong>영화 목록을 불러오지 못했습니다.</strong></p>
-          <p style="color:#666; margin-top:8px;">
-            ${error.message || "잠시 후 다시 시도하거나 다른 장르를 선택해주세요."}
-          </p>
-        </div>
-      `;
+      const errTitle = typeof t === "function" ? t("noMoviesTitle") : "영화 목록을 불러오지 못했습니다.";
+      const errDesc = typeof t === "function" ? t("noMoviesDesc") : "잠시 후 다시 시도하거나 다른 장르를 선택해주세요.";
+      movieList.innerHTML = `<div class="result-card"><p><strong>${errTitle}</strong></p><p style="color:#666; margin-top:8px;">${errDesc}</p></div>`;
     }
   } finally {
     hideMovieLoading();

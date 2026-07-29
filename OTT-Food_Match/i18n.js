@@ -2,6 +2,13 @@
 // 🌐 통합 다국어(i18n) 및 모달 관리 모듈
 // ==========================================
 
+// 첫 방문 시 브라우저 언어 자동 감지
+if (!localStorage.getItem("lang")) {
+  const browserLang = (navigator.language || "ko").slice(0, 2);
+  const supported = ["ko", "en", "zh", "ja"];
+  localStorage.setItem("lang", supported.includes(browserLang) ? browserLang : "ko");
+}
+
 const i18nData = {
   ko: {
     settingBtn: "⚙ 설정", settingTitle: "설정", 
@@ -52,7 +59,13 @@ const i18nData = {
     recDate: "개봉일:", recRating: "평점:", recRuntime: "상영 시간:", recGenreLabel: "영화 장르:", recMovieDesc: "🎬 영화 설명", recFoodRec: "🍽 추천 음식", recReason: "💡 추천 사유",
     alert_like: "좋아요가 반영되었습니다.", alert_dislike: "싫어요가 반영되었습니다.", alert_already_saved: "이미 저장된 조합입니다.", alert_saved: "조합이 저장되었습니다.",
     mins: "분", infoNone: "정보 없음",
-    sortPop: "인기순 ▾", sortRate: "평점순 ▾", sortLate: "최신순 ▾", sortName: "이름순 ▾", sortOptPop: "인기순", sortOptRate: "평점순", sortOptLate: "최신순", sortOptName: "이름순"
+    sortPop: "인기순 ▾", sortRate: "평점순 ▾", sortLate: "최신순 ▾", sortName: "이름순 ▾", sortOptPop: "인기순", sortOptRate: "평점순", sortOptLate: "최신순", sortOptName: "이름순",
+    mypagePageTitle: "마이페이지", mypagePageDesc: "내 취향과 저장 기록을 확인하세요.",
+    mypageLoginMsg: "마이페이지는 로그인 후 이용할 수 있어요.", mypageLoginBtn: "메인으로 이동",
+    mypageStatsTitle: "📊 내 취향 통계", statSavedLabel: "저장 조합", statLikeLabel: "좋아요", statDislikeLabel: "싫어요",
+    favOttLabel: "🎬 자주 보는 OTT", favFoodLabel: "🍽 최애 음식", favGenreLabel: "🎭 선호 장르",
+    mypageComboTitle: "🗂 저장한 조합", mypageEmptyTitle: "아직 저장한 조합이 없어요", mypageEmptyDesc: "영화 추천 페이지에서 마음에 드는 조합을 저장해보세요.",
+    logoutBtn: "로그아웃", mypageBackBtn: "메인으로 돌아가기", mypageLoginRequired: "🔐 로그인이 필요해요"
   },
   en: {
     settingBtn: "⚙ Settings", settingTitle: "Settings", 
@@ -101,7 +114,13 @@ const i18nData = {
     recDate: "Release:", recRating: "Rating:", recRuntime: "Runtime:", recGenreLabel: "Genre:", recMovieDesc: "🎬 Movie Description", recFoodRec: "🍽 Recommended Food", recReason: "💡 Reason",
     alert_like: "Like recorded.", alert_dislike: "Dislike recorded.", alert_already_saved: "Already saved combo.", alert_saved: "Combo saved.",
     mins: " min", infoNone: "No info",
-    sortPop: "Popular ▾", sortRate: "Rating ▾", sortLate: "Latest ▾", sortName: "Title ▾", sortOptPop: "Popular", sortOptRate: "Rating", sortOptLate: "Latest", sortOptName: "Title"
+    sortPop: "Popular ▾", sortRate: "Rating ▾", sortLate: "Latest ▾", sortName: "Title ▾", sortOptPop: "Popular", sortOptRate: "Rating", sortOptLate: "Latest", sortOptName: "Title",
+    mypagePageTitle: "My Page", mypagePageDesc: "Check your preferences and saved history.",
+    mypageLoginMsg: "Please log in to use My Page.", mypageLoginBtn: "Go to Main",
+    mypageStatsTitle: "📊 My Stats", statSavedLabel: "Saved", statLikeLabel: "Likes", statDislikeLabel: "Dislikes",
+    favOttLabel: "🎬 Favorite OTT", favFoodLabel: "🍽 Favorite Food", favGenreLabel: "🎭 Favorite Genre",
+    mypageComboTitle: "🗂 Saved Combos", mypageEmptyTitle: "No saved combos yet", mypageEmptyDesc: "Save your favorite combos on the movie detail page.",
+    logoutBtn: "Log Out", mypageBackBtn: "Back to Main", mypageLoginRequired: "🔐 Login Required"
   },
   zh: {
     settingBtn: "⚙ 设置", settingTitle: "设置", 
@@ -150,7 +169,13 @@ const i18nData = {
     recDate: "上映日期:", recRating: "评分:", recRuntime: "时长:", recGenreLabel: "电影类型:", recMovieDesc: "🎬 电影简介", recFoodRec: "🍽 推荐美食", recReason: "💡 推荐理由",
     alert_like: "已点赞。", alert_dislike: "已点踩。", alert_already_saved: "已保存过该组合。", alert_saved: "组合已保存。",
     mins: "分钟", infoNone: "暂无信息",
-    sortPop: "热门 ▾", sortRate: "评分 ▾", sortLate: "最新 ▾", sortName: "名称 ▾", sortOptPop: "热门", sortOptRate: "评分", sortOptLate: "最新", sortOptName: "名称"
+    sortPop: "热门 ▾", sortRate: "评分 ▾", sortLate: "最新 ▾", sortName: "名称 ▾", sortOptPop: "热门", sortOptRate: "评分", sortOptLate: "最新", sortOptName: "名称",
+    mypagePageTitle: "我的页面", mypagePageDesc: "查看您的偏好与保存记录。",
+    mypageLoginMsg: "请登录后使用我的页面。", mypageLoginBtn: "返回主页",
+    mypageStatsTitle: "📊 我的统计", statSavedLabel: "已保存", statLikeLabel: "喜欢", statDislikeLabel: "不喜欢",
+    favOttLabel: "🎬 常用OTT", favFoodLabel: "🍽 最爱美食", favGenreLabel: "🎭 偏好类型",
+    mypageComboTitle: "🗂 保存的组合", mypageEmptyTitle: "暂无保存的组合", mypageEmptyDesc: "在电影详情页保存您喜欢的组合吧。",
+    logoutBtn: "退出登录", mypageBackBtn: "返回主页", mypageLoginRequired: "🔐 需要登录"
   },
   ja: {
     settingBtn: "⚙ 設定", settingTitle: "設定", 
@@ -199,27 +224,42 @@ const i18nData = {
     recDate: "公開日:", recRating: "評価:", recRuntime: "上映時間:", recGenreLabel: "映画ジャンル:", recMovieDesc: "🎬 映画の説明", recFoodRec: "🍽 おすすめの食べ物", recReason: "💡 おすすめの理由",
     alert_like: "いいねを反映しました。", alert_dislike: "いまいちを反映しました。", alert_already_saved: "すでに保存されたコンボです。", alert_saved: "コンボが保存されました。",
     mins: "分", infoNone: "情報なし",
-    sortPop: "人気順 ▾", sortRate: "評価順 ▾", sortLate: "最新順 ▾", sortName: "名前順 ▾", sortOptPop: "人気順", sortOptRate: "評価順", sortOptLate: "最新順", sortOptName: "名前順"
+    sortPop: "人気順 ▾", sortRate: "評価順 ▾", sortLate: "最新順 ▾", sortName: "名前順 ▾", sortOptPop: "人気順", sortOptRate: "評価順", sortOptLate: "最新順", sortOptName: "名前順",
+    mypagePageTitle: "マイページ", mypagePageDesc: "好みと保存履歴を確認してください。",
+    mypageLoginMsg: "マイページはログイン後にご利用いただけます。", mypageLoginBtn: "メインへ移動",
+    mypageStatsTitle: "📊 マイ統計", statSavedLabel: "保存済み", statLikeLabel: "いいね", statDislikeLabel: "いまいち",
+    favOttLabel: "🎬 よく見るOTT", favFoodLabel: "🍽 お気に入り料理", favGenreLabel: "🎭 好みジャンル",
+    mypageComboTitle: "🗂 保存したコンボ", mypageEmptyTitle: "まだ保存したコンボがありません", mypageEmptyDesc: "映画詳細ページでお気に入りのコンボを保存してみてください。",
+    logoutBtn: "ログアウト", mypageBackBtn: "メインに戻る", mypageLoginRequired: "🔐 ログインが必要です"
   }
 };
 
 function getLang() { return localStorage.getItem("lang") || "ko"; }
 function t(key) { return i18nData[getLang()][key] || key; }
 
-function applyLanguage() {
+function applyLanguage(animate = false) {
   const lang = getLang();
-  Object.keys(i18nData[lang]).forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = i18nData[lang][id];
-  });
+  document.documentElement.lang = lang;
 
-  const darkModeToggle = document.getElementById("darkModeToggle");
-  if (darkModeToggle) {
-    if (document.body.classList.contains("dark-mode")) {
-      darkModeToggle.textContent = lang === "ko" ? "☀️ 라이트 모드" : (lang === "en" ? "☀️ Light Mode" : (lang === "zh" ? "☀️ 浅色模式" : "☀️ ライトモード"));
-    } else {
-      darkModeToggle.textContent = lang === "ko" ? "🌙 다크 모드" : (lang === "en" ? "🌙 Dark Mode" : (lang === "zh" ? "🌙 深色模式" : "🌙 ダークモード"));
+  const apply = () => {
+    Object.keys(i18nData[lang]).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = i18nData[lang][id];
+    });
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    if (darkModeToggle) {
+      const isDark = document.body.classList.contains("dark-mode");
+      const labels = { ko: ["🌙 다크 모드", "☀️ 라이트 모드"], en: ["🌙 Dark Mode", "☀️ Light Mode"], zh: ["🌙 深色模式", "☀️ 浅色模式"], ja: ["🌙 ダークモード", "☀️ ライトモード"] };
+      darkModeToggle.textContent = (labels[lang] || labels.ko)[isDark ? 1 : 0];
     }
+  };
+
+  if (animate && document.body) {
+    document.body.style.transition = "opacity 0.12s ease";
+    document.body.style.opacity = "0.6";
+    requestAnimationFrame(() => { apply(); requestAnimationFrame(() => { document.body.style.opacity = "1"; }); });
+  } else {
+    apply();
   }
 }
 
@@ -255,8 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       const selectedLang = e.currentTarget.dataset.lang;
       localStorage.setItem("lang", selectedLang);
-      applyLanguage();
       langModal.classList.remove("show");
+      applyLanguage(true);
       document.dispatchEvent(new Event("languageChanged"));
     });
   });
